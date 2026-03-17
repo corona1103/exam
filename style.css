@@ -1,0 +1,1278 @@
+/* 基础样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #1a73e8;
+  --primary-hover: #1557b0;
+  --success: #34a853;
+  --warning: #fbbc04;
+  --error: #ea4335;
+  --bg: #f5f5f5;
+  --sidebar-bg: #fff;
+  --border: #e0e0e0;
+  --text: #202124;
+  --text-secondary: #5f6368;
+  --shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* 页面切换 */
+.page {
+  height: 100vh;
+  display: none;
+  flex-direction: column;
+}
+
+.page.active {
+  display: flex;
+}
+
+/* ========== 考试列表页 ========== */
+.list-container {
+  flex: 1;
+  padding: 24px 40px;
+  overflow-y: auto;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.list-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.list-filters {
+  display: flex;
+  gap: 12px;
+}
+
+.filter-select {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.exam-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.exam-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+}
+
+.exam-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.exam-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+}
+
+.exam-icon.math {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.exam-icon.chinese {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.exam-icon.english {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.exam-icon.physics {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.exam-info {
+  flex: 1;
+}
+
+.exam-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.exam-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.exam-progress {
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.progress-bar {
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.exam-status {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.exam-status.pending {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.exam-status.grading {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.exam-status.done {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.btn-enter {
+  flex-shrink: 0;
+}
+
+.btn-back {
+  color: white;
+  border-color: rgba(255,255,255,0.3);
+  margin-right: 8px;
+}
+
+.btn-back:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.grading-mode-tag {
+  font-size: 12px;
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+/* 学生列表样式 */
+.student-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.student-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.student-item:hover {
+  background: var(--bg);
+}
+
+.student-item.active {
+  background: #e8f0fe;
+  border-left: 3px solid var(--primary);
+}
+
+.student-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.student-info-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.student-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.student-progress-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* 题目导航 */
+.question-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.question-info-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* 顶部导航 */
+.header {
+  height: 56px;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header h1 {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.exam-name {
+  font-size: 14px;
+  opacity: 0.9;
+  padding: 4px 12px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-info {
+  font-size: 14px;
+}
+
+/* 按钮 */
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+}
+
+.btn-outline:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-sm {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.btn-icon {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+}
+
+.btn-icon:hover {
+  background: var(--bg);
+}
+
+/* 主容器 */
+.main-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* 左侧边栏 */
+.sidebar {
+  width: 260px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-header h3 {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.progress {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.question-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.question-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.question-item:hover {
+  background: var(--bg);
+}
+
+.question-item.active {
+  background: #e8f0fe;
+  border-left: 3px solid var(--primary);
+}
+
+.question-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.question-num {
+  font-weight: 500;
+}
+
+.question-score {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.status {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.status.done {
+  background: #e6f4ea;
+  color: var(--success);
+}
+
+.status.current {
+  background: #e8f0fe;
+  color: var(--primary);
+}
+
+.status.pending {
+  background: var(--bg);
+  color: var(--text-secondary);
+}
+
+/* 中间答卷区域 */
+.paper-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #e0e0e0;
+  position: relative;
+}
+
+.paper-toolbar {
+  height: 48px;
+  background: var(--sidebar-bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+.student-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.student-info {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#zoomLevel {
+  font-size: 14px;
+  min-width: 50px;
+  text-align: center;
+}
+
+.paper-container {
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.paper {
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  width: 700px;
+  min-height: 900px;
+  position: relative;
+  transform-origin: top center;
+}
+
+.paper-content {
+  padding: 40px;
+}
+
+.paper-header {
+  margin-bottom: 24px;
+  line-height: 1.8;
+}
+
+.paper-header strong {
+  font-size: 16px;
+}
+
+.answer-area {
+  border: 1px dashed var(--border);
+  padding: 20px;
+  background: #fafafa;
+  border-radius: 4px;
+}
+
+.answer-title {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.handwriting {
+  font-family: "楷体", "STKaiti", serif;
+  font-size: 16px;
+  line-height: 2;
+  color: #333;
+}
+
+.annotations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.annotation {
+  position: absolute;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow 0.2s;
+}
+
+.annotation:hover {
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.3);
+}
+
+.annotation:active {
+  cursor: grabbing;
+}
+
+.annotation.correct {
+  color: var(--success);
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.annotation.wrong {
+  color: var(--error);
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.annotation.half {
+  color: var(--warning);
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.annotation.comment-mark {
+  color: #d32f2f;
+  font-weight: 700;
+  font-size: 18px;
+  background: transparent;
+  border: none;
+  padding: 2px;
+  max-width: 200px;
+  text-shadow: 0 0 2px rgba(255,255,255,0.8);
+}
+
+.annotation.comment-mark .resize-handle {
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 16px;
+  height: 16px;
+  background: var(--primary);
+  border-radius: 50%;
+  cursor: nwse-resize;
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: white;
+}
+
+.annotation.comment-mark:hover .resize-handle {
+  opacity: 1;
+}
+
+.annotation.circle {
+  border: 2px solid var(--error);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+
+.annotation.underline {
+  border-bottom: 2px solid var(--error);
+  height: 2px;
+  width: 60px;
+}
+
+/* 批注工具栏 */
+.annotation-toolbar {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--sidebar-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  padding: 8px;
+  display: flex;
+  gap: 4px;
+  z-index: 100;
+}
+
+.tool-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.tool-btn:hover {
+  background: var(--bg);
+}
+
+.tool-btn.active {
+  background: #e8f0fe;
+  color: var(--primary);
+}
+
+.tool-divider {
+  width: 1px;
+  background: var(--border);
+  margin: 4px 8px;
+}
+
+/* 右侧评分面板 */
+.scoring-panel {
+  width: 320px;
+  background: var(--sidebar-bg);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.panel-section {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-section h3 {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+}
+
+.score-input-group {
+  margin-bottom: 12px;
+}
+
+.score-input-group label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.score-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score-input {
+  width: 80px;
+  height: 48px;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+}
+
+.score-input:focus {
+  border-color: var(--primary);
+}
+
+.score-max {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.quick-scores, .quick-comments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.quick-scores .label, .quick-comments .label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.score-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.score-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.comment-input {
+  width: 100%;
+  height: 100px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  resize: none;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.comment-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.comment-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.comment-btn:hover {
+  background: var(--bg);
+}
+
+.history-list {
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--bg);
+  font-size: 13px;
+}
+
+.history-item .time {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.history-item .action {
+  color: var(--text);
+}
+
+.panel-actions {
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.panel-actions .btn {
+  flex: 1;
+}
+
+.panel-actions .btn-outline {
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.panel-actions .btn-outline:hover {
+  background: var(--bg);
+}
+
+/* 模态框 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.modal-content h4 {
+  margin-bottom: 16px;
+}
+
+.modal-content textarea {
+  width: 100%;
+  height: 100px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  resize: none;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.font-size-control {
+  margin-bottom: 16px;
+}
+
+.font-size-control label {
+  display: block;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.font-size-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.font-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.font-btn:hover {
+  background: var(--bg);
+}
+
+.font-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* 提示消息 */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #323232;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 1001;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ========== 学生诊断报告弹窗 ========== */
+.report-modal {
+  padding: 20px;
+}
+
+.report-modal .report-content {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.report-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.report-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.close-report {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.report-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* 学生信息和总分 */
+.report-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.student-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-avatar {
+  width: 56px;
+  height: 56px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.profile-info h3 {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.profile-info p {
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+.total-score {
+  text-align: right;
+}
+
+.score-label {
+  display: block;
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+
+.score-value {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.score-full {
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+/* 报告各部分 */
+.report-section {
+  margin-bottom: 24px;
+}
+
+.report-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary);
+  display: inline-block;
+}
+
+/* 得分概览 */
+.score-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.item-label {
+  width: 60px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.item-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.item-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+.item-score {
+  width: 60px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 逐题详情 */
+.question-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detail-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.detail-header {
+  background: var(--bg);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-num {
+  font-weight: 600;
+}
+
+.detail-score {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.detail-score.correct {
+  background: #e6f4ea;
+  color: var(--success);
+}
+
+.detail-score.partial {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.detail-score.wrong {
+  background: #fce8e6;
+  color: var(--error);
+}
+
+.detail-tag {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.detail-body {
+  padding: 16px;
+}
+
+.detail-row {
+  margin-bottom: 12px;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-row label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.detail-row p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.student-answer {
+  background: #fafafa;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid var(--primary);
+}
+
+.student-answer p {
+  margin-bottom: 4px;
+}
+
+.answer-mark {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.answer-mark.correct {
+  background: #e6f4ea;
+  color: var(--success);
+}
+
+.answer-mark.partial {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.answer-mark.wrong {
+  background: #fce8e6;
+  color: var(--error);
+}
+
+/* 文本框 */
+.report-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.report-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+/* 报告底部 */
+.report-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.report-footer .btn {
+  padding: 12px 24px;
+}
