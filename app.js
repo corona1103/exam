@@ -33,14 +33,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 考试数据
   const examsData = {
-    1: { name: '2024年期中考试 - 数学', class: '高三(1)班', total: 30, done: 12 },
-    2: { name: '2024年期中考试 - 语文', class: '高三(1)班', total: 30, done: 30 },
-    3: { name: '2024年期中考试 - 英语', class: '高三(2)班', total: 32, done: 0 },
-    4: { name: '2024年月考 - 物理', class: '高三(1)班', total: 30, done: 30 },
-    5: { name: '2024年月考 - 数学', class: '高三(2)班', total: 32, done: 24 }
+    1: { name: '2024年期中考试 - 数学', class: '高三(1)班', total: 30, done: 12, type: 'online' },
+    2: { name: '2024年期中考试 - 语文', class: '高三(1)班', total: 30, done: 30, type: 'online' },
+    3: { name: '2024年期中考试 - 英语', class: '高三(2)班', total: 32, done: 0, type: 'direct' },
+    4: { name: '2024年月考 - 物理', class: '高三(1)班', total: 30, done: 30, type: 'online' },
+    5: { name: '2024年月考 - 数学', class: '高三(2)班', total: 32, done: 24, type: 'direct' }
   };
 
   let currentExam = null;
+  let currentExamType = 'online'; // 'online' 或 'direct'
   let gradingMode = 'byQuestion'; // 'byQuestion' 或 'byStudent'
 
   // 页面切换函数
@@ -104,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const card = e.target.closest('.exam-card');
       const examId = card.dataset.exam;
       currentExam = examsData[examId];
+      currentExamType = card.dataset.type || currentExam.type || 'online';
 
       // 获取批改模式
       gradingMode = btn.dataset.mode || 'byQuestion';
@@ -111,14 +113,79 @@ document.addEventListener('DOMContentLoaded', () => {
       // 更新顶部考试名称
       document.getElementById('currentExamName').textContent = currentExam.name;
 
+      // 更新诊断类型标签
+      const examTypeTag = document.getElementById('examTypeTag');
+      examTypeTag.textContent = currentExamType === 'direct' ? '数据直传' : '在线模考';
+      examTypeTag.className = 'exam-type-tag-header ' + currentExamType;
+
       // 更新UI
       updateGradingModeUI();
+
+      // 根据诊断类型控制评分面板显示
+      updateScoringPanelVisibility();
 
       showPage('grading');
       const modeText = gradingMode === 'byStudent' ? '按学生批改' : '按题批改';
       showToast(`进入${modeText}: ${currentExam.name}`);
     });
   });
+
+  // 根据诊断类型控制评分面板显示
+  function updateScoringPanelVisibility() {
+    const scoringPanel = document.querySelector('.scoring-panel');
+    const scoreSection = scoringPanel.querySelector('.panel-section:first-child');
+
+    if (currentExamType === 'direct') {
+      // 数据直传类型：隐藏评分区域，分数从小分表自动获取
+      scoreSection.innerHTML = `
+        <h3>评分</h3>
+        <div class="direct-score-notice">
+          <p class="notice-text">数据直传模式</p>
+          <p class="notice-desc">分数已从小分表自动获取，仅支持批注</p>
+          <div class="auto-score-display">
+            <span class="label">本题得分</span>
+            <span class="score-value">12 / 15 分</span>
+          </div>
+        </div>
+      `;
+    } else {
+      // 在线模考类型：显示完整评分面板
+      scoreSection.innerHTML = `
+        <h3>评分</h3>
+        <div class="score-input-group">
+          <label>本题得分</label>
+          <div class="score-input-wrapper">
+            <input type="number" id="scoreInput" class="score-input" value="12" min="0" max="15">
+            <span class="score-max">/ 15 分</span>
+          </div>
+        </div>
+        <div class="quick-scores">
+          <span class="label">快捷赋分:</span>
+          <button class="score-btn" data-score="15">满分</button>
+          <button class="score-btn" data-score="12">12</button>
+          <button class="score-btn" data-score="10">10</button>
+          <button class="score-btn" data-score="8">8</button>
+          <button class="score-btn" data-score="5">5</button>
+          <button class="score-btn" data-score="0">0</button>
+        </div>
+      `;
+      // 重新绑定快捷赋分事件
+      bindQuickScoreEvents();
+    }
+  }
+
+  // 绑定快捷赋分事件
+  function bindQuickScoreEvents() {
+    document.querySelectorAll('.quick-scores .score-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const score = btn.dataset.score;
+        const scoreInput = document.getElementById('scoreInput');
+        if (scoreInput) {
+          scoreInput.value = score;
+        }
+      });
+    });
+  }
 
   // 返回列表
   document.getElementById('backToList').addEventListener('click', () => {
@@ -149,6 +216,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let dragTarget = null;
   let dragOffset = { x: 0, y: 0 };
 
+  // 涂鸦状态
+  let isDrawing = false;
+  let doodlePath = [];
+  let currentDoodleSvg = null;
+
   // 工具栏切换
   document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -175,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 点击答卷添加批注
   paper.addEventListener('click', (e) => {
-    if (currentTool === 'select') return;
+    if (currentTool === 'select' || currentTool === 'doodle') return;
 
     const rect = paper.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -189,6 +261,85 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     addAnnotation(currentTool, x, y);
+  });
+
+  // 涂鸦功能 - 鼠标按下开始绘制
+  paper.addEventListener('mousedown', (e) => {
+    if (currentTool !== 'doodle') return;
+
+    isDrawing = true;
+    const rect = paper.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    doodlePath = [{ x, y }];
+
+    // 创建SVG元素
+    currentDoodleSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    currentDoodleSvg.classList.add('doodle-svg');
+    currentDoodleSvg.setAttribute('width', paper.offsetWidth);
+    currentDoodleSvg.setAttribute('height', paper.offsetHeight);
+    currentDoodleSvg.style.position = 'absolute';
+    currentDoodleSvg.style.left = '0';
+    currentDoodleSvg.style.top = '0';
+    currentDoodleSvg.style.pointerEvents = 'none';
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('stroke', '#ea4335');
+    path.setAttribute('stroke-width', '3');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    path.setAttribute('d', `M ${x} ${y}`);
+    currentDoodleSvg.appendChild(path);
+    annotations.appendChild(currentDoodleSvg);
+  });
+
+  // 涂鸦功能 - 鼠标移动绘制路径
+  paper.addEventListener('mousemove', (e) => {
+    if (!isDrawing || currentTool !== 'doodle') return;
+
+    const rect = paper.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    doodlePath.push({ x, y });
+
+    // 更新路径
+    const path = currentDoodleSvg.querySelector('path');
+    let d = path.getAttribute('d');
+    d += ` L ${x} ${y}`;
+    path.setAttribute('d', d);
+  });
+
+  // 涂鸦功能 - 鼠标抬起结束绘制
+  paper.addEventListener('mouseup', () => {
+    if (!isDrawing) return;
+    isDrawing = false;
+
+    if (currentDoodleSvg && doodlePath.length > 1) {
+      currentDoodleSvg.dataset.id = ++annotationCount;
+      currentDoodleSvg.classList.add('annotation');
+      addHistory('添加涂鸦标记');
+    } else if (currentDoodleSvg) {
+      // 如果只是点击没有移动，移除空的SVG
+      currentDoodleSvg.remove();
+    }
+
+    currentDoodleSvg = null;
+    doodlePath = [];
+  });
+
+  // 涂鸦功能 - 鼠标离开区域结束绘制
+  paper.addEventListener('mouseleave', () => {
+    if (isDrawing) {
+      isDrawing = false;
+      if (currentDoodleSvg && doodlePath.length > 1) {
+        currentDoodleSvg.dataset.id = ++annotationCount;
+        currentDoodleSvg.classList.add('annotation');
+        addHistory('添加涂鸦标记');
+      }
+      currentDoodleSvg = null;
+      doodlePath = [];
+    }
   });
 
   // 添加批注
@@ -304,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 撤销最后一个批注
   function undoLastAnnotation() {
-    const allAnnotations = annotations.querySelectorAll('.annotation');
+    const allAnnotations = annotations.querySelectorAll('.annotation, .doodle-svg');
     if (allAnnotations.length > 0) {
       allAnnotations[allAnnotations.length - 1].remove();
       showToast('已撤销');
@@ -314,7 +465,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 清除所有批注
   function clearAllAnnotations() {
-    if (annotations.children.length === 0) return;
+    const allItems = annotations.querySelectorAll('.annotation, .doodle-svg');
+    if (allItems.length === 0) return;
     if (confirm('确定要清除所有批注吗？')) {
       annotations.innerHTML = '';
       showToast('已清除所有批注');
@@ -554,9 +706,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reportStudentName').textContent = studentName;
     document.querySelector('.profile-avatar').textContent = studentName.charAt(0);
 
-    // 计算总分（已发布的用模拟数据）
+    // 计算总分（数据直传类型从小分表获取，在线模考从批改结果获取）
     let displayScores = studentScores;
-    if (readonly) {
+    if (currentExamType === 'direct') {
+      // 数据直传类型：分数从上传的小分表自动获取（模拟数据）
+      displayScores = [10, 8, 12, 13, 19];
+    } else if (readonly) {
       // 已发布报告的模拟数据
       displayScores = [10, 8, 12, 13, 19];
     }
@@ -567,7 +722,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 更新各题得分条
     const scoreOverview = document.getElementById('scoreOverview');
-    scoreOverview.innerHTML = questionScores.map((full, i) => {
+    const scoreSourceNote = currentExamType === 'direct' ? '<p class="score-source-note">分数来源：学生小分表自动导入</p>' : '';
+    scoreOverview.innerHTML = scoreSourceNote + questionScores.map((full, i) => {
       const got = displayScores[i];
       const percent = Math.round((got / full) * 100);
       return `

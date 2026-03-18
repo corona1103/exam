@@ -61,7 +61,7 @@
       </div>
 
       <div class="exam-list">
-        <div class="exam-card" data-exam="1">
+        <div class="exam-card" data-exam="1" data-type="online">
           <div class="exam-icon math">数</div>
           <div class="exam-info">
             <h3>2024年期中考试 - 数学</h3>
@@ -71,6 +71,7 @@
               <span>共30份</span>
             </div>
           </div>
+          <span class="exam-type-tag online">在线模考</span>
           <div class="exam-progress">
             <div class="progress-bar">
               <div class="progress-fill" style="width: 40%"></div>
@@ -84,7 +85,7 @@
           </div>
         </div>
 
-        <div class="exam-card" data-exam="2">
+        <div class="exam-card" data-exam="2" data-type="online">
           <div class="exam-icon chinese">语</div>
           <div class="exam-info">
             <h3>2024年期中考试 - 语文</h3>
@@ -94,6 +95,7 @@
               <span>共30份</span>
             </div>
           </div>
+          <span class="exam-type-tag online">在线模考</span>
           <div class="exam-progress">
             <div class="progress-bar">
               <div class="progress-fill" style="width: 100%"></div>
@@ -107,7 +109,7 @@
           </div>
         </div>
 
-        <div class="exam-card" data-exam="3">
+        <div class="exam-card" data-exam="3" data-type="direct">
           <div class="exam-icon english">英</div>
           <div class="exam-info">
             <h3>2024年期中考试 - 英语</h3>
@@ -117,6 +119,7 @@
               <span>共32份</span>
             </div>
           </div>
+          <span class="exam-type-tag direct">数据直传</span>
           <div class="exam-progress">
             <div class="progress-bar">
               <div class="progress-fill" style="width: 0%"></div>
@@ -130,7 +133,7 @@
           </div>
         </div>
 
-        <div class="exam-card" data-exam="4">
+        <div class="exam-card" data-exam="4" data-type="online">
           <div class="exam-icon physics">物</div>
           <div class="exam-info">
             <h3>2024年月考 - 物理</h3>
@@ -140,6 +143,7 @@
               <span>共30份</span>
             </div>
           </div>
+          <span class="exam-type-tag online">在线模考</span>
           <div class="exam-progress">
             <div class="progress-bar">
               <div class="progress-fill" style="width: 100%"></div>
@@ -153,7 +157,7 @@
           </div>
         </div>
 
-        <div class="exam-card" data-exam="5">
+        <div class="exam-card" data-exam="5" data-type="direct">
           <div class="exam-icon math">数</div>
           <div class="exam-info">
             <h3>2024年月考 - 数学</h3>
@@ -163,6 +167,7 @@
               <span>共32份</span>
             </div>
           </div>
+          <span class="exam-type-tag direct">数据直传</span>
           <div class="exam-progress">
             <div class="progress-bar">
               <div class="progress-fill" style="width: 75%"></div>
@@ -184,6 +189,7 @@
         <div class="grading-header">
           <button class="btn btn-icon btn-back" id="backToList">← 返回列表</button>
           <span class="exam-name" id="currentExamName">2024年期中考试 - 数学</span>
+          <span class="exam-type-tag-header" id="examTypeTag">在线模考</span>
           <span class="grading-mode-tag" id="gradingModeTag">按题批改</span>
         </div>
 
@@ -370,6 +376,9 @@
           </button>
           <button class="tool-btn" data-tool="circle" title="圈注">
             <span>○</span>
+          </button>
+          <button class="tool-btn" data-tool="doodle" title="涂鸦">
+            <span>✏️</span>
           </button>
           <button class="tool-btn" data-tool="comment" title="添加批注">
             <span>💬</span>

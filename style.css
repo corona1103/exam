@@ -275,6 +275,24 @@ body {
   color: var(--text-secondary);
 }
 
+.exam-type-tag {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.exam-type-tag.online {
+  background: #e8f0fe;
+  color: var(--primary);
+}
+
+.exam-type-tag.direct {
+  background: #fce8e6;
+  color: #c5221f;
+}
+
 .exam-status {
   padding: 6px 12px;
   border-radius: 16px;
@@ -324,6 +342,23 @@ body {
   background: rgba(255,255,255,0.2);
   border-radius: 12px;
   margin-left: 8px;
+}
+
+.exam-type-tag-header {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-left: 12px;
+}
+
+.exam-type-tag-header.online {
+  background: rgba(26, 115, 232, 0.3);
+  color: #a8d4ff;
+}
+
+.exam-type-tag-header.direct {
+  background: rgba(234, 67, 53, 0.3);
+  color: #ffb4a8;
 }
 
 /* 学生列表样式 */
@@ -772,6 +807,25 @@ body {
   width: 60px;
 }
 
+/* 涂鸦SVG样式 */
+.doodle-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.doodle-svg.annotation {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.doodle-svg.annotation:hover path {
+  stroke: #c5221f;
+  stroke-width: 4;
+}
+
 /* 批注工具栏 */
 .annotation-toolbar {
   position: absolute;
@@ -840,6 +894,47 @@ body {
 
 .score-input-group {
   margin-bottom: 12px;
+}
+
+/* 数据直传模式评分提示 */
+.direct-score-notice {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.direct-score-notice .notice-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #c5221f;
+  margin-bottom: 4px;
+}
+
+.direct-score-notice .notice-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.direct-score-notice .auto-score-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.direct-score-notice .auto-score-display .label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.direct-score-notice .auto-score-display .score-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
 }
 
 .score-input-group label {
@@ -3222,6 +3317,15 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.score-source-note {
+  font-size: 12px;
+  color: #c5221f;
+  background: #fce8e6;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 4px;
 }
 
 .score-item {
