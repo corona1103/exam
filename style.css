@@ -1103,6 +1103,14 @@ body {
   height: 100%;
 }
 
+.diagnosis-page {
+  display: none;
+}
+
+.diagnosis-page.active {
+  display: block;
+}
+
 .diagnosis-header {
   display: flex;
   justify-content: space-between;
@@ -1187,6 +1195,24 @@ body {
   background: #fafafa;
 }
 
+/* 诊断类型标签 */
+.type-tag {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.type-tag.online {
+  background: #e8f0fe;
+  color: var(--primary);
+}
+
+.type-tag.direct {
+  background: #fce8f3;
+  color: #c41c7a;
+}
+
 .student-avatar-sm {
   display: inline-flex;
   width: 28px;
@@ -1208,14 +1234,21 @@ body {
   font-weight: 500;
 }
 
-.status-tag.published {
+.status-tag.published,
+.status-tag.active {
   background: #e6f4ea;
   color: var(--success);
 }
 
-.status-tag.draft {
+.status-tag.draft,
+.status-tag.pending {
   background: #fff3e0;
   color: #e65100;
+}
+
+.status-tag.ended {
+  background: var(--bg);
+  color: var(--text-secondary);
 }
 
 .diagnosis-pagination {
@@ -1232,6 +1265,361 @@ body {
 .page-btns {
   display: flex;
   gap: 4px;
+}
+
+/* ========== 诊断编辑页 ========== */
+.edit-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.edit-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.btn-back-diagnosis {
+  color: var(--text-secondary);
+}
+
+.edit-form {
+  max-width: 900px;
+}
+
+.form-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.form-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.required {
+  color: var(--error);
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+.form-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* 单选组 */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.radio-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.radio-item:hover {
+  border-color: var(--primary);
+  background: #f8faff;
+}
+
+.radio-item input[type="radio"] {
+  margin-top: 2px;
+}
+
+.radio-item input[type="radio"]:checked + .radio-label {
+  color: var(--primary);
+}
+
+.radio-label {
+  font-weight: 500;
+  display: block;
+}
+
+.radio-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* 复选框组 */
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.checkbox-item:hover {
+  border-color: var(--primary);
+}
+
+.checkbox-item input[type="checkbox"]:checked + span {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.checkbox-single {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.checkbox-single input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+/* 范围选择标签 */
+.scope-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.scope-tab {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.scope-tab:hover {
+  border-color: var(--primary);
+}
+
+.scope-tab.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.scope-content {
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 8px;
+}
+
+/* 班级选择器 */
+.class-selector {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+}
+
+.class-column h5 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.class-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* 学生上传 */
+.student-upload {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.upload-area {
+  flex: 1;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.upload-area:hover {
+  border-color: var(--primary);
+  background: #f8faff;
+}
+
+.upload-icon {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.selected-students h5 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.student-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.student-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #e8f0fe;
+  color: var(--primary);
+  border-radius: 16px;
+  font-size: 13px;
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
+}
+
+.tag-remove:hover {
+  color: var(--error);
+}
+
+/* 富文本编辑器 */
+.rich-editor {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.editor-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.editor-btn:hover {
+  background: white;
+}
+
+.editor-divider {
+  width: 1px;
+  background: var(--border);
+  margin: 4px 8px;
+}
+
+.editor-content {
+  min-height: 150px;
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.editor-content:focus {
+  outline: none;
+}
+
+.editor-content p {
+  margin-bottom: 8px;
+}
+
+/* 表单操作按钮 */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 20px;
+}
+
+.form-actions .btn {
+  padding: 12px 24px;
 }
 
 /* ========== 学生平板效果模块 ========== */

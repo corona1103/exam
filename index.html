@@ -422,134 +422,316 @@
     <!-- ========== 模块2：诊断管理 ========== -->
     <div class="module module-diagnosis" id="moduleDiagnosis">
       <div class="diagnosis-container">
-        <div class="diagnosis-header">
-          <h2>诊断报告管理</h2>
-          <div class="diagnosis-filters">
-            <select class="filter-select">
-              <option value="">全部考试</option>
-              <option value="1">2024年期中考试 - 数学</option>
-              <option value="2">2024年期中考试 - 语文</option>
-            </select>
-            <select class="filter-select">
-              <option value="">全部班级</option>
-              <option value="1">高三(1)班</option>
-              <option value="2">高三(2)班</option>
-            </select>
-            <select class="filter-select">
-              <option value="">全部状态</option>
-              <option value="published">已发布</option>
-              <option value="draft">草稿</option>
-            </select>
+        <!-- 列表页 -->
+        <div class="diagnosis-page diagnosis-list-page active" id="diagnosisListPage">
+          <div class="diagnosis-header">
+            <h2>诊断配置管理</h2>
+            <button class="btn btn-primary" id="createDiagnosisBtn">+ 创建诊断</button>
+          </div>
+
+          <div class="diagnosis-stats">
+            <div class="stat-card">
+              <span class="stat-value">8</span>
+              <span class="stat-label">诊断总数</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">3</span>
+              <span class="stat-label">进行中</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">5</span>
+              <span class="stat-label">已结束</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">1,256</span>
+              <span class="stat-label">参与学生</span>
+            </div>
+          </div>
+
+          <div class="diagnosis-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>诊断名称</th>
+                  <th>诊断类型</th>
+                  <th>开放时间</th>
+                  <th>学生范围</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>2024春季学业诊断</strong></td>
+                  <td><span class="type-tag online">在线模考</span></td>
+                  <td>2024-04-15 ~ 2024-04-20</td>
+                  <td>高三年级 (320人)</td>
+                  <td><span class="status-tag active">进行中</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline btn-edit-diagnosis">编辑</button>
+                    <button class="btn btn-sm btn-outline">查看报名</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>高二数学专项诊断</strong></td>
+                  <td><span class="type-tag direct">数据直传</span></td>
+                  <td>2024-04-10 ~ 2024-04-12</td>
+                  <td>高二(1)班、高二(2)班 (86人)</td>
+                  <td><span class="status-tag ended">已结束</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline btn-edit-diagnosis">编辑</button>
+                    <button class="btn btn-sm btn-outline">查看报名</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>高一期中学业诊断</strong></td>
+                  <td><span class="type-tag online">在线模考</span></td>
+                  <td>2024-04-18 ~ 2024-04-25</td>
+                  <td>全部学生 (850人)</td>
+                  <td><span class="status-tag pending">待开始</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline btn-edit-diagnosis">编辑</button>
+                    <button class="btn btn-sm btn-outline">查看报名</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>高三一模诊断</strong></td>
+                  <td><span class="type-tag online">在线模考</span></td>
+                  <td>2024-03-20 ~ 2024-03-25</td>
+                  <td>高三年级 (318人)</td>
+                  <td><span class="status-tag ended">已结束</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline btn-edit-diagnosis">编辑</button>
+                    <button class="btn btn-sm btn-outline">查看报名</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>艺考生专项诊断</strong></td>
+                  <td><span class="type-tag direct">数据直传</span></td>
+                  <td>2024-04-22 ~ 2024-04-28</td>
+                  <td>指定名单 (45人)</td>
+                  <td><span class="status-tag active">进行中</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline btn-edit-diagnosis">编辑</button>
+                    <button class="btn btn-sm btn-outline">查看报名</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="diagnosis-pagination">
+            <span class="page-info">显示 1-5 / 共 8 条</span>
+            <div class="page-btns">
+              <button class="btn btn-sm" disabled>上一页</button>
+              <button class="btn btn-sm btn-primary">1</button>
+              <button class="btn btn-sm">2</button>
+              <button class="btn btn-sm">下一页</button>
+            </div>
           </div>
         </div>
 
-        <div class="diagnosis-stats">
-          <div class="stat-card">
-            <span class="stat-value">156</span>
-            <span class="stat-label">报告总数</span>
+        <!-- 创建/编辑页 -->
+        <div class="diagnosis-page diagnosis-edit-page" id="diagnosisEditPage">
+          <div class="edit-header">
+            <button class="btn btn-icon btn-back-diagnosis" id="backToDiagnosisList">← 返回列表</button>
+            <h2 id="diagnosisEditTitle">创建诊断配置</h2>
           </div>
-          <div class="stat-card">
-            <span class="stat-value">142</span>
-            <span class="stat-label">已发布</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value">14</span>
-            <span class="stat-label">待审核</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value">85.6</span>
-            <span class="stat-label">平均分</span>
-          </div>
-        </div>
 
-        <div class="diagnosis-table">
-          <table>
-            <thead>
-              <tr>
-                <th>学生姓名</th>
-                <th>班级</th>
-                <th>考试名称</th>
-                <th>总分</th>
-                <th>状态</th>
-                <th>更新时间</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="student-avatar-sm">李</span> 李明</td>
-                <td>高三(1)班</td>
-                <td>2024年期中考试 - 数学</td>
-                <td><strong>62</strong>/70</td>
-                <td><span class="status-tag published">已发布</span></td>
-                <td>2024-04-17 10:30</td>
-                <td>
-                  <button class="btn btn-sm">查看</button>
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="student-avatar-sm">王</span> 王小红</td>
-                <td>高三(1)班</td>
-                <td>2024年期中考试 - 数学</td>
-                <td><strong>68</strong>/70</td>
-                <td><span class="status-tag published">已发布</span></td>
-                <td>2024-04-17 10:25</td>
-                <td>
-                  <button class="btn btn-sm">查看</button>
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="student-avatar-sm">张</span> 张华</td>
-                <td>高三(1)班</td>
-                <td>2024年期中考试 - 数学</td>
-                <td><strong>55</strong>/70</td>
-                <td><span class="status-tag draft">草稿</span></td>
-                <td>2024-04-17 09:50</td>
-                <td>
-                  <button class="btn btn-sm btn-primary">审核</button>
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="student-avatar-sm">刘</span> 刘芳</td>
-                <td>高三(2)班</td>
-                <td>2024年期中考试 - 数学</td>
-                <td><strong>70</strong>/70</td>
-                <td><span class="status-tag published">已发布</span></td>
-                <td>2024-04-17 09:30</td>
-                <td>
-                  <button class="btn btn-sm">查看</button>
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="student-avatar-sm">陈</span> 陈刚</td>
-                <td>高三(2)班</td>
-                <td>2024年期中考试 - 数学</td>
-                <td><strong>48</strong>/70</td>
-                <td><span class="status-tag draft">草稿</span></td>
-                <td>2024-04-17 09:15</td>
-                <td>
-                  <button class="btn btn-sm btn-primary">审核</button>
-                  <button class="btn btn-sm btn-outline">编辑</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <div class="edit-form">
+            <!-- 基本信息 -->
+            <div class="form-section">
+              <h3>基本信息</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>诊断名称 <span class="required">*</span></label>
+                  <input type="text" class="form-input" placeholder="请输入诊断名称" id="diagnosisName">
+                </div>
+                <div class="form-group">
+                  <label>诊断类型 <span class="required">*</span></label>
+                  <div class="radio-group">
+                    <label class="radio-item">
+                      <input type="radio" name="diagnosisType" value="online" checked>
+                      <span class="radio-label">在线模考</span>
+                      <span class="radio-desc">学生在线作答，系统自动收集数据</span>
+                    </label>
+                    <label class="radio-item">
+                      <input type="radio" name="diagnosisType" value="direct">
+                      <span class="radio-label">数据直传</span>
+                      <span class="radio-desc">线下考试数据直接导入系统</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        <div class="diagnosis-pagination">
-          <span class="page-info">显示 1-5 / 共 156 条</span>
-          <div class="page-btns">
-            <button class="btn btn-sm" disabled>上一页</button>
-            <button class="btn btn-sm btn-primary">1</button>
-            <button class="btn btn-sm">2</button>
-            <button class="btn btn-sm">3</button>
-            <button class="btn btn-sm">...</button>
-            <button class="btn btn-sm">32</button>
-            <button class="btn btn-sm">下一页</button>
+            <!-- 时间设置 -->
+            <div class="form-section">
+              <h3>入口/报名开放时间</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>开始时间 <span class="required">*</span></label>
+                  <input type="datetime-local" class="form-input" id="startTime">
+                </div>
+                <div class="form-group">
+                  <label>结束时间 <span class="required">*</span></label>
+                  <input type="datetime-local" class="form-input" id="endTime">
+                </div>
+              </div>
+            </div>
+
+            <!-- 学生范围 -->
+            <div class="form-section">
+              <h3>入口开放学生范围</h3>
+              <div class="form-group">
+                <label>选择范围方式 <span class="required">*</span></label>
+                <div class="scope-tabs">
+                  <button class="scope-tab active" data-scope="org">按机构</button>
+                  <button class="scope-tab" data-scope="grade">按年级</button>
+                  <button class="scope-tab" data-scope="class">按班级</button>
+                  <button class="scope-tab" data-scope="student">按学生名单</button>
+                </div>
+              </div>
+
+              <!-- 按机构 -->
+              <div class="scope-content" id="scopeOrg">
+                <div class="checkbox-group">
+                  <label class="checkbox-item">
+                    <input type="checkbox" checked>
+                    <span>北京总校</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox">
+                    <span>上海分校</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox">
+                    <span>广州分校</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox">
+                    <span>深圳分校</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 按年级 -->
+              <div class="scope-content" id="scopeGrade" style="display:none;">
+                <div class="checkbox-group">
+                  <label class="checkbox-item">
+                    <input type="checkbox">
+                    <span>高一年级</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" checked>
+                    <span>高二年级</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" checked>
+                    <span>高三年级</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 按班级 -->
+              <div class="scope-content" id="scopeClass" style="display:none;">
+                <div class="class-selector">
+                  <div class="class-column">
+                    <h5>选择年级</h5>
+                    <select class="form-select" id="gradeSelect">
+                      <option value="">请选择年级</option>
+                      <option value="g1">高一</option>
+                      <option value="g2">高二</option>
+                      <option value="g3" selected>高三</option>
+                    </select>
+                  </div>
+                  <div class="class-column">
+                    <h5>选择班级</h5>
+                    <div class="checkbox-group class-list">
+                      <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>高三(1)班</span>
+                      </label>
+                      <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>高三(2)班</span>
+                      </label>
+                      <label class="checkbox-item">
+                        <input type="checkbox">
+                        <span>高三(3)班</span>
+                      </label>
+                      <label class="checkbox-item">
+                        <input type="checkbox">
+                        <span>高三(4)班</span>
+                      </label>
+                      <label class="checkbox-item">
+                        <input type="checkbox">
+                        <span>高三(5)班</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 按学生名单 -->
+              <div class="scope-content" id="scopeStudent" style="display:none;">
+                <div class="student-upload">
+                  <div class="upload-area">
+                    <span class="upload-icon">📄</span>
+                    <p>点击上传或拖拽学生名单文件</p>
+                    <span class="upload-hint">支持 Excel (.xlsx) 格式</span>
+                  </div>
+                  <button class="btn btn-outline">下载模板</button>
+                </div>
+                <div class="selected-students">
+                  <h5>已选学生 (3人)</h5>
+                  <div class="student-tags">
+                    <span class="student-tag">李明 <button class="tag-remove">×</button></span>
+                    <span class="student-tag">王小红 <button class="tag-remove">×</button></span>
+                    <span class="student-tag">张华 <button class="tag-remove">×</button></span>
+                    <button class="btn btn-sm btn-outline">+ 手动添加</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 课程咨询方式 -->
+            <div class="form-section">
+              <h3>课程咨询方式</h3>
+              <div class="form-group">
+                <label>咨询说明（富文本）</label>
+                <div class="rich-editor" id="consultEditor">
+                  <div class="editor-toolbar">
+                    <button type="button" class="editor-btn" title="加粗"><strong>B</strong></button>
+                    <button type="button" class="editor-btn" title="斜体"><em>I</em></button>
+                    <button type="button" class="editor-btn" title="下划线"><u>U</u></button>
+                    <span class="editor-divider"></span>
+                    <button type="button" class="editor-btn" title="插入链接">🔗</button>
+                    <button type="button" class="editor-btn" title="插入图片">🖼️</button>
+                  </div>
+                  <div class="editor-content" contenteditable="true">
+                    <p>如需课程咨询，请联系：</p>
+                    <p><strong>张老师</strong>：138-0000-1234</p>
+                    <p><strong>李老师</strong>：139-0000-5678</p>
+                    <p>咨询时间：周一至周五 9:00-18:00</p>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="checkbox-single">
+                  <input type="checkbox" id="requirePhone" checked>
+                  <span>需要提交手机号预约</span>
+                </label>
+                <p class="form-hint">勾选后，学生需要填写手机号才能完成报名</p>
+              </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="form-actions">
+              <button class="btn btn-outline" id="cancelDiagnosis">取消</button>
+              <button class="btn btn-outline" id="saveDiagnosisDraft">保存草稿</button>
+              <button class="btn btn-primary" id="publishDiagnosis">发布诊断</button>
+            </div>
           </div>
         </div>
       </div>

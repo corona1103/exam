@@ -437,6 +437,11 @@ const studentNames = ['李明', '王小红', '张华', '刘芳', '陈刚', ...];
 | `#submitScore` | click | 提交评分 |
 | `#submitReport` | click | 提交报告 |
 | `document` | keydown | ESC 关闭弹窗 |
+| `#createDiagnosisBtn` | click | 创建诊断配置 |
+| `.btn-edit-diagnosis` | click | 编辑诊断配置 |
+| `#backToDiagnosisList` | click | 返回诊断列表 |
+| `.scope-tab` | click | 切换学生范围选择方式 |
+| `#publishDiagnosis` | click | 发布诊断配置 |
 
 ### 5.2 事件委托
 当前实现使用直接绑定，后续优化可使用事件委托：
@@ -540,8 +545,63 @@ function restoreState() {
 
 ---
 
+## 8. 诊断管理模块实现
+
+### 8.1 页面切换
+```javascript
+function showDiagnosisPage(page) {
+  diagnosisListPage.classList.remove('active');
+  diagnosisEditPage.classList.remove('active');
+  if (page === 'list') {
+    diagnosisListPage.classList.add('active');
+  } else {
+    diagnosisEditPage.classList.add('active');
+  }
+}
+```
+
+### 8.2 学生范围选择
+支持四种选择方式的标签切换：
+```javascript
+document.querySelectorAll('.scope-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    // 更新标签高亮
+    document.querySelectorAll('.scope-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    // 切换对应内容区域
+    const scope = tab.dataset.scope;
+    // 按 scope 值显示对应的 .scope-content
+  });
+});
+```
+
+### 8.3 CSS 组件
+**诊断类型标签：**
+```css
+.type-tag.online { background: #e8f0fe; color: var(--primary); }
+.type-tag.direct { background: #fce8f3; color: #c41c7a; }
+```
+
+**范围选择标签：**
+```css
+.scope-tab { padding: 8px 16px; border-radius: 20px; }
+.scope-tab.active { background: var(--primary); color: white; }
+```
+
+**富文本编辑器：**
+```css
+.rich-editor { border: 1px solid var(--border); border-radius: 8px; }
+.editor-toolbar { display: flex; gap: 4px; padding: 8px 12px; }
+.editor-content { min-height: 150px; padding: 16px; }
+```
+
+---
+
 ## 更新记录
 
 | 版本 | 日期 | 更新内容 |
 |------|------|----------|
 | v1.0 | 2024-04-17 | 初始版本 |
+| v1.1 | 2024-04-17 | 新增全局导航、诊断管理、学生平板效果模块 |
+| v1.2 | 2024-04-18 | 重构诊断管理模块为配置管理功能 |

@@ -685,4 +685,102 @@ document.addEventListener('DOMContentLoaded', () => {
     if (value > max) scoreInput.value = max;
     if (value < 0) scoreInput.value = 0;
   });
+
+  // ========== 诊断管理模块 ==========
+  const diagnosisListPage = document.getElementById('diagnosisListPage');
+  const diagnosisEditPage = document.getElementById('diagnosisEditPage');
+
+  // 显示诊断列表/编辑页
+  function showDiagnosisPage(page) {
+    diagnosisListPage.classList.remove('active');
+    diagnosisEditPage.classList.remove('active');
+    if (page === 'list') {
+      diagnosisListPage.classList.add('active');
+    } else {
+      diagnosisEditPage.classList.add('active');
+    }
+  }
+
+  // 创建诊断按钮
+  document.getElementById('createDiagnosisBtn').addEventListener('click', () => {
+    document.getElementById('diagnosisEditTitle').textContent = '创建诊断配置';
+    // 清空表单
+    document.getElementById('diagnosisName').value = '';
+    document.getElementById('startTime').value = '';
+    document.getElementById('endTime').value = '';
+    showDiagnosisPage('edit');
+  });
+
+  // 编辑诊断按钮
+  document.querySelectorAll('.btn-edit-diagnosis').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('diagnosisEditTitle').textContent = '编辑诊断配置';
+      // 可以根据行数据填充表单（演示直接显示）
+      showDiagnosisPage('edit');
+    });
+  });
+
+  // 返回列表
+  document.getElementById('backToDiagnosisList').addEventListener('click', () => {
+    showDiagnosisPage('list');
+  });
+
+  // 取消按钮
+  document.getElementById('cancelDiagnosis').addEventListener('click', () => {
+    showDiagnosisPage('list');
+  });
+
+  // 保存草稿
+  document.getElementById('saveDiagnosisDraft').addEventListener('click', () => {
+    showToast('诊断配置草稿已保存');
+    showDiagnosisPage('list');
+  });
+
+  // 发布诊断
+  document.getElementById('publishDiagnosis').addEventListener('click', () => {
+    const name = document.getElementById('diagnosisName').value;
+    if (!name.trim()) {
+      showToast('请填写诊断名称');
+      return;
+    }
+    showToast('诊断配置已发布');
+    showDiagnosisPage('list');
+  });
+
+  // 学生范围标签切换
+  document.querySelectorAll('.scope-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      // 更新标签高亮
+      document.querySelectorAll('.scope-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      // 切换内容
+      const scope = tab.dataset.scope;
+      document.querySelectorAll('.scope-content').forEach(content => {
+        content.style.display = 'none';
+      });
+
+      if (scope === 'org') {
+        document.getElementById('scopeOrg').style.display = 'block';
+      } else if (scope === 'grade') {
+        document.getElementById('scopeGrade').style.display = 'block';
+      } else if (scope === 'class') {
+        document.getElementById('scopeClass').style.display = 'block';
+      } else if (scope === 'student') {
+        document.getElementById('scopeStudent').style.display = 'block';
+      }
+    });
+  });
+
+  // 富文本编辑器简单交互
+  document.querySelectorAll('.editor-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const editor = document.querySelector('.editor-content');
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+
+      // 简单的格式化演示
+      document.execCommand('bold', false, null);
+    });
+  });
 });
