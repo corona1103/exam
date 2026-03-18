@@ -1155,97 +1155,540 @@
 
     <!-- ========== 模块3：学生平板效果 ========== -->
     <div class="module module-student" id="moduleStudent">
-      <div class="student-preview-container">
-        <div class="preview-header">
+      <div class="student-preview-wrapper">
+        <!-- 左侧说明区 -->
+        <div class="preview-sidebar">
           <h2>学生平板效果预览</h2>
-          <p class="preview-desc">模拟学生在平板上查看批改结果和诊断报告的效果</p>
-        </div>
+          <p class="preview-desc">模拟学生在iPad横屏上查看诊断活动和报告的效果</p>
 
-        <div class="tablet-frame">
-          <div class="tablet-screen">
-            <!-- 学生端顶部 -->
-            <div class="student-app-header">
-              <span class="app-title">我的成绩</span>
-              <span class="student-name-tag">李明 同学</span>
+          <div class="preview-controls">
+            <h4>模拟场景切换</h4>
+            <div class="scene-buttons">
+              <button class="scene-btn active" data-scene="list">诊断列表</button>
+              <button class="scene-btn" data-scene="exam">答题界面</button>
+              <button class="scene-btn" data-scene="report">诊断报告</button>
             </div>
+          </div>
 
-            <!-- 考试信息卡片 -->
-            <div class="student-exam-card">
-              <div class="exam-title">2024年期中考试 - 数学</div>
-              <div class="exam-score-display">
-                <span class="big-score">62</span>
-                <span class="full-score">/ 70 分</span>
-              </div>
-              <div class="score-rank">诊断排名：第 8 名 / 共 285 人</div>
-            </div>
-
-            <!-- 各题得分 -->
-            <div class="student-section">
-              <h4>各题得分</h4>
-              <div class="score-bars">
-                <div class="score-bar-item">
-                  <span class="bar-label">第1题</span>
-                  <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-                  <span class="bar-score">10/10</span>
-                </div>
-                <div class="score-bar-item">
-                  <span class="bar-label">第2题</span>
-                  <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
-                  <span class="bar-score">8/10</span>
-                </div>
-                <div class="score-bar-item">
-                  <span class="bar-label">第3题</span>
-                  <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
-                  <span class="bar-score">12/15</span>
-                </div>
-                <div class="score-bar-item">
-                  <span class="bar-label">第4题</span>
-                  <div class="bar-track"><div class="bar-fill" style="width:87%"></div></div>
-                  <span class="bar-score">13/15</span>
-                </div>
-                <div class="score-bar-item">
-                  <span class="bar-label">第5题</span>
-                  <div class="bar-track"><div class="bar-fill" style="width:95%"></div></div>
-                  <span class="bar-score">19/20</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 老师评价 -->
-            <div class="student-section">
-              <h4>老师评价</h4>
-              <div class="teacher-comment-card">
-                <p>该同学对函数求导、极值、单调性等基础知识点掌握较好，计算能力较强。但在表述规范性上仍有提升空间，特别是极值点需要明确说明是极大值还是极小值。</p>
-              </div>
-            </div>
-
-            <!-- 老师寄语 -->
-            <div class="student-section">
-              <h4>老师寄语</h4>
-              <div class="teacher-message-card">
-                <p>李明同学这次考试表现不错，继续保持！希望在接下来的学习中更加注意细节，争取在期末考试中取得更好的成绩。加油！</p>
-                <span class="teacher-sign">—— 张老师</span>
-              </div>
-            </div>
-
-            <!-- 查看详情按钮 -->
-            <div class="student-actions">
-              <button class="student-btn">查看答卷详情</button>
+          <div class="preview-tips">
+            <h4>状态说明</h4>
+            <div class="status-legend">
+              <div class="legend-item"><span class="dot blue"></span>立即报名/申请名额</div>
+              <div class="legend-item"><span class="dot green"></span>开始诊断/继续诊断</div>
+              <div class="legend-item"><span class="dot orange"></span>诊断中（等待报告）</div>
+              <div class="legend-item"><span class="dot purple"></span>查看诊断报告</div>
+              <div class="legend-item"><span class="dot gray"></span>已过期</div>
             </div>
           </div>
         </div>
 
-        <div class="preview-tips">
-          <h4>说明</h4>
-          <ul>
-            <li>此页面模拟学生在平板设备上查看成绩和报告的效果</li>
-            <li>学生可以看到各题得分、老师评价和寄语</li>
-            <li>点击"查看答卷详情"可查看每道题的批改详情</li>
-          </ul>
+        <!-- 右侧平板预览区 -->
+        <div class="tablet-preview-area">
+          <div class="tablet-frame-landscape">
+            <div class="tablet-notch"></div>
+            <div class="tablet-screen-landscape" id="tabletScreen">
+
+              <!-- ===== 场景1：诊断列表页 ===== -->
+              <div class="tablet-page tablet-list-page active" id="tabletListPage">
+                <div class="tablet-header">
+                  <div class="header-left">
+                    <span class="app-logo">智阅云</span>
+                  </div>
+                  <div class="header-right">
+                    <span class="student-info-badge">李明 同学</span>
+                  </div>
+                </div>
+
+                <div class="tablet-content">
+                  <h3 class="page-title">我的诊断</h3>
+
+                  <div class="diagnosis-card-list" id="studentDiagnosisList">
+                    <!-- 卡片1：在线模考 - 未报名 -->
+                    <div class="diagnosis-card-student" data-type="online" data-status="not-enrolled">
+                      <div class="card-main">
+                        <div class="card-info">
+                          <div class="card-type-tag online">在线模考</div>
+                          <h4 class="card-title">2024春季数学诊断</h4>
+                          <p class="card-desc">本次诊断涵盖函数、导数、三角函数等核心知识点</p>
+                          <div class="card-meta">
+                            <span class="meta-item"><i>📅</i> 报名截止：04-20 23:59</span>
+                            <span class="meta-item"><i>⏰</i> 考试时段：04-18 09:00 ~ 04-20 18:00</span>
+                          </div>
+                        </div>
+                        <div class="card-action">
+                          <div class="status-text">诊断开始时间：04-18 09:00</div>
+                          <button class="card-btn primary">立即报名</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片2：在线模考 - 已报名待考试 -->
+                    <div class="diagnosis-card-student" data-type="online" data-status="enrolled-waiting">
+                      <div class="card-main">
+                        <div class="card-info">
+                          <div class="card-type-tag online">在线模考</div>
+                          <span class="enrolled-badge">已报名</span>
+                          <h4 class="card-title">2024春季英语诊断</h4>
+                          <p class="card-desc">阅读理解、完形填空、写作专项诊断</p>
+                          <div class="card-meta">
+                            <span class="meta-item"><i>📅</i> 报名截止：04-22 23:59</span>
+                            <span class="meta-item"><i>⏰</i> 考试时段：04-21 14:00 ~ 04-22 18:00</span>
+                          </div>
+                        </div>
+                        <div class="card-action">
+                          <div class="status-text">诊断开始时间：04-21 14:00</div>
+                          <button class="card-btn primary" disabled>等待开考</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片3：在线模考 - 可以开始考试 -->
+                    <div class="diagnosis-card-student" data-type="online" data-status="can-start">
+                      <div class="card-main">
+                        <div class="card-info">
+                          <div class="card-type-tag online">在线模考</div>
+                          <h4 class="card-title">2024春季物理诊断</h4>
+                          <p class="card-desc">力学、电磁学基础诊断</p>
+                          <div class="card-meta">
+                            <span class="meta-item"><i>📅</i> 报名截止：04-25 23:59</span>
+                            <span class="meta-item"><i>⏰</i> 考试时段：04-20 08:00 ~ 04-25 18:00</span>
+                          </div>
+                        </div>
+                        <div class="card-action">
+                          <div class="status-text status-active">诊断进行中</div>
+                          <button class="card-btn success" id="btnStartExam">开始诊断</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片4：在线模考 - 答题中途离开 -->
+                    <div class="diagnosis-card-student" data-type="online" data-status="in-progress">
+                      <div class="card-main">
+                        <div class="card-info">
+                          <div class="card-type-tag online">在线模考</div>
+                          <span class="progress-badge">答题中</span>
+                          <h4 class="card-title">2024春季化学诊断</h4>
+                          <p class="card-desc">有机化学、无机化学综合诊断</p>
+                          <div class="card-meta">
+                            <span class="meta-item"><i>⏱️</i> 剩余时间：18:32</span>
+                          </div>
+                        </div>
+                        <div class="card-action">
+                          <div class="status-text status-active">诊断进行中</div>
+                          <button class="card-btn warning">继续诊断</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片5：在线模考 - 已提交等待报告 -->
+                    <div class="diagnosis-card-student" data-type="online" data-status="waiting-report">
+                      <div class="card-main">
+                        <div class="card-info">
+                          <div class="card-type-tag online">在线模考</div>
+                          <h4 class="card-title">2024春季语文诊断</h4>
+                          <p class="card-desc">古诗词鉴赏、现代文阅读诊断</p>
+                          <div class="card-meta">
+                            <span class="meta-item"><i>✓</i> 已于 04-15 10:30 提交</span>
+                          </div>
+                        </div>
+                        <div class="card-action">
+                          <div class="status-text status-waiting">老师正在进行1V1诊断<br>请耐心等待</div>
+                          <button class="card-btn" disabled>等待诊断</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片6：在线模考 - 已发报告 -->
+                    <div class="diagnosis-card-student" data-type="online" data-status="report-ready">
+                      <div class="card-main">
+                        <div class="card-info">
+                          <div class="card-type-tag online">在线模考</div>
+                          <span class="report-badge">报告已出</span>
+                          <h4 class="card-title">2024期中数学诊断</h4>
+                          <p class="card-desc">高三数学期中综合诊断</p>
+                          <div class="card-meta">
+                            <span class="meta-item"><i>📊</i> 得分：62/70 · 排名：第8名</span>
+                          </div>
+                        </div>
+                        <div class="card-action">
+                          <button class="card-btn purple" id="btnViewReport">查看诊断报告</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片7：数据直传 - 未报名 -->
+                    <div class="diagnosis-card-student" data-type="direct" data-status="not-enrolled">
+                      <div class="card-main">
+                        <div class="card-info">
+                          <div class="card-type-tag direct">数据直传</div>
+                          <h4 class="card-title">高三一模诊断分析</h4>
+                          <p class="card-desc">基于一模成绩的个性化诊断分析</p>
+                          <div class="card-meta">
+                            <span class="meta-item"><i>📅</i> 报名截止：04-30 23:59</span>
+                          </div>
+                        </div>
+                        <div class="card-action">
+                          <button class="card-btn primary">申请诊断名额</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片8：数据直传 - 等待报告 -->
+                    <div class="diagnosis-card-student" data-type="direct" data-status="waiting-report">
+                      <div class="card-main">
+                        <div class="card-info">
+                          <div class="card-type-tag direct">数据直传</div>
+                          <span class="enrolled-badge">已报名</span>
+                          <h4 class="card-title">艺考生专项诊断</h4>
+                          <p class="card-desc">针对艺考生的文化课诊断分析</p>
+                          <div class="card-meta">
+                            <span class="meta-item"><i>✓</i> 已报名</span>
+                          </div>
+                        </div>
+                        <div class="card-action">
+                          <div class="status-text status-waiting">老师正在进行1V1诊断<br>请耐心等待</div>
+                          <button class="card-btn" disabled>等待诊断</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 卡片9：已过期 -->
+                    <div class="diagnosis-card-student expired" data-type="online" data-status="expired">
+                      <div class="card-main">
+                        <div class="card-info">
+                          <div class="card-type-tag online">在线模考</div>
+                          <span class="expired-badge">已过期</span>
+                          <h4 class="card-title">2024春季生物诊断</h4>
+                          <p class="card-desc">细胞、遗传与进化专项诊断</p>
+                          <div class="card-meta">
+                            <span class="meta-item text-gray"><i>📅</i> 已于 04-10 截止</span>
+                          </div>
+                        </div>
+                        <div class="card-action">
+                          <button class="card-btn disabled" disabled>已过期</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 咨询按钮悬浮 -->
+                <div class="consult-float-btn" id="consultFloatBtn">
+                  <span>📞</span>
+                  <span>课程咨询</span>
+                </div>
+              </div>
+
+              <!-- ===== 场景2：答题界面 ===== -->
+              <div class="tablet-page tablet-exam-page" id="tabletExamPage">
+                <div class="exam-header">
+                  <div class="exam-header-left">
+                    <button class="back-btn" id="examBackBtn">← 返回</button>
+                    <span class="exam-title-text">2024春季物理诊断</span>
+                  </div>
+                  <div class="exam-header-center">
+                    <div class="countdown-display">
+                      <span class="countdown-icon">⏱️</span>
+                      <span class="countdown-time" id="examCountdown">29:45</span>
+                    </div>
+                  </div>
+                  <div class="exam-header-right">
+                    <button class="submit-exam-btn" id="submitExamBtn">提交答卷</button>
+                  </div>
+                </div>
+
+                <div class="exam-body">
+                  <!-- 左侧题目区域 -->
+                  <div class="exam-question-area">
+                    <div class="question-nav-bar">
+                      <span class="current-q">第 3 题 / 共 10 题</span>
+                      <div class="q-dots">
+                        <span class="q-dot done">1</span>
+                        <span class="q-dot done">2</span>
+                        <span class="q-dot active">3</span>
+                        <span class="q-dot">4</span>
+                        <span class="q-dot">5</span>
+                        <span class="q-dot">6</span>
+                        <span class="q-dot">7</span>
+                        <span class="q-dot">8</span>
+                        <span class="q-dot">9</span>
+                        <span class="q-dot">10</span>
+                      </div>
+                    </div>
+
+                    <div class="question-content">
+                      <div class="question-type-badge">单选题</div>
+                      <div class="question-score">（5分）</div>
+                      <div class="question-text">
+                        <p>3. 如图所示，一小球从高处自由落下，落在弹簧上，在弹簧压缩过程中，下列说法正确的是：</p>
+                        <div class="question-image">
+                          <div class="image-placeholder">[题目配图]</div>
+                        </div>
+                      </div>
+                      <div class="question-options">
+                        <label class="option-item">
+                          <input type="radio" name="q3" value="A">
+                          <span class="option-label">A</span>
+                          <span class="option-text">小球的动能一直减小</span>
+                        </label>
+                        <label class="option-item">
+                          <input type="radio" name="q3" value="B">
+                          <span class="option-label">B</span>
+                          <span class="option-text">小球的重力势能一直减小</span>
+                        </label>
+                        <label class="option-item selected">
+                          <input type="radio" name="q3" value="C" checked>
+                          <span class="option-label">C</span>
+                          <span class="option-text">弹簧的弹性势能一直增大</span>
+                        </label>
+                        <label class="option-item">
+                          <input type="radio" name="q3" value="D">
+                          <span class="option-label">D</span>
+                          <span class="option-text">小球和弹簧组成的系统机械能守恒</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="question-nav-btns">
+                      <button class="nav-btn">上一题</button>
+                      <button class="nav-btn primary">下一题</button>
+                    </div>
+                  </div>
+
+                  <!-- 右侧答题卡 -->
+                  <div class="answer-card-panel">
+                    <h4>答题卡</h4>
+                    <div class="answer-card-legend">
+                      <span class="legend done">已答</span>
+                      <span class="legend current">当前</span>
+                      <span class="legend empty">未答</span>
+                    </div>
+                    <div class="answer-card-grid">
+                      <div class="ac-section">
+                        <div class="ac-section-title">一、选择题（1-5题）</div>
+                        <div class="ac-items">
+                          <span class="ac-item done">1</span>
+                          <span class="ac-item done">2</span>
+                          <span class="ac-item current">3</span>
+                          <span class="ac-item">4</span>
+                          <span class="ac-item">5</span>
+                        </div>
+                      </div>
+                      <div class="ac-section">
+                        <div class="ac-section-title">二、填空题（6-8题）</div>
+                        <div class="ac-items">
+                          <span class="ac-item">6</span>
+                          <span class="ac-item">7</span>
+                          <span class="ac-item">8</span>
+                        </div>
+                      </div>
+                      <div class="ac-section">
+                        <div class="ac-section-title">三、解答题（9-10题）</div>
+                        <div class="ac-items">
+                          <span class="ac-item">9</span>
+                          <span class="ac-item">10</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="answer-card-summary">
+                      <p>已答：<strong>2</strong> / 10 题</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ===== 场景3：诊断报告页 ===== -->
+              <div class="tablet-page tablet-report-page" id="tabletReportPage">
+                <div class="report-header">
+                  <button class="back-btn" id="reportBackBtn">← 返回</button>
+                  <span class="report-title-text">诊断报告</span>
+                </div>
+
+                <div class="report-body">
+                  <div class="report-main-content">
+                    <!-- 成绩卡片 -->
+                    <div class="report-score-card">
+                      <div class="score-card-left">
+                        <div class="diagnosis-name">2024期中数学诊断</div>
+                        <div class="student-class">高三(1)班 · 李明</div>
+                      </div>
+                      <div class="score-card-center">
+                        <div class="big-score-display">
+                          <span class="score-num">62</span>
+                          <span class="score-full">/ 70分</span>
+                        </div>
+                      </div>
+                      <div class="score-card-right">
+                        <div class="rank-info">
+                          <span class="rank-label">诊断排名</span>
+                          <span class="rank-value">第 8 名</span>
+                          <span class="rank-total">共 285 人</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 各题得分 -->
+                    <div class="report-section">
+                      <h4 class="section-title">📊 各题得分</h4>
+                      <div class="score-bars-horizontal">
+                        <div class="score-bar-h">
+                          <span class="bar-label">第1题</span>
+                          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+                          <span class="bar-score">10/10</span>
+                        </div>
+                        <div class="score-bar-h">
+                          <span class="bar-label">第2题</span>
+                          <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
+                          <span class="bar-score">8/10</span>
+                        </div>
+                        <div class="score-bar-h">
+                          <span class="bar-label">第3题</span>
+                          <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
+                          <span class="bar-score">12/15</span>
+                        </div>
+                        <div class="score-bar-h">
+                          <span class="bar-label">第4题</span>
+                          <div class="bar-track"><div class="bar-fill" style="width:87%"></div></div>
+                          <span class="bar-score">13/15</span>
+                        </div>
+                        <div class="score-bar-h">
+                          <span class="bar-label">第5题</span>
+                          <div class="bar-track"><div class="bar-fill" style="width:95%"></div></div>
+                          <span class="bar-score">19/20</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 老师评价 -->
+                    <div class="report-section">
+                      <h4 class="section-title">📝 老师评价</h4>
+                      <div class="comment-card">
+                        <p>该同学对函数求导、极值、单调性等基础知识点掌握较好，计算能力较强。但在表述规范性上仍有提升空间，特别是极值点需要明确说明是极大值还是极小值。建议多练习数列求和类型题目。</p>
+                      </div>
+                    </div>
+
+                    <!-- 老师寄语 -->
+                    <div class="report-section">
+                      <h4 class="section-title">💌 老师寄语</h4>
+                      <div class="message-card">
+                        <p>李明同学这次考试表现不错，继续保持！希望在接下来的学习中更加注意细节，争取在期末考试中取得更好的成绩。加油！</p>
+                        <span class="teacher-signature">—— 张老师</span>
+                      </div>
+                    </div>
+
+                    <!-- 查看详情按钮 -->
+                    <div class="report-actions">
+                      <button class="report-btn outline">查看答卷详情</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 咨询按钮悬浮 -->
+                <div class="consult-float-btn">
+                  <span>📞</span>
+                  <span>课程咨询</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <!-- 模块3结束 -->
+
+    <!-- 学生端弹窗：开始诊断确认 -->
+    <div class="tablet-modal" id="startExamModal">
+      <div class="tablet-modal-content">
+        <div class="modal-icon">📝</div>
+        <h3>确认开始诊断</h3>
+        <p>开始后将进入计时状态<br>考试限时 <strong>30 分钟</strong></p>
+        <p class="modal-warning">中途退出不会暂停计时，请合理安排时间</p>
+        <div class="modal-btns">
+          <button class="modal-btn cancel" id="cancelStartExam">取消</button>
+          <button class="modal-btn confirm" id="confirmStartExam">确认开始</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 学生端弹窗：提交确认 -->
+    <div class="tablet-modal" id="submitExamModal">
+      <div class="tablet-modal-content">
+        <div class="modal-icon">📤</div>
+        <h3>确认提交答卷</h3>
+        <p>你已完成 <strong>2/10</strong> 道题目</p>
+        <p class="modal-warning">提交后将无法修改答案，确定提交吗？</p>
+        <div class="modal-btns">
+          <button class="modal-btn cancel" id="cancelSubmit">继续答题</button>
+          <button class="modal-btn confirm" id="confirmSubmit">确认提交</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 学生端弹窗：中途离开挽留 -->
+    <div class="tablet-modal" id="leaveExamModal">
+      <div class="tablet-modal-content">
+        <div class="modal-icon">⚠️</div>
+        <h3>确定要离开吗？</h3>
+        <p>离开后考试计时将继续</p>
+        <p class="modal-warning">剩余时间：<strong id="leaveRemainTime">28:15</strong></p>
+        <div class="modal-btns">
+          <button class="modal-btn cancel" id="cancelLeave">继续答题</button>
+          <button class="modal-btn confirm" id="confirmLeave">暂时离开</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 学生端弹窗：自动交卷提醒 -->
+    <div class="tablet-modal" id="autoSubmitModal">
+      <div class="tablet-modal-content">
+        <div class="modal-icon">⏰</div>
+        <h3>考试时间结束</h3>
+        <p>倒计时结束，已为您自动交卷</p>
+        <div class="modal-btns">
+          <button class="modal-btn confirm single" id="confirmAutoSubmit">我知道了</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 学生端弹窗：课程咨询 -->
+    <div class="tablet-modal" id="consultModal2">
+      <div class="tablet-modal-content consult-modal-content">
+        <div class="consult-modal-header">
+          <h3>课程咨询</h3>
+          <button class="close-modal-btn" id="closeConsultModal">✕</button>
+        </div>
+        <div class="consult-modal-body">
+          <div class="consult-info">
+            <p>如需进一步了解学习规划或课程安排，欢迎联系我们的老师进行一对一咨询。</p>
+            <div class="consult-contact">
+              <p><strong>咨询热线：</strong>400-888-8888</p>
+              <p><strong>服务时间：</strong>周一至周五 9:00-18:00</p>
+            </div>
+          </div>
+          <div class="consult-form">
+            <div class="form-group">
+              <label>预约咨询时段 <span class="required">*</span></label>
+              <select class="form-input" id="consultTime2">
+                <option value="">请选择</option>
+                <option value="weekday-day">工作日白天</option>
+                <option value="weekday-night">工作日晚上</option>
+                <option value="saturday-day">周六白天</option>
+                <option value="saturday-night">周六晚上</option>
+                <option value="sunday-day">周日白天</option>
+                <option value="sunday-night">周日晚上</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>联系电话 <span class="required">*</span></label>
+              <input type="tel" class="form-input" id="consultPhone2" placeholder="请输入手机号">
+              <p class="form-hint" id="phoneError2"></p>
+            </div>
+            <button class="consult-submit-btn" id="submitConsult2">提交咨询</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
   <!-- 主内容区域结束 -->

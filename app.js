@@ -1949,4 +1949,269 @@ document.addEventListener('DOMContentLoaded', () => {
       document.execCommand('bold', false, null);
     });
   });
+
+  // ========== 学生平板效果模块 ==========
+
+  // 场景切换按钮
+  const sceneButtons = document.querySelectorAll('.scene-btn');
+  const tabletPages = document.querySelectorAll('.tablet-page');
+
+  sceneButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const scene = btn.dataset.scene;
+
+      // 更新按钮状态
+      sceneButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // 切换页面
+      tabletPages.forEach(page => page.classList.remove('active'));
+      if (scene === 'list') {
+        document.getElementById('tabletListPage').classList.add('active');
+      } else if (scene === 'exam') {
+        document.getElementById('tabletExamPage').classList.add('active');
+      } else if (scene === 'report') {
+        document.getElementById('tabletReportPage').classList.add('active');
+      }
+    });
+  });
+
+  // 开始诊断按钮
+  const btnStartExam = document.getElementById('btnStartExam');
+  const startExamModal = document.getElementById('startExamModal');
+  const cancelStartExam = document.getElementById('cancelStartExam');
+  const confirmStartExam = document.getElementById('confirmStartExam');
+
+  if (btnStartExam) {
+    btnStartExam.addEventListener('click', () => {
+      startExamModal.classList.add('show');
+    });
+  }
+
+  if (cancelStartExam) {
+    cancelStartExam.addEventListener('click', () => {
+      startExamModal.classList.remove('show');
+    });
+  }
+
+  if (confirmStartExam) {
+    confirmStartExam.addEventListener('click', () => {
+      startExamModal.classList.remove('show');
+      // 切换到答题界面
+      tabletPages.forEach(page => page.classList.remove('active'));
+      document.getElementById('tabletExamPage').classList.add('active');
+      sceneButtons.forEach(b => b.classList.remove('active'));
+      document.querySelector('.scene-btn[data-scene="exam"]').classList.add('active');
+      showToast('已开始诊断，计时开始');
+      startExamCountdown();
+    });
+  }
+
+  // 查看报告按钮
+  const btnViewReport = document.getElementById('btnViewReport');
+  if (btnViewReport) {
+    btnViewReport.addEventListener('click', () => {
+      tabletPages.forEach(page => page.classList.remove('active'));
+      document.getElementById('tabletReportPage').classList.add('active');
+      sceneButtons.forEach(b => b.classList.remove('active'));
+      document.querySelector('.scene-btn[data-scene="report"]').classList.add('active');
+    });
+  }
+
+  // 答题界面返回按钮
+  const examBackBtn = document.getElementById('examBackBtn');
+  const leaveExamModal = document.getElementById('leaveExamModal');
+  const cancelLeave = document.getElementById('cancelLeave');
+  const confirmLeave = document.getElementById('confirmLeave');
+
+  if (examBackBtn) {
+    examBackBtn.addEventListener('click', () => {
+      // 更新剩余时间显示
+      const leaveRemainTime = document.getElementById('leaveRemainTime');
+      if (leaveRemainTime) {
+        leaveRemainTime.textContent = document.getElementById('examCountdown').textContent;
+      }
+      leaveExamModal.classList.add('show');
+    });
+  }
+
+  if (cancelLeave) {
+    cancelLeave.addEventListener('click', () => {
+      leaveExamModal.classList.remove('show');
+    });
+  }
+
+  if (confirmLeave) {
+    confirmLeave.addEventListener('click', () => {
+      leaveExamModal.classList.remove('show');
+      // 返回列表
+      tabletPages.forEach(page => page.classList.remove('active'));
+      document.getElementById('tabletListPage').classList.add('active');
+      sceneButtons.forEach(b => b.classList.remove('active'));
+      document.querySelector('.scene-btn[data-scene="list"]').classList.add('active');
+      showToast('已暂时离开，计时继续中');
+    });
+  }
+
+  // 报告页面返回按钮
+  const reportBackBtn = document.getElementById('reportBackBtn');
+  if (reportBackBtn) {
+    reportBackBtn.addEventListener('click', () => {
+      tabletPages.forEach(page => page.classList.remove('active'));
+      document.getElementById('tabletListPage').classList.add('active');
+      sceneButtons.forEach(b => b.classList.remove('active'));
+      document.querySelector('.scene-btn[data-scene="list"]').classList.add('active');
+    });
+  }
+
+  // 提交答卷
+  const submitExamBtn = document.getElementById('submitExamBtn');
+  const submitExamModal = document.getElementById('submitExamModal');
+  const cancelSubmit = document.getElementById('cancelSubmit');
+  const confirmSubmit = document.getElementById('confirmSubmit');
+
+  if (submitExamBtn) {
+    submitExamBtn.addEventListener('click', () => {
+      submitExamModal.classList.add('show');
+    });
+  }
+
+  if (cancelSubmit) {
+    cancelSubmit.addEventListener('click', () => {
+      submitExamModal.classList.remove('show');
+    });
+  }
+
+  if (confirmSubmit) {
+    confirmSubmit.addEventListener('click', () => {
+      submitExamModal.classList.remove('show');
+      stopExamCountdown();
+      // 返回列表
+      tabletPages.forEach(page => page.classList.remove('active'));
+      document.getElementById('tabletListPage').classList.add('active');
+      sceneButtons.forEach(b => b.classList.remove('active'));
+      document.querySelector('.scene-btn[data-scene="list"]').classList.add('active');
+      showToast('答卷已提交，等待老师诊断');
+    });
+  }
+
+  // 自动交卷弹窗
+  const autoSubmitModal = document.getElementById('autoSubmitModal');
+  const confirmAutoSubmit = document.getElementById('confirmAutoSubmit');
+
+  if (confirmAutoSubmit) {
+    confirmAutoSubmit.addEventListener('click', () => {
+      autoSubmitModal.classList.remove('show');
+      // 返回列表
+      tabletPages.forEach(page => page.classList.remove('active'));
+      document.getElementById('tabletListPage').classList.add('active');
+      sceneButtons.forEach(b => b.classList.remove('active'));
+      document.querySelector('.scene-btn[data-scene="list"]').classList.add('active');
+    });
+  }
+
+  // 倒计时功能
+  let examCountdownInterval = null;
+  let examTimeRemaining = 30 * 60; // 30分钟，单位秒
+
+  function startExamCountdown() {
+    examTimeRemaining = 30 * 60;
+    updateCountdownDisplay();
+
+    examCountdownInterval = setInterval(() => {
+      examTimeRemaining--;
+      updateCountdownDisplay();
+
+      if (examTimeRemaining <= 0) {
+        stopExamCountdown();
+        // 显示自动交卷弹窗
+        autoSubmitModal.classList.add('show');
+      }
+    }, 1000);
+  }
+
+  function stopExamCountdown() {
+    if (examCountdownInterval) {
+      clearInterval(examCountdownInterval);
+      examCountdownInterval = null;
+    }
+  }
+
+  function updateCountdownDisplay() {
+    const minutes = Math.floor(examTimeRemaining / 60);
+    const seconds = examTimeRemaining % 60;
+    const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    const countdownEl = document.getElementById('examCountdown');
+    if (countdownEl) {
+      countdownEl.textContent = display;
+    }
+  }
+
+  // 课程咨询按钮
+  const consultFloatBtns = document.querySelectorAll('.consult-float-btn');
+  const consultModal2 = document.getElementById('consultModal2');
+  const closeConsultModal = document.getElementById('closeConsultModal');
+
+  consultFloatBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      consultModal2.classList.add('show');
+    });
+  });
+
+  if (closeConsultModal) {
+    closeConsultModal.addEventListener('click', () => {
+      consultModal2.classList.remove('show');
+    });
+  }
+
+  // 咨询表单提交
+  const submitConsult2 = document.getElementById('submitConsult2');
+  if (submitConsult2) {
+    submitConsult2.addEventListener('click', () => {
+      const phone = document.getElementById('consultPhone2').value;
+      const time = document.getElementById('consultTime2').value;
+      const phoneError = document.getElementById('phoneError2');
+
+      // 重置错误提示
+      phoneError.textContent = '';
+
+      // 校验
+      if (!time) {
+        showToast('请选择预约时段');
+        return;
+      }
+
+      if (!phone) {
+        phoneError.textContent = '请输入手机号';
+        return;
+      }
+
+      // 手机号格式校验
+      const phoneRegex = /^1[3-9]\d{9}$/;
+      if (!phoneRegex.test(phone)) {
+        phoneError.textContent = '请输入正确的手机号格式';
+        return;
+      }
+
+      // 提交成功
+      consultModal2.classList.remove('show');
+      showToast('咨询预约已提交，老师会尽快联系您');
+
+      // 清空表单
+      document.getElementById('consultPhone2').value = '';
+      document.getElementById('consultTime2').value = '';
+    });
+  }
+
+  // 点击弹窗外部关闭
+  [startExamModal, submitExamModal, leaveExamModal, autoSubmitModal, consultModal2].forEach(modal => {
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('show');
+        }
+      });
+    }
+  });
+
 });
