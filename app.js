@@ -1,6 +1,32 @@
 // 阅卷系统演示 - 交互逻辑
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  // ========== 全局导航切换 ==========
+  const navItems = document.querySelectorAll('.nav-item');
+  const modules = document.querySelectorAll('.module');
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const targetPage = item.dataset.page;
+
+      // 更新导航高亮
+      navItems.forEach(nav => nav.classList.remove('active'));
+      item.classList.add('active');
+
+      // 切换模块
+      modules.forEach(mod => mod.classList.remove('active'));
+      if (targetPage === 'grading') {
+        document.getElementById('moduleGrading').classList.add('active');
+      } else if (targetPage === 'diagnosis') {
+        document.getElementById('moduleDiagnosis').classList.add('active');
+      } else if (targetPage === 'student') {
+        document.getElementById('moduleStudent').classList.add('active');
+      }
+    });
+  });
+
+  // ========== 阅卷批改模块 ==========
   // 页面元素
   const pageList = document.getElementById('pageList');
   const pageGrading = document.getElementById('pageGrading');

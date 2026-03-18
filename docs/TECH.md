@@ -24,16 +24,26 @@ exam/
 ### 1.3 页面结构
 ```html
 <body>
-  <!-- 页面1：考试列表 -->
-  <div class="page page-list" id="pageList">...</div>
+  <!-- 全局导航栏 -->
+  <nav class="global-nav">...</nav>
 
-  <!-- 页面2：批改页面 -->
-  <div class="page page-grading" id="pageGrading">...</div>
+  <!-- 主内容区域 -->
+  <div class="main-wrapper">
+    <!-- 模块1：阅卷批改 -->
+    <div class="module module-grading" id="moduleGrading">
+      <div class="page page-list" id="pageList">...</div>
+      <div class="page page-grading" id="pageGrading">...</div>
+    </div>
 
-  <!-- 弹窗：批注输入 -->
+    <!-- 模块2：诊断管理 -->
+    <div class="module module-diagnosis" id="moduleDiagnosis">...</div>
+
+    <!-- 模块3：学生平板效果 -->
+    <div class="module module-student" id="moduleStudent">...</div>
+  </div>
+
+  <!-- 弹窗 -->
   <div class="modal" id="commentModal">...</div>
-
-  <!-- 弹窗：学生报告 -->
   <div class="modal report-modal" id="reportModal">...</div>
 
   <!-- Toast 提示 -->
@@ -45,7 +55,48 @@ exam/
 
 ## 2. 核心模块实现
 
-### 2.1 页面切换
+### 2.1 全局导航切换
+
+**实现方式：** 左侧固定导航栏，通过 data-page 属性切换模块
+
+```javascript
+const navItems = document.querySelectorAll('.nav-item');
+const modules = document.querySelectorAll('.module');
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const targetPage = item.dataset.page;
+
+    // 更新导航高亮
+    navItems.forEach(nav => nav.classList.remove('active'));
+    item.classList.add('active');
+
+    // 切换模块
+    modules.forEach(mod => mod.classList.remove('active'));
+    document.getElementById(`module${capitalize(targetPage)}`).classList.add('active');
+  });
+});
+```
+
+**CSS 结构：**
+```css
+.global-nav {
+  width: 200px;
+  height: 100vh;
+  background: linear-gradient(180deg, #1a1f36 0%, #252b48 100%);
+  position: fixed;
+  left: 0;
+}
+
+.module {
+  display: none;
+}
+.module.active {
+  display: flex;
+}
+```
+
+### 2.2 页面切换（模块内）
 
 **实现方式：** CSS 类名控制显示/隐藏
 

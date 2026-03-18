@@ -7,22 +7,43 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- 考试列表页 -->
-  <div class="page page-list active" id="pageList">
-    <header class="header">
-      <div class="header-left">
-        <h1>阅卷系统</h1>
-      </div>
-      <div class="header-right">
-        <span class="user-info">张老师</span>
-        <button class="btn btn-outline">退出</button>
-      </div>
-    </header>
+  <!-- 全局导航栏 -->
+  <nav class="global-nav">
+    <div class="nav-brand">
+      <h1>智阅云</h1>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item active" data-page="grading">
+        <span class="nav-icon">📝</span>
+        <span>阅卷批改</span>
+      </li>
+      <li class="nav-item" data-page="diagnosis">
+        <span class="nav-icon">📊</span>
+        <span>诊断管理</span>
+      </li>
+      <li class="nav-item" data-page="student">
+        <span class="nav-icon">📱</span>
+        <span>学生平板效果</span>
+      </li>
+    </ul>
+    <div class="nav-user">
+      <span class="user-avatar">张</span>
+      <span class="user-name">张老师</span>
+    </div>
+  </nav>
 
-    <div class="list-container">
-      <div class="list-header">
-        <h2>考试列表</h2>
-        <div class="list-filters">
+  <!-- 主内容区域 -->
+  <div class="main-wrapper">
+
+    <!-- ========== 模块1：阅卷批改 ========== -->
+    <div class="module module-grading active" id="moduleGrading">
+
+      <!-- 考试列表页 -->
+      <div class="page page-list active" id="pageList">
+        <div class="list-container">
+          <div class="list-header">
+            <h2>考试列表</h2>
+            <div class="list-filters">
           <select class="filter-select" id="filterSubject">
             <option value="">全部科目</option>
             <option value="math">数学</option>
@@ -153,25 +174,18 @@
             <button class="btn btn-primary btn-enter" data-mode="byStudent">按学生批改</button>
             <button class="btn btn-outline btn-enter" data-mode="byQuestion">按题批改</button>
           </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- 批改页 -->
-  <div class="page page-grading" id="pageGrading">
-    <header class="header">
-      <div class="header-left">
-        <button class="btn btn-icon btn-back" id="backToList">← 返回</button>
-        <h1>阅卷系统</h1>
-        <span class="exam-name" id="currentExamName">2024年期中考试 - 数学</span>
-        <span class="grading-mode-tag" id="gradingModeTag">按题批改</span>
-      </div>
-      <div class="header-right">
-        <span class="user-info">张老师</span>
-        <button class="btn btn-outline">退出</button>
-      </div>
-    </header>
+      <!-- 批改页 -->
+      <div class="page page-grading" id="pageGrading">
+        <div class="grading-header">
+          <button class="btn btn-icon btn-back" id="backToList">← 返回列表</button>
+          <span class="exam-name" id="currentExamName">2024年期中考试 - 数学</span>
+          <span class="grading-mode-tag" id="gradingModeTag">按题批改</span>
+        </div>
 
     <div class="main-container">
       <!-- 左侧：列表 -->
@@ -399,8 +413,245 @@
           <button class="btn btn-primary" id="submitScore">提交并下一份</button>
         </div>
       </aside>
+      </div>
     </div>
+
+    </div>
+    <!-- 模块1结束 -->
+
+    <!-- ========== 模块2：诊断管理 ========== -->
+    <div class="module module-diagnosis" id="moduleDiagnosis">
+      <div class="diagnosis-container">
+        <div class="diagnosis-header">
+          <h2>诊断报告管理</h2>
+          <div class="diagnosis-filters">
+            <select class="filter-select">
+              <option value="">全部考试</option>
+              <option value="1">2024年期中考试 - 数学</option>
+              <option value="2">2024年期中考试 - 语文</option>
+            </select>
+            <select class="filter-select">
+              <option value="">全部班级</option>
+              <option value="1">高三(1)班</option>
+              <option value="2">高三(2)班</option>
+            </select>
+            <select class="filter-select">
+              <option value="">全部状态</option>
+              <option value="published">已发布</option>
+              <option value="draft">草稿</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="diagnosis-stats">
+          <div class="stat-card">
+            <span class="stat-value">156</span>
+            <span class="stat-label">报告总数</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">142</span>
+            <span class="stat-label">已发布</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">14</span>
+            <span class="stat-label">待审核</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">85.6</span>
+            <span class="stat-label">平均分</span>
+          </div>
+        </div>
+
+        <div class="diagnosis-table">
+          <table>
+            <thead>
+              <tr>
+                <th>学生姓名</th>
+                <th>班级</th>
+                <th>考试名称</th>
+                <th>总分</th>
+                <th>状态</th>
+                <th>更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="student-avatar-sm">李</span> 李明</td>
+                <td>高三(1)班</td>
+                <td>2024年期中考试 - 数学</td>
+                <td><strong>62</strong>/70</td>
+                <td><span class="status-tag published">已发布</span></td>
+                <td>2024-04-17 10:30</td>
+                <td>
+                  <button class="btn btn-sm">查看</button>
+                  <button class="btn btn-sm btn-outline">编辑</button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="student-avatar-sm">王</span> 王小红</td>
+                <td>高三(1)班</td>
+                <td>2024年期中考试 - 数学</td>
+                <td><strong>68</strong>/70</td>
+                <td><span class="status-tag published">已发布</span></td>
+                <td>2024-04-17 10:25</td>
+                <td>
+                  <button class="btn btn-sm">查看</button>
+                  <button class="btn btn-sm btn-outline">编辑</button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="student-avatar-sm">张</span> 张华</td>
+                <td>高三(1)班</td>
+                <td>2024年期中考试 - 数学</td>
+                <td><strong>55</strong>/70</td>
+                <td><span class="status-tag draft">草稿</span></td>
+                <td>2024-04-17 09:50</td>
+                <td>
+                  <button class="btn btn-sm btn-primary">审核</button>
+                  <button class="btn btn-sm btn-outline">编辑</button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="student-avatar-sm">刘</span> 刘芳</td>
+                <td>高三(2)班</td>
+                <td>2024年期中考试 - 数学</td>
+                <td><strong>70</strong>/70</td>
+                <td><span class="status-tag published">已发布</span></td>
+                <td>2024-04-17 09:30</td>
+                <td>
+                  <button class="btn btn-sm">查看</button>
+                  <button class="btn btn-sm btn-outline">编辑</button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="student-avatar-sm">陈</span> 陈刚</td>
+                <td>高三(2)班</td>
+                <td>2024年期中考试 - 数学</td>
+                <td><strong>48</strong>/70</td>
+                <td><span class="status-tag draft">草稿</span></td>
+                <td>2024-04-17 09:15</td>
+                <td>
+                  <button class="btn btn-sm btn-primary">审核</button>
+                  <button class="btn btn-sm btn-outline">编辑</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="diagnosis-pagination">
+          <span class="page-info">显示 1-5 / 共 156 条</span>
+          <div class="page-btns">
+            <button class="btn btn-sm" disabled>上一页</button>
+            <button class="btn btn-sm btn-primary">1</button>
+            <button class="btn btn-sm">2</button>
+            <button class="btn btn-sm">3</button>
+            <button class="btn btn-sm">...</button>
+            <button class="btn btn-sm">32</button>
+            <button class="btn btn-sm">下一页</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 模块2结束 -->
+
+    <!-- ========== 模块3：学生平板效果 ========== -->
+    <div class="module module-student" id="moduleStudent">
+      <div class="student-preview-container">
+        <div class="preview-header">
+          <h2>学生平板效果预览</h2>
+          <p class="preview-desc">模拟学生在平板上查看批改结果和诊断报告的效果</p>
+        </div>
+
+        <div class="tablet-frame">
+          <div class="tablet-screen">
+            <!-- 学生端顶部 -->
+            <div class="student-app-header">
+              <span class="app-title">我的成绩</span>
+              <span class="student-name-tag">李明 同学</span>
+            </div>
+
+            <!-- 考试信息卡片 -->
+            <div class="student-exam-card">
+              <div class="exam-title">2024年期中考试 - 数学</div>
+              <div class="exam-score-display">
+                <span class="big-score">62</span>
+                <span class="full-score">/ 70 分</span>
+              </div>
+              <div class="score-rank">班级排名：第 8 名 / 共 30 人</div>
+            </div>
+
+            <!-- 各题得分 -->
+            <div class="student-section">
+              <h4>各题得分</h4>
+              <div class="score-bars">
+                <div class="score-bar-item">
+                  <span class="bar-label">第1题</span>
+                  <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+                  <span class="bar-score">10/10</span>
+                </div>
+                <div class="score-bar-item">
+                  <span class="bar-label">第2题</span>
+                  <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
+                  <span class="bar-score">8/10</span>
+                </div>
+                <div class="score-bar-item">
+                  <span class="bar-label">第3题</span>
+                  <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
+                  <span class="bar-score">12/15</span>
+                </div>
+                <div class="score-bar-item">
+                  <span class="bar-label">第4题</span>
+                  <div class="bar-track"><div class="bar-fill" style="width:87%"></div></div>
+                  <span class="bar-score">13/15</span>
+                </div>
+                <div class="score-bar-item">
+                  <span class="bar-label">第5题</span>
+                  <div class="bar-track"><div class="bar-fill" style="width:95%"></div></div>
+                  <span class="bar-score">19/20</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 老师评价 -->
+            <div class="student-section">
+              <h4>老师评价</h4>
+              <div class="teacher-comment-card">
+                <p>该同学对函数求导、极值、单调性等基础知识点掌握较好，计算能力较强。但在表述规范性上仍有提升空间，特别是极值点需要明确说明是极大值还是极小值。</p>
+              </div>
+            </div>
+
+            <!-- 老师寄语 -->
+            <div class="student-section">
+              <h4>老师寄语</h4>
+              <div class="teacher-message-card">
+                <p>李明同学这次考试表现不错，继续保持！希望在接下来的学习中更加注意细节，争取在期末考试中取得更好的成绩。加油！</p>
+                <span class="teacher-sign">—— 张老师</span>
+              </div>
+            </div>
+
+            <!-- 查看详情按钮 -->
+            <div class="student-actions">
+              <button class="student-btn">查看答卷详情</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-tips">
+          <h4>说明</h4>
+          <ul>
+            <li>此页面模拟学生在平板设备上查看成绩和报告的效果</li>
+            <li>学生可以看到各题得分、老师评价和寄语</li>
+            <li>点击"查看答卷详情"可查看每道题的批改详情</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- 模块3结束 -->
+
   </div>
+  <!-- 主内容区域结束 -->
 
   <!-- 批注弹窗 -->
   <div class="modal" id="commentModal">
