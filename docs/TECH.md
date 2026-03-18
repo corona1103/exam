@@ -13,8 +13,10 @@
 ```
 exam/
 ├── index.html      # 主页面（包含所有 HTML 结构）
-├── style.css       # 全局样式
-├── app.js          # 交互逻辑
+├── style.css       # 全局样式（~2500行）
+├── app.js          # 交互逻辑（~600行）
+├── assets/         # 静态资源
+│   └── answer-sheet-sample.png  # 答题卡示例图
 └── docs/           # 文档
     ├── README.md
     ├── PRD.md
@@ -39,7 +41,21 @@ exam/
     <div class="module module-diagnosis" id="moduleDiagnosis">...</div>
 
     <!-- 模块3：学生平板效果 -->
-    <div class="module module-student" id="moduleStudent">...</div>
+    <div class="module module-student" id="moduleStudent">
+      <div class="student-preview-wrapper">
+        <aside class="preview-sidebar">...</aside>
+        <main class="tablet-preview-area">
+          <div class="tablet-frame-landscape">
+            <div class="tablet-screen-landscape">
+              <!-- 三个页面场景 -->
+              <div class="tablet-page" id="tabletListPage">...</div>
+              <div class="tablet-page" id="tabletExamPage">...</div>
+              <div class="tablet-page" id="tabletReportPage">...</div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
   </div>
 
   <!-- 弹窗 -->
@@ -49,6 +65,12 @@ exam/
   <div class="modal consult-modal" id="consultModal">...</div>
   <div class="modal report-list-modal" id="reportListModal">...</div>
   <div class="modal cloud-control-modal" id="cloudControlModal">...</div>
+
+  <!-- 平板端弹窗 -->
+  <div class="tablet-modal" id="startExamModal">...</div>
+  <div class="tablet-modal" id="submitConfirmModal">...</div>
+  <div class="tablet-modal" id="leaveConfirmModal">...</div>
+  <div class="tablet-modal" id="autoSubmitModal">...</div>
 
   <!-- Toast 提示 -->
   <div class="toast" id="toast"></div>
@@ -453,20 +475,181 @@ function validateDiagnosisTimes() {
 
 ---
 
-## 8. 已知问题与优化建议
+## 8. 学生平板效果模块
 
-### 8.1 已知问题
+### 8.1 页面架构
+
+学生平板效果模块模拟 iPad 横屏（1024x680px）展示学生端体验。
+
+**布局结构：**
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      学生平板效果预览                          │
+├────────────────┬────────────────────────────────────────────┤
+│                │                                            │
+│   场景选择      │         iPad 横屏模拟框                     │
+│   侧边栏       │                                            │
+│                │    ┌──────────────────────────────────┐   │
+│   · 诊断列表    │    │                                  │   │
+│   · 考试界面    │    │       当前页面内容               │   │
+│   · 诊断报告    │    │                                  │   │
+│                │    └──────────────────────────────────┘   │
+│                │                                            │
+└────────────────┴────────────────────────────────────────────┘
+```
+
+### 8.2 诊断卡片状态机
+
+| 状态 | data-status | 主按钮 | 次按钮 | 说明 |
+|------|-------------|--------|--------|------|
+| 未报名 | not-enrolled | 立即报名 | - | 开放中的诊断 |
+| 已报名-等待 | enrolled-waiting | - | 取消报名 | 考试未开始 |
+| 可开考 | can-start | 开始考试 | - | 考试时间到 |
+| 考试中 | in-progress | 继续考试 | - | 已开始未提交 |
+| 待报告 | waiting-report | - | - | 已提交等待阅卷 |
+| 报告已出 | report-ready | 查看报告 | - | 可查看报告 |
+| 已过期 | expired | - | - | 未报名已过期 |
+
+### 8.3 考试界面实现
+
+**倒计时器：**
+```javascript
+let examTime = 120 * 60; // 120分钟转秒
+let countdownTimer = setInterval(() => {
+  examTime--;
+  updateCountdownDisplay(examTime);
+
+  // 最后5分钟警告
+  if (examTime <= 300) {
+    countdownEl.classList.add('warning');
+  }
+
+  // 时间到自动提交
+  if (examTime <= 0) {
+    clearInterval(countdownTimer);
+    showAutoSubmitModal();
+  }
+}, 1000);
+```
+
+**答题卡面板：**
+```html
+<div class="answer-card-panel">
+  <div class="answer-card-header">
+    <h4>答题卡</h4>
+    <span class="answered-count">已答 8/25</span>
+  </div>
+  <div class="answer-card-grid">
+    <span class="q-dot answered">1</span>
+    <span class="q-dot answered">2</span>
+    <span class="q-dot">3</span>
+    ...
+  </div>
+</div>
+```
+
+### 8.4 诊断报告页
+
+**得分展示：**
+```html
+<div class="report-score-card">
+  <div class="score-big">
+    <span class="score-value">62</span>
+    <span class="score-unit">分</span>
+  </div>
+  <div class="score-meta">
+    <span>满分 70 分</span>
+    <span class="rank-info">诊断排名：第 8 名 / 共 285 人</span>
+  </div>
+</div>
+```
+
+**答卷详情展示：**
+```html
+<div class="answer-details-section">
+  <h4>答卷详情</h4>
+  <div class="answer-detail-item">
+    <div class="detail-header">
+      <div class="detail-q-info">
+        <span class="q-number">第1题</span>
+        <span class="q-type-tag">选择题</span>
+      </div>
+      <div class="detail-score full-score">
+        <span class="score-got">10</span>/<span class="score-total">10分</span>
+      </div>
+    </div>
+    <div class="detail-content">
+      <!-- 选择题显示文字答案 -->
+      <div class="choice-answer-display">
+        <span class="answer-label">学生答案：</span>
+        <span class="answer-value correct">B</span>
+        <span class="answer-label">正确答案：</span>
+        <span class="answer-value">B</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="answer-detail-item">
+    <!-- 解答题显示批注后的图片 -->
+    <div class="detail-content">
+      <div class="answer-image-container">
+        <img src="assets/answer-sheet-sample.png" class="annotated-answer-image">
+      </div>
+      <div class="teacher-annotation-note">
+        <span class="note-icon">📝</span>
+        <span class="note-text">老师批注：计算过程正确，注意书写规范...</span>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+### 8.5 弹窗系统
+
+| 弹窗 | ID | 触发场景 | 按钮 |
+|------|-----|----------|------|
+| 开始考试确认 | startExamModal | 点击"开始考试" | 确定开始 / 取消 |
+| 提交确认 | submitConfirmModal | 点击"交卷" | 确认提交 / 继续作答 |
+| 离开确认 | leaveConfirmModal | 考试中点击返回 | 暂时离开 / 继续作答 |
+| 自动提交 | autoSubmitModal | 倒计时结束 | 查看结果 |
+
+### 8.6 课程咨询表单
+
+```javascript
+// 手机号验证
+const phoneRegex = /^1[3-9]\d{9}$/;
+function validatePhone(phone) {
+  return phoneRegex.test(phone);
+}
+
+// 表单提交
+consultForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const phone = phoneInput.value;
+  if (!validatePhone(phone)) {
+    showToast('请输入正确的手机号');
+    return;
+  }
+  // 提交逻辑
+});
+```
+
+---
+
+## 9. 已知问题与优化建议
+
+### 9.1 已知问题
 1. 批注数据未持久化，刷新页面丢失
 2. 学生/题目数据为模拟数据
-3. 报告中的逐题详情为静态内容
+3. 平板预览中的考试计时仅为演示，未与实际考试数据关联
 
-### 8.2 优化建议
+### 9.2 优化建议
 1. **性能优化**：大量批注时使用 Canvas 渲染
 2. **代码重构**：拆分为模块化组件
 3. **状态管理**：引入简单的状态管理模式
 4. **测试覆盖**：添加单元测试和 E2E 测试
 
-### 8.3 技术升级路径
+### 9.3 技术升级路径
 - Phase 1（当前）：纯静态演示
 - Phase 2：接入后端 API，数据持久化
 - Phase 3：重构为 Vue/React 组件化架构
@@ -483,4 +666,6 @@ function validateDiagnosisTimes() {
 | v1.3 | 2024-04-18 | 新增级联选择器、多弹窗系统 |
 | v1.4 | 2024-04-19 | 新增学生状态管理（待发布/已完成）、报告只读模式 |
 | v1.5 | 2024-04-19 | 报名名单状态调整、咨询名单增加预约时间字段 |
-| v1.6 | 2024-04-19 | 新增云控开关、诊断说明字段、考试时间校验、诊断列表增加考试时间列 |
+| v1.6 | 2024-04-19 | 新增云控开关、诊断说明字段、考试时间校验 |
+| v1.7 | 2024-04-20 | 数据直传模式支持答题卡图片展示、新增涂鸦工具 |
+| v2.0 | 2024-04-20 | 学生平板模块重构：iPad横屏布局、9种卡片状态、考试倒计时、答卷详情展示 |
