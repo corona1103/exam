@@ -1527,38 +1527,6 @@
                       </div>
                     </div>
 
-                    <!-- 各题得分 -->
-                    <div class="report-section">
-                      <h4 class="section-title">📊 各题得分</h4>
-                      <div class="score-bars-horizontal">
-                        <div class="score-bar-h">
-                          <span class="bar-label">第1题</span>
-                          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-                          <span class="bar-score">10/10</span>
-                        </div>
-                        <div class="score-bar-h">
-                          <span class="bar-label">第2题</span>
-                          <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
-                          <span class="bar-score">8/10</span>
-                        </div>
-                        <div class="score-bar-h">
-                          <span class="bar-label">第3题</span>
-                          <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
-                          <span class="bar-score">12/15</span>
-                        </div>
-                        <div class="score-bar-h">
-                          <span class="bar-label">第4题</span>
-                          <div class="bar-track"><div class="bar-fill" style="width:87%"></div></div>
-                          <span class="bar-score">13/15</span>
-                        </div>
-                        <div class="score-bar-h">
-                          <span class="bar-label">第5题</span>
-                          <div class="bar-track"><div class="bar-fill" style="width:95%"></div></div>
-                          <span class="bar-score">19/20</span>
-                        </div>
-                      </div>
-                    </div>
-
                     <!-- 老师评价 -->
                     <div class="report-section">
                       <h4 class="section-title">📝 老师评价</h4>
@@ -1576,9 +1544,160 @@
                       </div>
                     </div>
 
-                    <!-- 查看详情按钮 -->
-                    <div class="report-actions">
-                      <button class="report-btn outline">查看答卷详情</button>
+                    <!-- 答卷详情 - 逐题展示 -->
+                    <div class="report-section answer-details-section">
+                      <h4 class="section-title">📋 答卷详情</h4>
+
+                      <!-- 第1题 - 选择题满分 -->
+                      <div class="answer-detail-item">
+                        <div class="detail-header">
+                          <div class="detail-q-info">
+                            <span class="q-number">第1题</span>
+                            <span class="q-type-tag">单选题</span>
+                          </div>
+                          <div class="detail-score full-score">
+                            <span class="score-got">10</span>
+                            <span class="score-divider">/</span>
+                            <span class="score-total">10分</span>
+                            <span class="score-mark correct">✓</span>
+                          </div>
+                        </div>
+                        <div class="detail-content">
+                          <div class="student-answer-row">
+                            <span class="answer-label">你的答案：</span>
+                            <span class="answer-value correct">B</span>
+                            <span class="answer-result correct">正确</span>
+                          </div>
+                          <div class="correct-answer-row">
+                            <span class="answer-label">正确答案：</span>
+                            <span class="answer-value">B</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 第2题 - 选择题扣分 -->
+                      <div class="answer-detail-item">
+                        <div class="detail-header">
+                          <div class="detail-q-info">
+                            <span class="q-number">第2题</span>
+                            <span class="q-type-tag">单选题</span>
+                          </div>
+                          <div class="detail-score partial-score">
+                            <span class="score-got">8</span>
+                            <span class="score-divider">/</span>
+                            <span class="score-total">10分</span>
+                            <span class="score-mark wrong">✗</span>
+                          </div>
+                        </div>
+                        <div class="detail-content">
+                          <div class="student-answer-row">
+                            <span class="answer-label">你的答案：</span>
+                            <span class="answer-value wrong">C</span>
+                            <span class="answer-result wrong">错误</span>
+                          </div>
+                          <div class="correct-answer-row">
+                            <span class="answer-label">正确答案：</span>
+                            <span class="answer-value">A</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 第3题 - 解答题带批注图片 -->
+                      <div class="answer-detail-item">
+                        <div class="detail-header">
+                          <div class="detail-q-info">
+                            <span class="q-number">第3题</span>
+                            <span class="q-type-tag">解答题</span>
+                          </div>
+                          <div class="detail-score partial-score">
+                            <span class="score-got">12</span>
+                            <span class="score-divider">/</span>
+                            <span class="score-total">15分</span>
+                          </div>
+                        </div>
+                        <div class="detail-content">
+                          <div class="answer-image-container">
+                            <img src="assets/answer-sheet-sample.png" alt="批注后的答题卡" class="annotated-answer-image">
+                          </div>
+                          <div class="teacher-annotation-note">
+                            <span class="note-icon">💬</span>
+                            <span class="note-text">老师批注：第(2)小问计算过程正确，但最后结论表述不完整，扣3分。</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 第4题 - 解答题 -->
+                      <div class="answer-detail-item">
+                        <div class="detail-header">
+                          <div class="detail-q-info">
+                            <span class="q-number">第4题</span>
+                            <span class="q-type-tag">解答题</span>
+                          </div>
+                          <div class="detail-score partial-score">
+                            <span class="score-got">13</span>
+                            <span class="score-divider">/</span>
+                            <span class="score-total">15分</span>
+                          </div>
+                        </div>
+                        <div class="detail-content">
+                          <div class="answer-image-container">
+                            <div class="answer-placeholder">
+                              <div class="placeholder-content">
+                                <p class="handwriting-preview">解：设等差数列{an}的公差为d</p>
+                                <p class="handwriting-preview">由题意得：a1 + 5d = 11</p>
+                                <p class="handwriting-preview">10a1 + 45d = 100</p>
+                                <p class="handwriting-preview">解得：a1 = 1, d = 2</p>
+                                <p class="handwriting-preview">∴ an = 1 + (n-1)×2 = 2n-1</p>
+                                <div class="inline-annotation correct-mark">✓</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="teacher-annotation-note">
+                            <span class="note-icon">💬</span>
+                            <span class="note-text">老师批注：解题思路清晰，但通项公式化简过程缺少必要步骤，扣2分。</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 第5题 - 解答题高分 -->
+                      <div class="answer-detail-item">
+                        <div class="detail-header">
+                          <div class="detail-q-info">
+                            <span class="q-number">第5题</span>
+                            <span class="q-type-tag">解答题</span>
+                          </div>
+                          <div class="detail-score full-score">
+                            <span class="score-got">19</span>
+                            <span class="score-divider">/</span>
+                            <span class="score-total">20分</span>
+                          </div>
+                        </div>
+                        <div class="detail-content">
+                          <div class="answer-image-container">
+                            <div class="answer-placeholder">
+                              <div class="placeholder-content">
+                                <p class="handwriting-preview">解：(1) f'(x) = 3x² - 6x = 3x(x-2)</p>
+                                <p class="handwriting-preview">令 f'(x) = 0，得 x = 0 或 x = 2</p>
+                                <p class="handwriting-preview">当 x < 0 时，f'(x) > 0，单调递增</p>
+                                <p class="handwriting-preview">当 0 < x < 2 时，f'(x) < 0，单调递减</p>
+                                <p class="handwriting-preview">当 x > 2 时，f'(x) > 0，单调递增</p>
+                                <div class="inline-annotation correct-mark">✓</div>
+                                <p class="handwriting-preview" style="margin-top:12px">(2) f(-1) = -2, f(0) = 2, f(2) = -2, f(3) = 2</p>
+                                <p class="handwriting-preview">∴ 最大值为2，最小值为-2</p>
+                                <div class="inline-annotation correct-mark">✓</div>
+                                <div class="inline-annotation comment-mark" style="top: 60px; right: 20px;">
+                                  <span class="comment-text">表述规范</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="teacher-annotation-note success">
+                            <span class="note-icon">✨</span>
+                            <span class="note-text">老师批注：解题过程完整规范，思路清晰，表述准确。仅在极值点说明上略有不足，扣1分。继续保持！</span>
+                          </div>
+                        </div>
+                      </div>
+
                     </div>
                   </div>
                 </div>
