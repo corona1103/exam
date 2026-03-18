@@ -134,9 +134,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateScoringPanelVisibility() {
     const scoringPanel = document.querySelector('.scoring-panel');
     const scoreSection = scoringPanel.querySelector('.panel-section:first-child');
+    const paperContentOnline = document.getElementById('paperContentOnline');
+    const paperContentDirect = document.getElementById('paperContentDirect');
 
     if (currentExamType === 'direct') {
-      // 数据直传类型：隐藏评分区域，分数从小分表自动获取
+      // 数据直传类型：显示答题卡图片，隐藏评分区域
+      paperContentOnline.style.display = 'none';
+      paperContentDirect.style.display = 'flex';
+
       scoreSection.innerHTML = `
         <h3>评分</h3>
         <div class="direct-score-notice">
@@ -144,12 +149,15 @@ document.addEventListener('DOMContentLoaded', () => {
           <p class="notice-desc">分数已从小分表自动获取，仅支持批注</p>
           <div class="auto-score-display">
             <span class="label">本题得分</span>
-            <span class="score-value">12 / 15 分</span>
+            <span class="score-value">11 / 15 分</span>
           </div>
         </div>
       `;
     } else {
-      // 在线模考类型：显示完整评分面板
+      // 在线模考类型：显示文字作答，显示完整评分面板
+      paperContentOnline.style.display = 'block';
+      paperContentDirect.style.display = 'none';
+
       scoreSection.innerHTML = `
         <h3>评分</h3>
         <div class="score-input-group">

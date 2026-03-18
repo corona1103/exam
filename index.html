@@ -325,8 +325,8 @@
 
         <div class="paper-container" id="paperContainer">
           <div class="paper" id="paper">
-            <!-- 模拟答题卡内容 -->
-            <div class="paper-content">
+            <!-- 在线模考模式：文字作答内容 -->
+            <div class="paper-content paper-content-online" id="paperContentOnline">
               <div class="paper-header">
                 <p><strong>第三题</strong>（15分）</p>
                 <p>已知函数 f(x) = x³ - 3x² + 2，求：</p>
@@ -348,6 +348,11 @@
                   <p>所以最大值为 2，最小值为 -2</p>
                 </div>
               </div>
+            </div>
+
+            <!-- 数据直传模式：答题卡图片 -->
+            <div class="paper-content paper-content-direct" id="paperContentDirect" style="display: none;">
+              <img src="assets/answer-sheet-sample.png" alt="学生答题卡" class="answer-sheet-image" id="answerSheetImage">
             </div>
 
             <!-- 批注层 -->

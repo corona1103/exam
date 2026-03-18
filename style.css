@@ -689,6 +689,19 @@ body {
   padding: 40px;
 }
 
+.paper-content-direct {
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.answer-sheet-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 .paper-header {
   margin-bottom: 24px;
   line-height: 1.8;
