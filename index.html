@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>阅卷系统 - 演示</title>
+  <title>阅卷诊断系统 - 演示</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,7 +15,7 @@
     <ul class="nav-menu">
       <li class="nav-item active" data-page="grading">
         <span class="nav-icon">📝</span>
-        <span>阅卷批改</span>
+        <span>阅卷诊断</span>
       </li>
       <li class="nav-item" data-page="diagnosis">
         <span class="nav-icon">📊</span>
@@ -35,14 +35,14 @@
   <!-- 主内容区域 -->
   <div class="main-wrapper">
 
-    <!-- ========== 模块1：阅卷批改 ========== -->
+    <!-- ========== 模块1：阅卷诊断 ========== -->
     <div class="module module-grading active" id="moduleGrading">
 
-      <!-- 考试列表页 -->
+      <!-- 诊断列表页 -->
       <div class="page page-list active" id="pageList">
         <div class="list-container">
           <div class="list-header">
-            <h2>考试列表</h2>
+            <h2>诊断列表</h2>
             <div class="list-filters">
           <select class="filter-select" id="filterSubject">
             <option value="">全部科目</option>
@@ -53,8 +53,8 @@
           </select>
           <select class="filter-select" id="filterStatus">
             <option value="">全部状态</option>
-            <option value="pending">待批改</option>
-            <option value="grading">批改中</option>
+            <option value="pending">待诊断</option>
+            <option value="grading">诊断中</option>
             <option value="done">已完成</option>
           </select>
         </div>
@@ -75,12 +75,12 @@
             <div class="progress-bar">
               <div class="progress-fill" style="width: 40%"></div>
             </div>
-            <span class="progress-text">12/30 已批改</span>
+            <span class="progress-text">12/30 已诊断</span>
           </div>
-          <span class="exam-status grading">批改中</span>
+          <span class="exam-status grading">诊断中</span>
           <div class="btn-group">
-            <button class="btn btn-primary btn-enter" data-mode="byStudent">按学生批改</button>
-            <button class="btn btn-outline btn-enter" data-mode="byQuestion">按题批改</button>
+            <button class="btn btn-primary btn-enter" data-mode="byStudent">按学生诊断</button>
+            <button class="btn btn-outline btn-enter" data-mode="byQuestion">按题诊断</button>
           </div>
         </div>
 
@@ -98,7 +98,7 @@
             <div class="progress-bar">
               <div class="progress-fill" style="width: 100%"></div>
             </div>
-            <span class="progress-text">30/30 已批改</span>
+            <span class="progress-text">30/30 已诊断</span>
           </div>
           <span class="exam-status done">已完成</span>
           <div class="btn-group">
@@ -121,12 +121,12 @@
             <div class="progress-bar">
               <div class="progress-fill" style="width: 0%"></div>
             </div>
-            <span class="progress-text">0/32 已批改</span>
+            <span class="progress-text">0/32 已诊断</span>
           </div>
-          <span class="exam-status pending">待批改</span>
+          <span class="exam-status pending">待诊断</span>
           <div class="btn-group">
-            <button class="btn btn-primary btn-enter" data-mode="byStudent">按学生批改</button>
-            <button class="btn btn-outline btn-enter" data-mode="byQuestion">按题批改</button>
+            <button class="btn btn-primary btn-enter" data-mode="byStudent">按学生诊断</button>
+            <button class="btn btn-outline btn-enter" data-mode="byQuestion">按题诊断</button>
           </div>
         </div>
 
@@ -144,7 +144,7 @@
             <div class="progress-bar">
               <div class="progress-fill" style="width: 100%"></div>
             </div>
-            <span class="progress-text">30/30 已批改</span>
+            <span class="progress-text">30/30 已诊断</span>
           </div>
           <span class="exam-status done">已完成</span>
           <div class="btn-group">
@@ -167,12 +167,12 @@
             <div class="progress-bar">
               <div class="progress-fill" style="width: 75%"></div>
             </div>
-            <span class="progress-text">24/32 已批改</span>
+            <span class="progress-text">24/32 已诊断</span>
           </div>
-          <span class="exam-status grading">批改中</span>
+          <span class="exam-status grading">诊断中</span>
           <div class="btn-group">
-            <button class="btn btn-primary btn-enter" data-mode="byStudent">按学生批改</button>
-            <button class="btn btn-outline btn-enter" data-mode="byQuestion">按题批改</button>
+            <button class="btn btn-primary btn-enter" data-mode="byStudent">按学生诊断</button>
+            <button class="btn btn-outline btn-enter" data-mode="byQuestion">按题诊断</button>
           </div>
             </div>
           </div>
@@ -234,47 +234,63 @@
           </div>
         </div>
 
-        <!-- 按学生批改模式：学生列表 -->
+        <!-- 按学生诊断模式：学生列表 -->
         <div class="student-list" id="studentList" style="display: none;">
-          <div class="student-item active" data-student="1">
+          <div class="student-item active" data-student="1" data-report-status="grading">
             <div class="student-avatar">李</div>
             <div class="student-info-item">
               <span class="student-name">李明</span>
               <span class="student-progress-text">已批 2/5 题</span>
             </div>
-            <span class="status current">批改中</span>
+            <span class="status current">诊断中</span>
           </div>
-          <div class="student-item" data-student="2">
+          <div class="student-item" data-student="2" data-report-status="published">
             <div class="student-avatar">王</div>
             <div class="student-info-item">
               <span class="student-name">王小红</span>
               <span class="student-progress-text">已批 5/5 题</span>
             </div>
-            <span class="status done">已完成</span>
+            <span class="status completed">已完成</span>
           </div>
-          <div class="student-item" data-student="3">
+          <div class="student-item" data-student="3" data-report-status="pending">
             <div class="student-avatar">张</div>
             <div class="student-info-item">
               <span class="student-name">张华</span>
-              <span class="student-progress-text">已批 0/5 题</span>
+              <span class="student-progress-text">已批 5/5 题</span>
             </div>
-            <span class="status pending">待批</span>
+            <span class="status topublish">待发布</span>
           </div>
-          <div class="student-item" data-student="4">
+          <div class="student-item" data-student="4" data-report-status="none">
             <div class="student-avatar">刘</div>
             <div class="student-info-item">
               <span class="student-name">刘芳</span>
               <span class="student-progress-text">已批 0/5 题</span>
             </div>
-            <span class="status pending">待批</span>
+            <span class="status pending">待诊断</span>
           </div>
-          <div class="student-item" data-student="5">
+          <div class="student-item" data-student="5" data-report-status="none">
             <div class="student-avatar">陈</div>
             <div class="student-info-item">
               <span class="student-name">陈刚</span>
               <span class="student-progress-text">已批 0/5 题</span>
             </div>
-            <span class="status pending">待批</span>
+            <span class="status pending">待诊断</span>
+          </div>
+          <div class="student-item" data-student="6" data-report-status="published">
+            <div class="student-avatar">赵</div>
+            <div class="student-info-item">
+              <span class="student-name">赵丽</span>
+              <span class="student-progress-text">已批 5/5 题</span>
+            </div>
+            <span class="status completed">已完成</span>
+          </div>
+          <div class="student-item" data-student="7" data-report-status="pending">
+            <div class="student-avatar">孙</div>
+            <div class="student-info-item">
+              <span class="student-name">孙伟</span>
+              <span class="student-progress-text">已批 5/5 题</span>
+            </div>
+            <span class="status topublish">待发布</span>
           </div>
         </div>
       </aside>
@@ -426,7 +442,10 @@
         <div class="diagnosis-page diagnosis-list-page active" id="diagnosisListPage">
           <div class="diagnosis-header">
             <h2>诊断配置管理</h2>
-            <button class="btn btn-primary" id="createDiagnosisBtn">+ 创建诊断</button>
+            <div class="header-actions">
+              <button class="btn btn-outline" id="cloudControlBtn">☁️ 云控开关</button>
+              <button class="btn btn-primary" id="createDiagnosisBtn">+ 创建诊断</button>
+            </div>
           </div>
 
           <div class="diagnosis-stats">
@@ -435,16 +454,16 @@
               <span class="stat-label">诊断总数</span>
             </div>
             <div class="stat-card">
-              <span class="stat-value">3</span>
-              <span class="stat-label">进行中</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-value">5</span>
-              <span class="stat-label">已结束</span>
-            </div>
-            <div class="stat-card">
               <span class="stat-value">1,256</span>
-              <span class="stat-label">参与学生</span>
+              <span class="stat-label">已报名学生</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">892</span>
+              <span class="stat-label">已发报告</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">126</span>
+              <span class="stat-label">课程咨询</span>
             </div>
           </div>
 
@@ -454,7 +473,8 @@
                 <tr>
                   <th>诊断名称</th>
                   <th>诊断类型</th>
-                  <th>开放时间</th>
+                  <th>报名开放时间</th>
+                  <th>考试开放时间</th>
                   <th>学生范围</th>
                   <th>状态</th>
                   <th>操作</th>
@@ -465,55 +485,70 @@
                   <td><strong>2024春季学业诊断</strong></td>
                   <td><span class="type-tag online">在线模考</span></td>
                   <td>2024-04-15 ~ 2024-04-20</td>
+                  <td>2024-04-16 ~ 2024-04-19</td>
                   <td>高三年级 (320人)</td>
                   <td><span class="status-tag active">进行中</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-outline btn-edit-diagnosis">编辑</button>
-                    <button class="btn btn-sm btn-outline">查看报名</button>
+                  <td class="action-cell">
+                    <button class="btn btn-sm btn-outline btn-edit-diagnosis" data-status="active">编辑</button>
+                    <button class="btn btn-sm btn-outline btn-view-enroll" data-count="285">报名名单</button>
+                    <button class="btn btn-sm btn-outline btn-view-consult" data-count="28">咨询名单</button>
+                    <button class="btn btn-sm btn-outline btn-view-report" data-count="180">诊断报告</button>
                   </td>
                 </tr>
                 <tr>
                   <td><strong>高二数学专项诊断</strong></td>
                   <td><span class="type-tag direct">数据直传</span></td>
                   <td>2024-04-10 ~ 2024-04-12</td>
+                  <td><span class="text-muted">--</span></td>
                   <td>高二(1)班、高二(2)班 (86人)</td>
                   <td><span class="status-tag ended">已结束</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-outline btn-edit-diagnosis">编辑</button>
-                    <button class="btn btn-sm btn-outline">查看报名</button>
+                  <td class="action-cell">
+                    <button class="btn btn-sm btn-outline btn-view-diagnosis" data-status="ended">查看</button>
+                    <button class="btn btn-sm btn-outline btn-view-enroll" data-count="86">报名名单</button>
+                    <button class="btn btn-sm btn-outline btn-view-consult" data-count="12">咨询名单</button>
+                    <button class="btn btn-sm btn-outline btn-view-report" data-count="86">诊断报告</button>
                   </td>
                 </tr>
                 <tr>
                   <td><strong>高一期中学业诊断</strong></td>
                   <td><span class="type-tag online">在线模考</span></td>
                   <td>2024-04-18 ~ 2024-04-25</td>
+                  <td>2024-04-19 ~ 2024-04-24</td>
                   <td>全部学生 (850人)</td>
                   <td><span class="status-tag pending">待开始</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-outline btn-edit-diagnosis">编辑</button>
-                    <button class="btn btn-sm btn-outline">查看报名</button>
+                  <td class="action-cell">
+                    <button class="btn btn-sm btn-outline btn-edit-diagnosis" data-status="pending">编辑</button>
+                    <button class="btn btn-sm btn-outline btn-view-enroll" data-count="120">报名名单</button>
+                    <button class="btn btn-sm btn-outline btn-view-consult" data-count="5">咨询名单</button>
+                    <button class="btn btn-sm btn-outline btn-view-report" data-count="0">诊断报告</button>
                   </td>
                 </tr>
                 <tr>
                   <td><strong>高三一模诊断</strong></td>
                   <td><span class="type-tag online">在线模考</span></td>
                   <td>2024-03-20 ~ 2024-03-25</td>
+                  <td>2024-03-21 ~ 2024-03-24</td>
                   <td>高三年级 (318人)</td>
                   <td><span class="status-tag ended">已结束</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-outline btn-edit-diagnosis">编辑</button>
-                    <button class="btn btn-sm btn-outline">查看报名</button>
+                  <td class="action-cell">
+                    <button class="btn btn-sm btn-outline btn-view-diagnosis" data-status="ended">查看</button>
+                    <button class="btn btn-sm btn-outline btn-view-enroll" data-count="318">报名名单</button>
+                    <button class="btn btn-sm btn-outline btn-view-consult" data-count="45">咨询名单</button>
+                    <button class="btn btn-sm btn-outline btn-view-report" data-count="318">诊断报告</button>
                   </td>
                 </tr>
                 <tr>
                   <td><strong>艺考生专项诊断</strong></td>
                   <td><span class="type-tag direct">数据直传</span></td>
                   <td>2024-04-22 ~ 2024-04-28</td>
+                  <td><span class="text-muted">--</span></td>
                   <td>指定名单 (45人)</td>
                   <td><span class="status-tag active">进行中</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-outline btn-edit-diagnosis">编辑</button>
-                    <button class="btn btn-sm btn-outline">查看报名</button>
+                  <td class="action-cell">
+                    <button class="btn btn-sm btn-outline btn-edit-diagnosis" data-status="active">编辑</button>
+                    <button class="btn btn-sm btn-outline btn-view-enroll" data-count="45">报名名单</button>
+                    <button class="btn btn-sm btn-outline btn-view-consult" data-count="8">咨询名单</button>
+                    <button class="btn btn-sm btn-outline btn-view-report" data-count="32">诊断报告</button>
                   </td>
                 </tr>
               </tbody>
@@ -548,20 +583,41 @@
                   <input type="text" class="form-input" placeholder="请输入诊断名称" id="diagnosisName">
                 </div>
                 <div class="form-group">
-                  <label>诊断类型 <span class="required">*</span></label>
-                  <div class="radio-group">
-                    <label class="radio-item">
-                      <input type="radio" name="diagnosisType" value="online" checked>
-                      <span class="radio-label">在线模考</span>
-                      <span class="radio-desc">学生在线作答，系统自动收集数据</span>
-                    </label>
-                    <label class="radio-item">
-                      <input type="radio" name="diagnosisType" value="direct">
-                      <span class="radio-label">数据直传</span>
-                      <span class="radio-desc">线下考试数据直接导入系统</span>
-                    </label>
-                  </div>
+                  <label>诊断科目 <span class="required">*</span></label>
+                  <select class="form-input" id="diagnosisSubject">
+                    <option value="">请选择科目</option>
+                    <option value="math">数学</option>
+                    <option value="chinese">语文</option>
+                    <option value="english">英语</option>
+                    <option value="physics">物理</option>
+                    <option value="chemistry">化学</option>
+                    <option value="biology">生物</option>
+                    <option value="politics">政治</option>
+                    <option value="history">历史</option>
+                    <option value="geography">地理</option>
+                    <option value="comprehensive">综合</option>
+                  </select>
                 </div>
+              </div>
+              <div class="form-group">
+                <label>诊断类型 <span class="required">*</span></label>
+                <div class="radio-group-inline">
+                  <label class="radio-item-inline">
+                    <input type="radio" name="diagnosisType" value="online" checked>
+                    <span class="radio-label">在线模考</span>
+                    <span class="radio-desc">学生在线作答，系统自动收集数据</span>
+                  </label>
+                  <label class="radio-item-inline">
+                    <input type="radio" name="diagnosisType" value="direct">
+                    <span class="radio-label">数据直传</span>
+                    <span class="radio-desc">线下考试数据直接导入系统</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>诊断说明</label>
+                <textarea class="form-input form-textarea" id="diagnosisDesc" placeholder="请输入诊断说明（选填，最多100字）" maxlength="100" rows="3"></textarea>
+                <p class="form-hint char-count"><span id="diagnosisDescCount">0</span>/100</p>
               </div>
             </div>
 
@@ -580,118 +636,463 @@
               </div>
             </div>
 
-            <!-- 学生范围 -->
-            <div class="form-section">
-              <h3>入口开放学生范围</h3>
-              <div class="form-group">
-                <label>选择范围方式 <span class="required">*</span></label>
-                <div class="scope-tabs">
-                  <button class="scope-tab active" data-scope="org">按机构</button>
-                  <button class="scope-tab" data-scope="grade">按年级</button>
-                  <button class="scope-tab" data-scope="class">按班级</button>
-                  <button class="scope-tab" data-scope="student">按学生名单</button>
+            <!-- 在线模考配置（仅在线模考类型显示） -->
+            <div class="form-section online-exam-config" id="onlineExamConfig">
+              <h3>模考配置</h3>
+
+              <!-- 考试时间设置 -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label>考试开放开始时间 <span class="required">*</span></label>
+                  <input type="datetime-local" class="form-input" id="examStartTime">
+                </div>
+                <div class="form-group">
+                  <label>考试开放结束时间 <span class="required">*</span></label>
+                  <input type="datetime-local" class="form-input" id="examEndTime">
                 </div>
               </div>
-
-              <!-- 按机构 -->
-              <div class="scope-content" id="scopeOrg">
-                <div class="checkbox-group">
-                  <label class="checkbox-item">
-                    <input type="checkbox" checked>
-                    <span>北京总校</span>
-                  </label>
-                  <label class="checkbox-item">
-                    <input type="checkbox">
-                    <span>上海分校</span>
-                  </label>
-                  <label class="checkbox-item">
-                    <input type="checkbox">
-                    <span>广州分校</span>
-                  </label>
-                  <label class="checkbox-item">
-                    <input type="checkbox">
-                    <span>深圳分校</span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- 按年级 -->
-              <div class="scope-content" id="scopeGrade" style="display:none;">
-                <div class="checkbox-group">
-                  <label class="checkbox-item">
-                    <input type="checkbox">
-                    <span>高一年级</span>
-                  </label>
-                  <label class="checkbox-item">
-                    <input type="checkbox" checked>
-                    <span>高二年级</span>
-                  </label>
-                  <label class="checkbox-item">
-                    <input type="checkbox" checked>
-                    <span>高三年级</span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- 按班级 -->
-              <div class="scope-content" id="scopeClass" style="display:none;">
-                <div class="class-selector">
-                  <div class="class-column">
-                    <h5>选择年级</h5>
-                    <select class="form-select" id="gradeSelect">
-                      <option value="">请选择年级</option>
-                      <option value="g1">高一</option>
-                      <option value="g2">高二</option>
-                      <option value="g3" selected>高三</option>
-                    </select>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>考试限制时长 <span class="required">*</span></label>
+                  <div class="input-with-unit">
+                    <input type="number" class="form-input" id="examDuration" value="120" min="1">
+                    <span class="input-unit">分钟</span>
                   </div>
-                  <div class="class-column">
-                    <h5>选择班级</h5>
-                    <div class="checkbox-group class-list">
-                      <label class="checkbox-item">
-                        <input type="checkbox" checked>
-                        <span>高三(1)班</span>
-                      </label>
-                      <label class="checkbox-item">
-                        <input type="checkbox" checked>
-                        <span>高三(2)班</span>
-                      </label>
-                      <label class="checkbox-item">
-                        <input type="checkbox">
-                        <span>高三(3)班</span>
-                      </label>
-                      <label class="checkbox-item">
-                        <input type="checkbox">
-                        <span>高三(4)班</span>
-                      </label>
-                      <label class="checkbox-item">
-                        <input type="checkbox">
-                        <span>高三(5)班</span>
-                      </label>
+                  <p class="form-hint">学生开始作答后的最大答题时间</p>
+                </div>
+                <div class="form-group">
+                  <label>试卷总分</label>
+                  <div class="input-with-unit">
+                    <input type="number" class="form-input" id="examTotalScore" value="100" min="0" readonly>
+                    <span class="input-unit">分</span>
+                  </div>
+                  <p class="form-hint">根据题目分值自动计算</p>
+                </div>
+              </div>
+
+              <!-- 试卷题目配置 -->
+              <div class="form-group">
+                <label>试卷题目 <span class="required">*</span></label>
+                <div class="question-config-panel">
+                  <div class="question-add-row">
+                    <input type="text" class="form-input form-input-wide" id="questionIdInput" placeholder="输入题目ID，多个用逗号分隔，如：Q001,Q002,Q003">
+                    <button type="button" class="btn btn-primary" id="addQuestionBtn">批量添加</button>
+                  </div>
+                  <p class="form-hint">支持批量输入多个题目ID，用逗号分隔，系统将自动获取题型信息</p>
+
+                  <!-- 题目列表 -->
+                  <div class="question-list-config" id="questionListConfig">
+                    <div class="question-list-header">
+                      <span class="col-seq">序号</span>
+                      <span class="col-id">题目ID</span>
+                      <span class="col-type">题型</span>
+                      <span class="col-score">分值</span>
+                      <span class="col-action">操作</span>
+                    </div>
+                    <div class="question-list-body" id="questionListBody">
+                      <!-- 示例题目 -->
+                      <div class="question-row" data-qid="Q001">
+                        <span class="col-seq">1</span>
+                        <span class="col-id">Q001</span>
+                        <span class="col-type"><span class="type-badge choice">单选题</span></span>
+                        <span class="col-score">
+                          <input type="number" class="score-input-sm" value="5" min="0">
+                        </span>
+                        <span class="col-action">
+                          <button type="button" class="btn-icon-sm btn-move-up" title="上移">↑</button>
+                          <button type="button" class="btn-icon-sm btn-move-down" title="下移">↓</button>
+                          <button type="button" class="btn-icon-sm btn-delete-q" title="删除">×</button>
+                        </span>
+                      </div>
+                      <div class="question-row" data-qid="Q002">
+                        <span class="col-seq">2</span>
+                        <span class="col-id">Q002</span>
+                        <span class="col-type"><span class="type-badge choice">单选题</span></span>
+                        <span class="col-score">
+                          <input type="number" class="score-input-sm" value="5" min="0">
+                        </span>
+                        <span class="col-action">
+                          <button type="button" class="btn-icon-sm btn-move-up" title="上移">↑</button>
+                          <button type="button" class="btn-icon-sm btn-move-down" title="下移">↓</button>
+                          <button type="button" class="btn-icon-sm btn-delete-q" title="删除">×</button>
+                        </span>
+                      </div>
+                      <div class="question-row" data-qid="Q003">
+                        <span class="col-seq">3</span>
+                        <span class="col-id">Q003</span>
+                        <span class="col-type"><span class="type-badge multi">多选题</span></span>
+                        <span class="col-score">
+                          <input type="number" class="score-input-sm" value="10" min="0">
+                        </span>
+                        <span class="col-action">
+                          <button type="button" class="btn-icon-sm btn-move-up" title="上移">↑</button>
+                          <button type="button" class="btn-icon-sm btn-move-down" title="下移">↓</button>
+                          <button type="button" class="btn-icon-sm btn-delete-q" title="删除">×</button>
+                        </span>
+                      </div>
+                      <div class="question-row" data-qid="Q004">
+                        <span class="col-seq">4</span>
+                        <span class="col-id">Q004</span>
+                        <span class="col-type"><span class="type-badge fill">填空题</span></span>
+                        <span class="col-score">
+                          <input type="number" class="score-input-sm" value="10" min="0">
+                        </span>
+                        <span class="col-action">
+                          <button type="button" class="btn-icon-sm btn-move-up" title="上移">↑</button>
+                          <button type="button" class="btn-icon-sm btn-move-down" title="下移">↓</button>
+                          <button type="button" class="btn-icon-sm btn-delete-q" title="删除">×</button>
+                        </span>
+                      </div>
+                      <div class="question-row" data-qid="Q005">
+                        <span class="col-seq">5</span>
+                        <span class="col-id">Q005</span>
+                        <span class="col-type"><span class="type-badge essay">解答题</span></span>
+                        <span class="col-score">
+                          <input type="number" class="score-input-sm" value="20" min="0">
+                        </span>
+                        <span class="col-action">
+                          <button type="button" class="btn-icon-sm btn-move-up" title="上移">↑</button>
+                          <button type="button" class="btn-icon-sm btn-move-down" title="下移">↓</button>
+                          <button type="button" class="btn-icon-sm btn-delete-q" title="删除">×</button>
+                        </span>
+                      </div>
+                      <div class="question-row" data-qid="Q006">
+                        <span class="col-seq">6</span>
+                        <span class="col-id">Q006</span>
+                        <span class="col-type"><span class="type-badge essay">解答题</span></span>
+                        <span class="col-score">
+                          <input type="number" class="score-input-sm" value="25" min="0">
+                        </span>
+                        <span class="col-action">
+                          <button type="button" class="btn-icon-sm btn-move-up" title="上移">↑</button>
+                          <button type="button" class="btn-icon-sm btn-move-down" title="下移">↓</button>
+                          <button type="button" class="btn-icon-sm btn-delete-q" title="删除">×</button>
+                        </span>
+                      </div>
+                      <div class="question-row" data-qid="Q007">
+                        <span class="col-seq">7</span>
+                        <span class="col-id">Q007</span>
+                        <span class="col-type"><span class="type-badge essay">解答题</span></span>
+                        <span class="col-score">
+                          <input type="number" class="score-input-sm" value="25" min="0">
+                        </span>
+                        <span class="col-action">
+                          <button type="button" class="btn-icon-sm btn-move-up" title="上移">↑</button>
+                          <button type="button" class="btn-icon-sm btn-move-down" title="下移">↓</button>
+                          <button type="button" class="btn-icon-sm btn-delete-q" title="删除">×</button>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="question-list-footer">
+                      <span>共 <strong id="questionCount">7</strong> 道题目</span>
+                      <span>总分 <strong id="questionTotalScore">100</strong> 分</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 数据直传配置（仅数据直传类型显示） -->
+            <div class="form-section direct-data-config hidden" id="directDataConfig">
+              <h3>数据直传配置</h3>
+              <div class="config-notice">
+                <span class="notice-icon">💡</span>
+                <span class="notice-text">阅卷范围说明：只有已报名且上传了答题卡的学生才会纳入阅卷诊断范围，仅有答题卡数据但未报名的学生不会参与阅卷。</span>
+              </div>
+
+              <!-- 题目配置 -->
+              <div class="form-group">
+                <label>试卷题目 <span class="required">*</span></label>
+                <div class="question-config-panel">
+                  <div class="question-add-row">
+                    <input type="text" class="form-input form-input-wide" id="directQuestionIdInput" placeholder="输入题目ID，多个用逗号分隔，如：Q001,Q002,Q003">
+                    <button type="button" class="btn btn-primary" id="addDirectQuestionBtn">批量添加</button>
+                  </div>
+                  <p class="form-hint">支持批量输入多个题目ID，用逗号分隔</p>
+
+                  <!-- 题目列表（简化版，无分值） -->
+                  <div class="question-list-config question-list-simple" id="directQuestionListConfig">
+                    <div class="question-list-header">
+                      <span class="col-seq">序号</span>
+                      <span class="col-id-wide">题目ID</span>
+                      <span class="col-type">题型</span>
+                      <span class="col-action">操作</span>
+                    </div>
+                    <div class="question-list-body" id="directQuestionListBody">
+                      <div class="question-row" data-qid="D001">
+                        <span class="col-seq">1</span>
+                        <span class="col-id-wide">D001</span>
+                        <span class="col-type"><span class="type-badge choice">单选题</span></span>
+                        <span class="col-action">
+                          <button type="button" class="btn-icon-sm btn-delete-dq" title="删除">×</button>
+                        </span>
+                      </div>
+                      <div class="question-row" data-qid="D002">
+                        <span class="col-seq">2</span>
+                        <span class="col-id-wide">D002</span>
+                        <span class="col-type"><span class="type-badge fill">填空题</span></span>
+                        <span class="col-action">
+                          <button type="button" class="btn-icon-sm btn-delete-dq" title="删除">×</button>
+                        </span>
+                      </div>
+                      <div class="question-row" data-qid="D003">
+                        <span class="col-seq">3</span>
+                        <span class="col-id-wide">D003</span>
+                        <span class="col-type"><span class="type-badge essay">解答题</span></span>
+                        <span class="col-action">
+                          <button type="button" class="btn-icon-sm btn-delete-dq" title="删除">×</button>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="question-list-footer">
+                      <span>共 <strong id="directQuestionCount">3</strong> 道题目</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- 按学生名单 -->
-              <div class="scope-content" id="scopeStudent" style="display:none;">
-                <div class="student-upload">
-                  <div class="upload-area">
-                    <span class="upload-icon">📄</span>
-                    <p>点击上传或拖拽学生名单文件</p>
-                    <span class="upload-hint">支持 Excel (.xlsx) 格式</span>
+              <!-- 学生小分表上传 -->
+              <div class="form-group">
+                <label>学生小分表 <span class="required">*</span></label>
+                <div class="upload-box" id="scoreUploadBox">
+                  <div class="upload-content">
+                    <span class="upload-icon-lg">📊</span>
+                    <p class="upload-title">点击或拖拽上传学生小分表</p>
+                    <p class="upload-hint">支持 Excel (.xlsx, .xls) 或 CSV 格式</p>
                   </div>
-                  <button class="btn btn-outline">下载模板</button>
+                  <input type="file" class="upload-input" id="scoreFileInput" accept=".xlsx,.xls,.csv">
                 </div>
-                <div class="selected-students">
-                  <h5>已选学生 (3人)</h5>
-                  <div class="student-tags">
-                    <span class="student-tag">李明 <button class="tag-remove">×</button></span>
-                    <span class="student-tag">王小红 <button class="tag-remove">×</button></span>
-                    <span class="student-tag">张华 <button class="tag-remove">×</button></span>
-                    <button class="btn btn-sm btn-outline">+ 手动添加</button>
+                <div class="uploaded-file hidden" id="scoreUploadedFile">
+                  <span class="file-icon">📄</span>
+                  <span class="file-name">学生小分表_高三1班.xlsx</span>
+                  <span class="file-size">125 KB</span>
+                  <button type="button" class="btn-icon-sm btn-remove-file" id="removeScoreFile">×</button>
+                </div>
+                <p class="form-hint">小分表需包含：学生姓名/学号、各题得分。<a href="#" class="link">下载模板</a></p>
+              </div>
+
+              <!-- 学生答题卡上传 -->
+              <div class="form-group">
+                <label>学生答题卡 <span class="required">*</span></label>
+                <div class="upload-type-switch">
+                  <label class="switch-item active" data-type="image">
+                    <input type="radio" name="answerCardType" value="image" checked>
+                    <span>上传图片</span>
+                  </label>
+                  <label class="switch-item" data-type="json">
+                    <input type="radio" name="answerCardType" value="json">
+                    <span>上传JSON</span>
+                  </label>
+                </div>
+
+                <!-- 图片上传 -->
+                <div class="upload-area-card" id="imageUploadArea">
+                  <div class="upload-box upload-box-multi" id="cardImageUploadBox">
+                    <div class="upload-content">
+                      <span class="upload-icon-lg">🖼️</span>
+                      <p class="upload-title">点击或拖拽上传答题卡图片</p>
+                      <p class="upload-hint">支持 JPG、PNG 格式，可批量上传多张</p>
+                    </div>
+                    <input type="file" class="upload-input" id="cardImageInput" accept=".jpg,.jpeg,.png" multiple>
+                  </div>
+                  <div class="uploaded-images" id="uploadedImages">
+                    <div class="image-item">
+                      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='80' fill='%23e0e0e0'%3E%3Crect width='60' height='80'/%3E%3C/svg%3E" alt="答题卡">
+                      <span class="image-name">李明_答题卡.jpg</span>
+                      <button type="button" class="btn-remove-img">×</button>
+                    </div>
+                    <div class="image-item">
+                      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='80' fill='%23e0e0e0'%3E%3Crect width='60' height='80'/%3E%3C/svg%3E" alt="答题卡">
+                      <span class="image-name">王小红_答题卡.jpg</span>
+                      <button type="button" class="btn-remove-img">×</button>
+                    </div>
+                    <div class="image-item">
+                      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='80' fill='%23e0e0e0'%3E%3Crect width='60' height='80'/%3E%3C/svg%3E" alt="答题卡">
+                      <span class="image-name">张华_答题卡.jpg</span>
+                      <button type="button" class="btn-remove-img">×</button>
+                    </div>
+                  </div>
+                  <p class="form-hint">图片命名建议：学生姓名_答题卡.jpg，便于系统自动匹配</p>
+                </div>
+
+                <!-- JSON上传 -->
+                <div class="upload-area-card hidden" id="jsonUploadArea">
+                  <div class="upload-box" id="cardJsonUploadBox">
+                    <div class="upload-content">
+                      <span class="upload-icon-lg">📋</span>
+                      <p class="upload-title">点击或拖拽上传答题卡JSON文件</p>
+                      <p class="upload-hint">支持 .json 格式</p>
+                    </div>
+                    <input type="file" class="upload-input" id="cardJsonInput" accept=".json">
+                  </div>
+                  <div class="uploaded-file hidden" id="jsonUploadedFile">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">答题卡数据.json</span>
+                    <span class="file-size">256 KB</span>
+                    <button type="button" class="btn-icon-sm btn-remove-file" id="removeJsonFile">×</button>
+                  </div>
+                  <p class="form-hint">JSON格式需包含学生信息和各题作答内容。<a href="#" class="link">查看格式说明</a></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 学生范围 - 级联选择 -->
+            <div class="form-section">
+              <h3>入口开放学生范围</h3>
+              <div class="edit-notice hidden" id="editActiveNotice">
+                <span class="notice-icon">⚠️</span>
+                <span class="notice-text">当前诊断正在进行中，已报名的学生不可移除，仅支持添加新学生。</span>
+              </div>
+              <div class="cascade-selector">
+                <!-- 第一级：机构 -->
+                <div class="cascade-column">
+                  <div class="cascade-header">
+                    <span>机构</span>
+                  </div>
+                  <div class="cascade-list" id="orgList">
+                    <div class="cascade-item active" data-id="org1">
+                      <span class="item-name">北京总校</span>
+                      <span class="item-arrow">›</span>
+                    </div>
+                    <div class="cascade-item" data-id="org2">
+                      <span class="item-name">上海分校</span>
+                      <span class="item-arrow">›</span>
+                    </div>
+                    <div class="cascade-item" data-id="org3">
+                      <span class="item-name">广州分校</span>
+                      <span class="item-arrow">›</span>
+                    </div>
+                    <div class="cascade-item" data-id="org4">
+                      <span class="item-name">深圳分校</span>
+                      <span class="item-arrow">›</span>
+                    </div>
                   </div>
                 </div>
+
+                <!-- 第二级：班级 -->
+                <div class="cascade-column">
+                  <div class="cascade-header">
+                    <span>班级</span>
+                    <label class="select-all-label">
+                      <input type="checkbox" id="selectAllClasses">
+                      <span>全选</span>
+                    </label>
+                  </div>
+                  <div class="cascade-list" id="classList">
+                    <div class="cascade-item-check" data-id="class1">
+                      <input type="checkbox" checked>
+                      <span>高三(1)班</span>
+                      <span class="item-arrow">›</span>
+                    </div>
+                    <div class="cascade-item-check" data-id="class2">
+                      <input type="checkbox" checked>
+                      <span>高三(2)班</span>
+                      <span class="item-arrow">›</span>
+                    </div>
+                    <div class="cascade-item-check" data-id="class3">
+                      <input type="checkbox">
+                      <span>高三(3)班</span>
+                      <span class="item-arrow">›</span>
+                    </div>
+                    <div class="cascade-item-check" data-id="class4">
+                      <input type="checkbox">
+                      <span>高二(1)班</span>
+                      <span class="item-arrow">›</span>
+                    </div>
+                    <div class="cascade-item-check" data-id="class5">
+                      <input type="checkbox">
+                      <span>高二(2)班</span>
+                      <span class="item-arrow">›</span>
+                    </div>
+                    <div class="cascade-item-check" data-id="class6">
+                      <input type="checkbox">
+                      <span>高一(1)班</span>
+                      <span class="item-arrow">›</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 第三级：学生名单 -->
+                <div class="cascade-column cascade-column-wide">
+                  <div class="cascade-header">
+                    <span>学生名单</span>
+                    <label class="select-all-label">
+                      <input type="checkbox" id="selectAllStudents">
+                      <span>全选</span>
+                    </label>
+                  </div>
+                  <div class="cascade-search">
+                    <input type="text" class="search-input" placeholder="搜索学生姓名..." id="studentSearch">
+                  </div>
+                  <div class="cascade-list student-list-cascade" id="studentListCascade">
+                    <div class="cascade-item-check student-check locked" data-id="stu1" data-locked="true">
+                      <input type="checkbox" checked disabled>
+                      <span class="student-info-cascade">
+                        <span class="stu-name">李明</span>
+                        <span class="stu-id">学号: 20240101</span>
+                      </span>
+                      <span class="locked-tag" title="进行中的诊断已有学生不可移除">已报名</span>
+                    </div>
+                    <div class="cascade-item-check student-check locked" data-id="stu2" data-locked="true">
+                      <input type="checkbox" checked disabled>
+                      <span class="student-info-cascade">
+                        <span class="stu-name">王小红</span>
+                        <span class="stu-id">学号: 20240102</span>
+                      </span>
+                      <span class="locked-tag" title="进行中的诊断已有学生不可移除">已报名</span>
+                    </div>
+                    <div class="cascade-item-check student-check locked" data-id="stu3" data-locked="true">
+                      <input type="checkbox" checked disabled>
+                      <span class="student-info-cascade">
+                        <span class="stu-name">张华</span>
+                        <span class="stu-id">学号: 20240103</span>
+                      </span>
+                      <span class="locked-tag" title="进行中的诊断已有学生不可移除">已报名</span>
+                    </div>
+                    <div class="cascade-item-check student-check" data-id="stu4">
+                      <input type="checkbox">
+                      <span class="student-info-cascade">
+                        <span class="stu-name">刘芳</span>
+                        <span class="stu-id">学号: 20240104</span>
+                      </span>
+                    </div>
+                    <div class="cascade-item-check student-check" data-id="stu5">
+                      <input type="checkbox">
+                      <span class="student-info-cascade">
+                        <span class="stu-name">陈刚</span>
+                        <span class="stu-id">学号: 20240105</span>
+                      </span>
+                    </div>
+                    <div class="cascade-item-check student-check" data-id="stu6">
+                      <input type="checkbox">
+                      <span class="student-info-cascade">
+                        <span class="stu-name">赵丽</span>
+                        <span class="stu-id">学号: 20240106</span>
+                      </span>
+                    </div>
+                    <div class="cascade-item-check student-check" data-id="stu7">
+                      <input type="checkbox">
+                      <span class="student-info-cascade">
+                        <span class="stu-name">孙伟</span>
+                        <span class="stu-id">学号: 20240107</span>
+                      </span>
+                    </div>
+                    <div class="cascade-item-check student-check" data-id="stu8">
+                      <input type="checkbox">
+                      <span class="student-info-cascade">
+                        <span class="stu-name">周敏</span>
+                        <span class="stu-id">学号: 20240108</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 已选统计 -->
+              <div class="selected-summary">
+                <span class="summary-label">已选择：</span>
+                <span class="summary-count" id="selectedCount">2 个班级，3 名学生</span>
+                <button class="btn btn-sm btn-outline" id="clearSelection">清空选择</button>
               </div>
             </div>
 
@@ -761,7 +1162,7 @@
                 <span class="big-score">62</span>
                 <span class="full-score">/ 70 分</span>
               </div>
-              <div class="score-rank">班级排名：第 8 名 / 共 30 人</div>
+              <div class="score-rank">诊断排名：第 8 名 / 共 285 人</div>
             </div>
 
             <!-- 各题得分 -->
@@ -834,6 +1235,561 @@
 
   </div>
   <!-- 主内容区域结束 -->
+
+  <!-- 报名名单弹窗 -->
+  <div class="modal enroll-modal" id="enrollModal">
+    <div class="enroll-content">
+      <div class="enroll-header">
+        <h2>报名学生名单</h2>
+        <button class="btn btn-icon close-enroll" id="closeEnroll">✕</button>
+      </div>
+
+      <div class="enroll-info">
+        <span class="enroll-diagnosis" id="enrollDiagnosisName">2024春季学业诊断</span>
+        <span class="enroll-count">共 <strong id="enrollTotalCount">285</strong> 人报名</span>
+      </div>
+
+      <div class="enroll-toolbar">
+        <div class="search-box">
+          <input type="text" class="form-input" id="enrollSearchInput" placeholder="搜索姓名或学号...">
+        </div>
+        <button class="btn btn-outline" id="exportEnrollBtn">导出名单</button>
+      </div>
+
+      <div class="enroll-table">
+        <table>
+          <thead>
+            <tr>
+              <th>序号</th>
+              <th>机构</th>
+              <th>学生姓名</th>
+              <th>学号</th>
+              <th>班级</th>
+              <th>报名时间</th>
+              <th>答题状态</th>
+            </tr>
+          </thead>
+          <tbody id="enrollTableBody">
+            <tr>
+              <td>1</td>
+              <td>北京总校</td>
+              <td><span class="student-avatar-sm">李</span> 李明</td>
+              <td>20240101</td>
+              <td>高三(1)班</td>
+              <td>2024-04-14 18:30</td>
+              <td><span class="answer-status published">报告已发布</span></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>北京总校</td>
+              <td><span class="student-avatar-sm">王</span> 王小红</td>
+              <td>20240102</td>
+              <td>高三(1)班</td>
+              <td>2024-04-14 19:05</td>
+              <td><span class="answer-status published">报告已发布</span></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>北京总校</td>
+              <td><span class="student-avatar-sm">张</span> 张华</td>
+              <td>20240103</td>
+              <td>高三(1)班</td>
+              <td>2024-04-14 20:15</td>
+              <td><span class="answer-status grading">阅卷中</span></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>上海分校</td>
+              <td><span class="student-avatar-sm">刘</span> 刘芳</td>
+              <td>20240201</td>
+              <td>高三(2)班</td>
+              <td>2024-04-15 08:30</td>
+              <td><span class="answer-status grading">阅卷中</span></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>上海分校</td>
+              <td><span class="student-avatar-sm">陈</span> 陈刚</td>
+              <td>20240202</td>
+              <td>高三(2)班</td>
+              <td>2024-04-15 09:10</td>
+              <td><span class="answer-status notsubmit">未提交</span></td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>广州分校</td>
+              <td><span class="student-avatar-sm">赵</span> 赵丽</td>
+              <td>20240301</td>
+              <td>高三(1)班</td>
+              <td>2024-04-15 10:20</td>
+              <td><span class="answer-status published">报告已发布</span></td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>广州分校</td>
+              <td><span class="student-avatar-sm">孙</span> 孙伟</td>
+              <td>20240302</td>
+              <td>高三(3)班</td>
+              <td>2024-04-15 11:00</td>
+              <td><span class="answer-status grading">阅卷中</span></td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>深圳分校</td>
+              <td><span class="student-avatar-sm">周</span> 周敏</td>
+              <td>20240401</td>
+              <td>高三(3)班</td>
+              <td>2024-04-15 14:30</td>
+              <td><span class="answer-status notsubmit">未提交</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="enroll-footer">
+        <div class="enroll-stats">
+          <span class="stat-item"><span class="dot completed"></span> 已完成 <strong>180</strong></span>
+          <span class="stat-item"><span class="dot inprogress"></span> 答题中 <strong>35</strong></span>
+          <span class="stat-item"><span class="dot notstart"></span> 未开始 <strong>70</strong></span>
+        </div>
+        <div class="enroll-pagination">
+          <button class="btn btn-sm" disabled>上一页</button>
+          <span class="page-num">1 / 36</span>
+          <button class="btn btn-sm">下一页</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 诊断报告列表弹窗 -->
+  <div class="modal report-list-modal" id="reportListModal">
+    <div class="report-list-content">
+      <div class="report-list-header">
+        <h2>诊断报告列表</h2>
+        <button class="btn btn-icon close-report-list" id="closeReportList">✕</button>
+      </div>
+
+      <div class="report-list-info">
+        <span class="report-list-diagnosis" id="reportListDiagnosisName">2024春季学业诊断</span>
+        <span class="report-list-count">共 <strong id="reportListTotalCount">180</strong> 份报告</span>
+      </div>
+
+      <div class="report-list-toolbar">
+        <div class="search-box">
+          <input type="text" class="form-input" id="reportListSearchInput" placeholder="搜索姓名或学号...">
+        </div>
+        <div class="filter-group">
+          <select class="form-input filter-select-sm" id="reportScoreFilter">
+            <option value="">全部分数段</option>
+            <option value="90">90分以上</option>
+            <option value="80">80-89分</option>
+            <option value="70">70-79分</option>
+            <option value="60">60-69分</option>
+            <option value="0">60分以下</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="report-list-table">
+        <table>
+          <thead>
+            <tr>
+              <th>序号</th>
+              <th>学生姓名</th>
+              <th>学号</th>
+              <th>班级</th>
+              <th>诊断得分</th>
+              <th>诊断排名</th>
+              <th>完成时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="reportListTableBody">
+            <tr>
+              <td>1</td>
+              <td><span class="student-avatar-sm">刘</span> 刘芳</td>
+              <td>20240104</td>
+              <td>高三(2)班</td>
+              <td><span class="score-cell">95</span>/100</td>
+              <td>第 1 名</td>
+              <td>2024-04-16 10:30</td>
+              <td><button class="btn btn-sm btn-primary btn-view-detail">查看报告</button></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><span class="student-avatar-sm">王</span> 王小红</td>
+              <td>20240102</td>
+              <td>高三(1)班</td>
+              <td><span class="score-cell">92</span>/100</td>
+              <td>第 2 名</td>
+              <td>2024-04-16 11:15</td>
+              <td><button class="btn btn-sm btn-primary btn-view-detail">查看报告</button></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><span class="student-avatar-sm">周</span> 周敏</td>
+              <td>20240108</td>
+              <td>高三(3)班</td>
+              <td><span class="score-cell">88</span>/100</td>
+              <td>第 5 名</td>
+              <td>2024-04-16 14:20</td>
+              <td><button class="btn btn-sm btn-primary btn-view-detail">查看报告</button></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><span class="student-avatar-sm">李</span> 李明</td>
+              <td>20240101</td>
+              <td>高三(1)班</td>
+              <td><span class="score-cell">85</span>/100</td>
+              <td>第 8 名</td>
+              <td>2024-04-16 15:00</td>
+              <td><button class="btn btn-sm btn-primary btn-view-detail">查看报告</button></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td><span class="student-avatar-sm">赵</span> 赵丽</td>
+              <td>20240106</td>
+              <td>高三(1)班</td>
+              <td><span class="score-cell">78</span>/100</td>
+              <td>第 15 名</td>
+              <td>2024-04-16 16:30</td>
+              <td><button class="btn btn-sm btn-primary btn-view-detail">查看报告</button></td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td><span class="student-avatar-sm">陈</span> 陈刚</td>
+              <td>20240105</td>
+              <td>高三(2)班</td>
+              <td><span class="score-cell">72</span>/100</td>
+              <td>第 22 名</td>
+              <td>2024-04-16 17:45</td>
+              <td><button class="btn btn-sm btn-primary btn-view-detail">查看报告</button></td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td><span class="student-avatar-sm">张</span> 张华</td>
+              <td>20240103</td>
+              <td>高三(1)班</td>
+              <td><span class="score-cell">58</span>/100</td>
+              <td>第 35 名</td>
+              <td>2024-04-17 09:10</td>
+              <td><button class="btn btn-sm btn-primary btn-view-detail">查看报告</button></td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td><span class="student-avatar-sm">孙</span> 孙伟</td>
+              <td>20240107</td>
+              <td>高三(3)班</td>
+              <td><span class="score-cell">45</span>/100</td>
+              <td>第 42 名</td>
+              <td>2024-04-17 10:20</td>
+              <td><button class="btn btn-sm btn-primary btn-view-detail">查看报告</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="report-list-footer">
+        <div class="report-list-stats">
+          <span class="stat-item">平均分 <strong>76.5</strong></span>
+          <span class="stat-item">最高分 <strong>95</strong></span>
+          <span class="stat-item">最低分 <strong>45</strong></span>
+        </div>
+        <div class="report-list-pagination">
+          <button class="btn btn-sm" disabled>上一页</button>
+          <span class="page-num">1 / 23</span>
+          <button class="btn btn-sm">下一页</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 云控开关弹窗 -->
+  <div class="modal cloud-control-modal" id="cloudControlModal">
+    <div class="cloud-control-content">
+      <div class="cloud-control-header">
+        <h2>机构云控开关</h2>
+        <button class="btn btn-icon close-cloud-control" id="closeCloudControl">✕</button>
+      </div>
+
+      <div class="cloud-control-notice">
+        <span class="notice-icon">💡</span>
+        <span class="notice-text">控制各机构的诊断入口开放状态，关闭后该机构学生将无法访问诊断入口。修改后需点击"保存并下发"使配置生效。</span>
+      </div>
+
+      <div class="cloud-control-toolbar">
+        <div class="search-box">
+          <input type="text" class="form-input" id="cloudControlSearch" placeholder="搜索机构名称...">
+        </div>
+        <div class="batch-actions">
+          <button class="btn btn-sm btn-outline" id="batchOpenAll">全部开放</button>
+          <button class="btn btn-sm btn-outline" id="batchCloseAll">全部关闭</button>
+        </div>
+      </div>
+
+      <div class="cloud-control-list">
+        <div class="control-list-header">
+          <span class="col-org">机构名称</span>
+          <span class="col-students">学生数</span>
+          <span class="col-status">当前状态</span>
+          <span class="col-switch">开关控制</span>
+        </div>
+        <div class="control-list-body" id="cloudControlListBody">
+          <div class="control-row" data-org="org1">
+            <span class="col-org">
+              <span class="org-icon">🏫</span>
+              北京总校
+            </span>
+            <span class="col-students">320人</span>
+            <span class="col-status"><span class="status-dot open"></span>已开放</span>
+            <span class="col-switch">
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </span>
+          </div>
+          <div class="control-row" data-org="org2">
+            <span class="col-org">
+              <span class="org-icon">🏫</span>
+              上海分校
+            </span>
+            <span class="col-students">256人</span>
+            <span class="col-status"><span class="status-dot open"></span>已开放</span>
+            <span class="col-switch">
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </span>
+          </div>
+          <div class="control-row" data-org="org3">
+            <span class="col-org">
+              <span class="org-icon">🏫</span>
+              广州分校
+            </span>
+            <span class="col-students">198人</span>
+            <span class="col-status"><span class="status-dot closed"></span>已关闭</span>
+            <span class="col-switch">
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </span>
+          </div>
+          <div class="control-row" data-org="org4">
+            <span class="col-org">
+              <span class="org-icon">🏫</span>
+              深圳分校
+            </span>
+            <span class="col-students">175人</span>
+            <span class="col-status"><span class="status-dot open"></span>已开放</span>
+            <span class="col-switch">
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </span>
+          </div>
+          <div class="control-row" data-org="org5">
+            <span class="col-org">
+              <span class="org-icon">🏫</span>
+              杭州分校
+            </span>
+            <span class="col-students">142人</span>
+            <span class="col-status"><span class="status-dot open"></span>已开放</span>
+            <span class="col-switch">
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </span>
+          </div>
+          <div class="control-row" data-org="org6">
+            <span class="col-org">
+              <span class="org-icon">🏫</span>
+              南京分校
+            </span>
+            <span class="col-students">128人</span>
+            <span class="col-status"><span class="status-dot closed"></span>已关闭</span>
+            <span class="col-switch">
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </span>
+          </div>
+          <div class="control-row" data-org="org7">
+            <span class="col-org">
+              <span class="org-icon">🏫</span>
+              成都分校
+            </span>
+            <span class="col-students">165人</span>
+            <span class="col-status"><span class="status-dot open"></span>已开放</span>
+            <span class="col-switch">
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </span>
+          </div>
+          <div class="control-row" data-org="org8">
+            <span class="col-org">
+              <span class="org-icon">🏫</span>
+              武汉分校
+            </span>
+            <span class="col-students">112人</span>
+            <span class="col-status"><span class="status-dot open"></span>已开放</span>
+            <span class="col-switch">
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cloud-control-footer">
+        <div class="control-summary">
+          <span>共 <strong>8</strong> 个机构，<strong>6</strong> 个已开放，<strong>2</strong> 个已关闭</span>
+        </div>
+        <div class="control-actions">
+          <button class="btn btn-outline" id="cancelCloudControl">取消</button>
+          <button class="btn btn-primary" id="saveCloudControl">保存并下发</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 课程咨询名单弹窗 -->
+  <div class="modal consult-modal" id="consultModal">
+    <div class="consult-content">
+      <div class="consult-header">
+        <h2>课程咨询名单</h2>
+        <button class="btn btn-icon close-consult" id="closeConsult">✕</button>
+      </div>
+
+      <div class="consult-info">
+        <span class="consult-diagnosis">2024春季学业诊断</span>
+        <span class="consult-count">共 <strong id="consultTotalCount">28</strong> 人提交咨询</span>
+      </div>
+
+      <div class="consult-toolbar">
+        <div class="search-box">
+          <input type="text" class="form-input" id="consultSearchInput" placeholder="搜索姓名或手机号...">
+        </div>
+        <button class="btn btn-outline" id="exportConsultBtn">导出名单</button>
+      </div>
+
+      <div class="consult-table">
+        <table>
+          <thead>
+            <tr>
+              <th>序号</th>
+              <th>学生姓名</th>
+              <th>学号</th>
+              <th>班级</th>
+              <th>诊断得分</th>
+              <th>手机号</th>
+              <th>预约时间</th>
+              <th>提交时间</th>
+            </tr>
+          </thead>
+          <tbody id="consultTableBody">
+            <tr>
+              <td>1</td>
+              <td><span class="student-avatar-sm">李</span> 李明</td>
+              <td>20240101</td>
+              <td>高三(1)班</td>
+              <td><span class="score-cell">85</span>/100</td>
+              <td class="phone-cell">138****1234</td>
+              <td><span class="time-slot">工作日白天</span></td>
+              <td>2024-04-15 10:23</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><span class="student-avatar-sm">王</span> 王小红</td>
+              <td>20240102</td>
+              <td>高三(1)班</td>
+              <td><span class="score-cell high">92</span>/100</td>
+              <td class="phone-cell">139****5678</td>
+              <td><span class="time-slot">工作日晚上</span></td>
+              <td>2024-04-15 11:05</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><span class="student-avatar-sm">张</span> 张华</td>
+              <td>20240103</td>
+              <td>高三(1)班</td>
+              <td><span class="score-cell low">58</span>/100</td>
+              <td class="phone-cell">137****9012</td>
+              <td><span class="time-slot">周六白天</span></td>
+              <td>2024-04-15 14:30</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><span class="student-avatar-sm">刘</span> 刘芳</td>
+              <td>20240104</td>
+              <td>高三(2)班</td>
+              <td><span class="score-cell high">95</span>/100</td>
+              <td class="phone-cell">136****3456</td>
+              <td><span class="time-slot">周六晚上</span></td>
+              <td>2024-04-15 15:12</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td><span class="student-avatar-sm">陈</span> 陈刚</td>
+              <td>20240105</td>
+              <td>高三(2)班</td>
+              <td><span class="score-cell">72</span>/100</td>
+              <td class="phone-cell">135****7890</td>
+              <td><span class="time-slot">周日白天</span></td>
+              <td>2024-04-15 16:45</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td><span class="student-avatar-sm">赵</span> 赵丽</td>
+              <td>20240106</td>
+              <td>高三(1)班</td>
+              <td><span class="score-cell">78</span>/100</td>
+              <td class="phone-cell">134****2345</td>
+              <td><span class="time-slot">工作日白天</span></td>
+              <td>2024-04-16 09:10</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td><span class="student-avatar-sm">孙</span> 孙伟</td>
+              <td>20240107</td>
+              <td>高三(3)班</td>
+              <td><span class="score-cell low">45</span>/100</td>
+              <td class="phone-cell">133****6789</td>
+              <td><span class="time-slot">周日晚上</span></td>
+              <td>2024-04-16 10:30</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td><span class="student-avatar-sm">周</span> 周敏</td>
+              <td>20240108</td>
+              <td>高三(3)班</td>
+              <td><span class="score-cell">88</span>/100</td>
+              <td class="phone-cell">132****0123</td>
+              <td><span class="time-slot">工作日晚上</span></td>
+              <td>2024-04-16 11:20</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="consult-footer">
+        <div class="consult-pagination">
+          <button class="btn btn-sm" disabled>上一页</button>
+          <span class="page-num">1 / 4</span>
+          <button class="btn btn-sm">下一页</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- 批注弹窗 -->
   <div class="modal" id="commentModal">
@@ -1024,7 +1980,7 @@
         </div>
       </div>
 
-      <div class="report-footer">
+      <div class="report-footer report-actions">
         <button class="btn btn-outline" id="saveReportDraft">保存草稿</button>
         <button class="btn btn-primary" id="submitReport">发布报告，查看下一人</button>
       </div>

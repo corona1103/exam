@@ -1,4 +1,4 @@
-# 在线阅卷系统 - 技术实现文档
+# 在线阅卷诊断系统 - 技术实现文档
 
 ## 1. 技术架构
 
@@ -29,7 +29,7 @@ exam/
 
   <!-- 主内容区域 -->
   <div class="main-wrapper">
-    <!-- 模块1：阅卷批改 -->
+    <!-- 模块1：阅卷诊断 -->
     <div class="module module-grading" id="moduleGrading">
       <div class="page page-list" id="pageList">...</div>
       <div class="page page-grading" id="pageGrading">...</div>
@@ -45,6 +45,10 @@ exam/
   <!-- 弹窗 -->
   <div class="modal" id="commentModal">...</div>
   <div class="modal report-modal" id="reportModal">...</div>
+  <div class="modal enroll-modal" id="enrollModal">...</div>
+  <div class="modal consult-modal" id="consultModal">...</div>
+  <div class="modal report-list-modal" id="reportListModal">...</div>
+  <div class="modal cloud-control-modal" id="cloudControlModal">...</div>
 
   <!-- Toast 提示 -->
   <div class="toast" id="toast"></div>
@@ -78,235 +82,192 @@ navItems.forEach(item => {
 });
 ```
 
-**CSS 结构：**
-```css
-.global-nav {
-  width: 200px;
-  height: 100vh;
-  background: linear-gradient(180deg, #1a1f36 0%, #252b48 100%);
-  position: fixed;
-  left: 0;
-}
+### 2.2 学生状态管理
 
-.module {
-  display: none;
-}
-.module.active {
-  display: flex;
-}
-```
-
-### 2.2 页面切换（模块内）
-
-**实现方式：** CSS 类名控制显示/隐藏
-
-```css
-.page {
-  display: none;
-}
-.page.active {
-  display: flex;
-}
-```
-
+**状态类型：**
 ```javascript
-function showPage(page) {
-  pageList.classList.remove('active');
-  pageGrading.classList.remove('active');
-  if (page === 'list') {
-    pageList.classList.add('active');
-  } else {
-    pageGrading.classList.add('active');
-  }
-}
+// data-report-status 属性值
+'none'      // 待诊断
+'grading'   // 诊断中
+'pending'   // 待发布（已批完，报告未发布）
+'published' // 已完成（报告已发布）
 ```
 
-### 2.2 批改模式切换
-
-**状态变量：**
+**状态切换逻辑：**
 ```javascript
-let gradingMode = 'byQuestion'; // 'byQuestion' | 'byStudent'
-```
+document.querySelectorAll('.student-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const reportStatus = item.dataset.reportStatus;
 
-**UI 切换逻辑：**
-```javascript
-function updateGradingModeUI() {
-  if (gradingMode === 'byQuestion') {
-    // 显示题目列表，隐藏学生列表
-    // 显示学生导航，隐藏题目导航
-  } else {
-    // 显示学生列表，隐藏题目列表
-    // 显示题目导航，隐藏学生导航
-    // 更新提交按钮文字
-  }
-}
-```
-
-### 2.3 批注系统
-
-#### 2.3.1 批注类型
-| 类型 | CSS 类名 | 样式 |
-|------|----------|------|
-| 正确 | `.correct` | 绿色 ✓ |
-| 错误 | `.wrong` | 红色 ✗ |
-| 半对 | `.half` | 黄色 △ |
-| 圈注 | `.circle` | 红色圆圈 |
-| 下划线 | `.underline` | 红色下划线 |
-| 文字批注 | `.comment-mark` | 红色粗体文字 |
-
-#### 2.3.2 添加批注
-```javascript
-function addAnnotation(type, x, y, text = '') {
-  const annotation = document.createElement('div');
-  annotation.className = 'annotation';
-  annotation.style.left = x + 'px';
-  annotation.style.top = y + 'px';
-
-  switch(type) {
-    case 'correct':
-      annotation.classList.add('correct');
-      annotation.textContent = '✓';
-      break;
-    // ... 其他类型
-  }
-
-  // 绑定拖拽和删除事件
-  makeDraggable(annotation);
-  annotation.addEventListener('dblclick', () => annotation.remove());
-
-  annotations.appendChild(annotation);
-}
-```
-
-#### 2.3.3 拖拽实现
-```javascript
-// 状态变量
-let isDragging = false;
-let dragTarget = null;
-let dragOffset = { x: 0, y: 0 };
-
-// mousedown: 开始拖拽
-element.addEventListener('mousedown', (e) => {
-  if (currentTool !== 'select') return;
-  isDragging = true;
-  dragTarget = element;
-  dragOffset.x = e.clientX - rect.left;
-  dragOffset.y = e.clientY - rect.top;
-});
-
-// mousemove: 拖拽中（全局监听）
-document.addEventListener('mousemove', (e) => {
-  if (!isDragging) return;
-  // 计算新位置（考虑缩放比例）
-  let newX = (e.clientX - paperRect.left) / scale - dragOffset.x;
-  let newY = (e.clientY - paperRect.top) / scale - dragOffset.y;
-  // 限制在答卷范围内
-  dragTarget.style.left = newX + 'px';
-  dragTarget.style.top = newY + 'px';
-});
-
-// mouseup: 结束拖拽
-document.addEventListener('mouseup', () => {
-  isDragging = false;
-  dragTarget = null;
-});
-```
-
-#### 2.3.4 文字批注字号
-```javascript
-let selectedFontSize = 18; // 默认字号
-
-// 字号选择按钮
-document.querySelectorAll('.font-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    selectedFontSize = parseInt(btn.dataset.size);
+    if (reportStatus === 'published') {
+      // 已发布：显示只读报告
+      showStudentReport(true);
+    } else if (reportStatus === 'pending') {
+      // 待发布：显示可编辑报告
+      showStudentReport(false);
+    } else {
+      // 正常批改流程
+      // ...
+    }
   });
 });
-
-// 应用字号
-annotation.style.fontSize = selectedFontSize + 'px';
 ```
 
-### 2.4 缩放功能
+### 2.3 报告只读模式
 
 ```javascript
-let zoomLevel = 100;
+function showStudentReport(readonly = false) {
+  if (readonly) {
+    // 禁用编辑
+    overallComment.setAttribute('readonly', true);
+    teacherMessage.setAttribute('readonly', true);
 
-function updateZoom() {
-  document.getElementById('zoomLevel').textContent = zoomLevel + '%';
-  paper.style.transform = `scale(${zoomLevel / 100})`;
-}
-
-// 缩放时拖拽位置需要除以缩放比例
-const scale = zoomLevel / 100;
-let newX = (e.clientX - paperRect.left) / scale - dragOffset.x;
-```
-
-### 2.5 学生报告
-
-#### 2.5.1 显示报告
-```javascript
-function showStudentReport() {
-  // 获取学生信息
-  const studentName = document.querySelector('.student-item.active .student-name').textContent;
-
-  // 计算总分
-  const totalScore = studentScores.reduce((a, b) => a + b, 0);
-
-  // 更新报告 UI
-  document.getElementById('reportStudentName').textContent = studentName;
-  document.getElementById('reportTotalScore').textContent = totalScore;
-
-  // 生成各题得分条
-  scoreOverview.innerHTML = questionScores.map((full, i) => {
-    const got = studentScores[i];
-    const percent = Math.round((got / full) * 100);
-    return `<div class="score-item">...</div>`;
-  }).join('');
-
-  // 显示弹窗
-  reportModal.classList.add('show');
-}
-```
-
-#### 2.5.2 提交按钮动态文字
-```javascript
-function updateSubmitButtonText() {
-  const submitBtn = document.getElementById('submitScore');
-  if (gradingMode === 'byStudent') {
-    if (currentQuestion >= totalQuestions) {
-      submitBtn.textContent = '完成批改并审核报告';
-    } else {
-      submitBtn.textContent = '提交并去下一题';
-    }
+    // 只显示关闭按钮
+    reportActions.innerHTML = `
+      <button class="btn btn-outline" id="closeReportOnly">关闭</button>
+    `;
   } else {
-    submitBtn.textContent = '提交并下一份';
+    // 可编辑模式
+    overallComment.removeAttribute('readonly');
+    teacherMessage.removeAttribute('readonly');
+
+    // 显示完整操作按钮
+    reportActions.innerHTML = `
+      <button class="btn btn-outline" id="saveReportDraft">保存草稿</button>
+      <button class="btn btn-primary" id="submitReport">发布报告，查看下一人</button>
+    `;
   }
-}
-```
-
-#### 2.5.3 智能跳转逻辑
-```javascript
-// 切换学生时检查是否需要直接显示报告
-const progressText = item.querySelector('.student-progress-text').textContent;
-const match = progressText.match(/已批 (\d+)\/(\d+)/);
-const gradedCount = match ? parseInt(match[1]) : 0;
-
-if (gradedCount >= totalQuestions) {
-  // 直接显示报告
-  showStudentReport();
-} else {
-  // 从未批改的题目开始
-  currentQuestion = gradedCount + 1;
-  updateQuestionInfo();
 }
 ```
 
 ---
 
-## 3. CSS 架构
+## 3. 诊断管理模块
 
-### 3.1 CSS 变量
+### 3.1 云控开关
+
+**HTML 结构：**
+```html
+<div class="cloud-control-modal" id="cloudControlModal">
+  <div class="control-row" data-org="org1">
+    <span class="col-org">北京总校</span>
+    <span class="col-students">320人</span>
+    <span class="col-status"><span class="status-dot open"></span>已开放</span>
+    <span class="col-switch">
+      <label class="switch">
+        <input type="checkbox" checked>
+        <span class="slider"></span>
+      </label>
+    </span>
+  </div>
+</div>
+```
+
+**JavaScript 逻辑：**
+```javascript
+// 全部开放
+batchOpenAll.addEventListener('click', () => {
+  document.querySelectorAll('#cloudControlListBody .switch input').forEach(cb => {
+    cb.checked = true;
+  });
+  updateCloudControlStatus();
+});
+
+// 更新状态显示
+function updateCloudControlStatus() {
+  const rows = document.querySelectorAll('#cloudControlListBody .control-row');
+  let openCount = 0, closedCount = 0;
+
+  rows.forEach(row => {
+    const checkbox = row.querySelector('.switch input');
+    const statusCol = row.querySelector('.col-status');
+    if (checkbox.checked) {
+      statusCol.innerHTML = '<span class="status-dot open"></span>已开放';
+      openCount++;
+    } else {
+      statusCol.innerHTML = '<span class="status-dot closed"></span>已关闭';
+      closedCount++;
+    }
+  });
+}
+```
+
+### 3.2 级联选择器
+
+**三级结构：** 机构 → 班级 → 学生
+
+```javascript
+// 学生锁定（进行中诊断的已报名学生）
+<div class="cascade-item-check student-check locked" data-locked="true">
+  <input type="checkbox" checked disabled>
+  <span class="student-info-cascade">
+    <span class="stu-name">李明</span>
+    <span class="stu-id">学号: 20240101</span>
+  </span>
+  <span class="locked-tag">已报名</span>
+</div>
+```
+
+### 3.3 诊断编辑规则
+
+```javascript
+// 编辑按钮处理
+document.querySelectorAll('.btn-edit-diagnosis').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const status = btn.dataset.status;
+
+    if (status === 'active') {
+      // 进行中：显示警告，锁定已报名学生
+      editNotice.classList.remove('hidden');
+      document.querySelectorAll('.student-check.locked input').forEach(cb => {
+        cb.disabled = true;
+      });
+    }
+  });
+});
+
+// 查看按钮处理（已结束诊断）
+document.querySelectorAll('.btn-view-diagnosis').forEach(btn => {
+  btn.addEventListener('click', () => {
+    // 禁用所有表单元素
+    editPage.querySelectorAll('input, select, textarea').forEach(el => {
+      el.disabled = true;
+    });
+  });
+});
+```
+
+### 3.4 时间校验
+
+```javascript
+function validateDiagnosisTimes() {
+  const enrollStart = new Date(startTime.value);
+  const enrollEnd = new Date(endTime.value);
+
+  // 在线模考类型需要校验考试时间
+  if (diagnosisType.value === 'online') {
+    const examStart = new Date(examStartTime.value);
+    const examEnd = new Date(examEndTime.value);
+
+    // 考试时间必须在报名时间区间内
+    if (examStart < enrollStart) {
+      showToast('考试开始时间不能早于报名开始时间');
+      return false;
+    }
+    if (examEnd > enrollEnd) {
+      showToast('考试结束时间不能晚于报名结束时间');
+      return false;
+    }
+  }
+  return true;
+}
+```
+
+---
+
+## 4. CSS 架构
+
+### 4.1 CSS 变量
 ```css
 :root {
   --primary: #1a73e8;
@@ -323,278 +284,192 @@ if (gradedCount >= totalQuestions) {
 }
 ```
 
-### 3.2 布局结构
+### 4.2 学生状态样式
 ```css
-/* 三栏布局 */
-.main-container {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
+/* 待诊断 */
+.status.pending { background: var(--bg); color: var(--text-secondary); }
+
+/* 诊断中 */
+.status.current { background: #e8f0fe; color: var(--primary); }
+
+/* 待发布 */
+.status.topublish { background: #fff3e0; color: #e65100; }
+
+/* 已完成 */
+.status.completed { background: #e6f4ea; color: var(--success); }
+```
+
+### 4.3 报名名单状态样式
+```css
+/* 未提交 */
+.answer-status.notsubmit { background: var(--bg); color: var(--text-secondary); }
+
+/* 阅卷中 */
+.answer-status.grading { background: #fff3e0; color: #e65100; }
+
+/* 报告已发布 */
+.answer-status.published { background: #e6f4ea; color: var(--success); }
+```
+
+### 4.4 开关组件
+```css
+.switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
 }
 
-.sidebar { width: 260px; }
-.paper-area { flex: 1; }
-.scoring-panel { width: 320px; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+  background-color: var(--success);
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
 ```
 
-### 3.3 组件样式规范
-
-**按钮：**
+### 4.5 锁定状态样式
 ```css
-.btn { padding: 8px 16px; border-radius: 4px; }
-.btn-primary { background: var(--primary); color: white; }
-.btn-outline { border: 1px solid currentColor; background: transparent; }
+.cascade-item-check.locked {
+  background: #f5f5f5;
+}
+
+.locked-tag {
+  font-size: 10px;
+  padding: 2px 6px;
+  background: #e0e0e0;
+  color: #666;
+  border-radius: 10px;
+  margin-left: auto;
+}
 ```
 
-**状态标签：**
-```css
-.status.done { background: #e6f4ea; color: var(--success); }
-.status.current { background: #e8f0fe; color: var(--primary); }
-.status.pending { background: var(--bg); color: var(--text-secondary); }
-```
+---
 
-**弹窗：**
+## 5. 弹窗系统
+
+### 5.1 弹窗列表
+| 弹窗 | ID | 用途 |
+|------|-----|------|
+| 批注弹窗 | commentModal | 输入文字批注 |
+| 报告弹窗 | reportModal | 学生诊断报告 |
+| 报名名单 | enrollModal | 查看报名学生 |
+| 咨询名单 | consultModal | 查看课程咨询 |
+| 诊断报告列表 | reportListModal | 查看所有诊断报告 |
+| 云控开关 | cloudControlModal | 控制机构开放状态 |
+
+### 5.2 弹窗通用样式
 ```css
 .modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.5);
   display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
-.modal.show { display: flex; }
+
+.modal.show {
+  display: flex;
+}
 ```
 
 ---
 
-## 4. 状态管理
+## 6. 事件处理汇总
 
-### 4.1 全局状态
-```javascript
-// 批改模式
-let gradingMode = 'byQuestion';
-
-// 当前考试
-let currentExam = null;
-
-// 按题批改状态
-let currentStudent = 13;
-const totalStudents = 30;
-
-// 按学生批改状态
-let currentQuestion = 3;
-const totalQuestions = 5;
-const questionScores = [10, 10, 15, 15, 20];
-
-// 学生得分记录
-let studentScores = [10, 8, 12, 13, 19];
-
-// 工具状态
-let currentTool = 'select';
-let zoomLevel = 100;
-
-// 拖拽状态
-let isDragging = false;
-let dragTarget = null;
-let dragOffset = { x: 0, y: 0 };
-
-// 批注状态
-let annotationCount = 0;
-let pendingAnnotationPos = null;
-let selectedFontSize = 18;
-```
-
-### 4.2 模拟数据
-```javascript
-const examsData = {
-  1: { name: '2024年期中考试 - 数学', class: '高三(1)班', total: 30, done: 12 },
-  2: { name: '2024年期中考试 - 语文', class: '高三(1)班', total: 30, done: 30 },
-  // ...
-};
-
-const studentNames = ['李明', '王小红', '张华', '刘芳', '陈刚', ...];
-```
-
----
-
-## 5. 事件处理
-
-### 5.1 事件绑定汇总
+### 6.1 诊断管理模块
 | 元素 | 事件 | 处理函数 |
 |------|------|----------|
-| `.btn-enter` | click | 进入批改页面 |
-| `#backToList` | click | 返回列表页 |
-| `.tool-btn` | click | 切换批注工具 |
-| `#paper` | click | 添加批注 |
-| `.annotation` | mousedown | 开始拖拽 |
-| `.annotation` | dblclick | 删除批注 |
-| `document` | mousemove | 拖拽中 |
-| `document` | mouseup | 结束拖拽 |
-| `#prevStudent/#nextStudent` | click | 切换学生 |
-| `#prevQuestion/#nextQuestion` | click | 切换题目 |
-| `.question-item` | click | 选择题目 |
-| `.student-item` | click | 选择学生 |
-| `.score-btn` | click | 快捷赋分 |
-| `#submitScore` | click | 提交评分 |
-| `#submitReport` | click | 提交报告 |
-| `document` | keydown | ESC 关闭弹窗 |
-| `#createDiagnosisBtn` | click | 创建诊断配置 |
-| `.btn-edit-diagnosis` | click | 编辑诊断配置 |
-| `#backToDiagnosisList` | click | 返回诊断列表 |
-| `.scope-tab` | click | 切换学生范围选择方式 |
-| `#publishDiagnosis` | click | 发布诊断配置 |
+| `#cloudControlBtn` | click | 打开云控弹窗 |
+| `#saveCloudControl` | click | 保存并下发云控配置 |
+| `#batchOpenAll` | click | 全部开放 |
+| `#batchCloseAll` | click | 全部关闭 |
+| `.btn-edit-diagnosis` | click | 编辑诊断（根据状态处理） |
+| `.btn-view-diagnosis` | click | 查看诊断（只读模式） |
+| `.btn-view-enroll` | click | 打开报名名单弹窗 |
+| `.btn-view-consult` | click | 打开咨询名单弹窗 |
+| `.btn-view-report` | click | 打开诊断报告列表弹窗 |
+| `#publishDiagnosis` | click | 发布诊断（含时间校验） |
+| `#diagnosisDesc` | input | 更新字数统计 |
+| `#examStartTime` | change | 校验考试时间范围 |
+| `#examEndTime` | change | 校验考试时间范围 |
 
-### 5.2 事件委托
-当前实现使用直接绑定，后续优化可使用事件委托：
-```javascript
-// 优化建议
-document.querySelector('.question-list').addEventListener('click', (e) => {
-  const item = e.target.closest('.question-item');
-  if (item) {
-    // 处理点击
-  }
-});
-```
+### 6.2 阅卷诊断模块
+| 元素 | 事件 | 处理函数 |
+|------|------|----------|
+| `.student-item` | click | 根据报告状态决定行为 |
+| `#submitReport` | click | 发布报告，更新学生状态 |
+| `#closeReportOnly` | click | 关闭只读报告 |
 
 ---
 
-## 6. 扩展指南
+## 7. 数据字段说明
 
-### 6.1 添加新的批注类型
-1. 在 `style.css` 中添加样式：
-```css
-.annotation.new-type {
-  /* 样式定义 */
-}
-```
+### 7.1 诊断列表字段
+| 字段 | 说明 |
+|------|------|
+| 诊断名称 | 诊断配置名称 |
+| 诊断类型 | 在线模考 / 数据直传 |
+| 报名开放时间 | 入口开放时间范围 |
+| 考试开放时间 | 仅在线模考显示，数据直传显示 "--" |
+| 学生范围 | 学生范围和人数 |
+| 状态 | 待开始 / 进行中 / 已结束 |
 
-2. 在 `index.html` 工具栏中添加按钮：
-```html
-<button class="tool-btn" data-tool="newType" title="新类型">
-  <span>图标</span>
-</button>
-```
+### 7.2 统计卡片字段
+| 字段 | 说明 |
+|------|------|
+| 诊断总数 | 所有诊断数量 |
+| 已报名学生 | 所有诊断的报名学生总数 |
+| 已发报告 | 已发布的诊断报告数量 |
+| 课程咨询 | 课程咨询提交数量 |
 
-3. 在 `app.js` 的 `addAnnotation` 函数中添加 case：
-```javascript
-case 'newType':
-  annotation.classList.add('new-type');
-  // 设置内容和样式
-  break;
-```
-
-### 6.2 接入后端 API
-```javascript
-// 示例：保存批注
-async function saveAnnotations(studentId, questionId, annotations) {
-  const response = await fetch('/api/annotations', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ studentId, questionId, annotations })
-  });
-  return response.json();
-}
-
-// 示例：获取学生答卷
-async function getStudentAnswer(studentId, questionId) {
-  const response = await fetch(`/api/answers/${studentId}/${questionId}`);
-  return response.json();
-}
-```
-
-### 6.3 状态持久化
-```javascript
-// 保存到 localStorage
-function saveState() {
-  localStorage.setItem('gradingState', JSON.stringify({
-    gradingMode,
-    currentStudent,
-    currentQuestion,
-    studentScores
-  }));
-}
-
-// 恢复状态
-function restoreState() {
-  const saved = localStorage.getItem('gradingState');
-  if (saved) {
-    const state = JSON.parse(saved);
-    // 恢复各状态变量
-  }
-}
-```
+### 7.3 咨询名单字段
+| 字段 | 说明 |
+|------|------|
+| 预约时间 | 学生选择的咨询时段（工作日白天/晚上、周六/周日白天/晚上） |
 
 ---
 
-## 7. 已知问题与优化建议
+## 8. 已知问题与优化建议
 
-### 7.1 已知问题
+### 8.1 已知问题
 1. 批注数据未持久化，刷新页面丢失
 2. 学生/题目数据为模拟数据
 3. 报告中的逐题详情为静态内容
 
-### 7.2 优化建议
+### 8.2 优化建议
 1. **性能优化**：大量批注时使用 Canvas 渲染
 2. **代码重构**：拆分为模块化组件
 3. **状态管理**：引入简单的状态管理模式
 4. **测试覆盖**：添加单元测试和 E2E 测试
 
-### 7.3 技术升级路径
+### 8.3 技术升级路径
 - Phase 1（当前）：纯静态演示
 - Phase 2：接入后端 API，数据持久化
 - Phase 3：重构为 Vue/React 组件化架构
-
----
-
-## 8. 诊断管理模块实现
-
-### 8.1 页面切换
-```javascript
-function showDiagnosisPage(page) {
-  diagnosisListPage.classList.remove('active');
-  diagnosisEditPage.classList.remove('active');
-  if (page === 'list') {
-    diagnosisListPage.classList.add('active');
-  } else {
-    diagnosisEditPage.classList.add('active');
-  }
-}
-```
-
-### 8.2 学生范围选择
-支持四种选择方式的标签切换：
-```javascript
-document.querySelectorAll('.scope-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    // 更新标签高亮
-    document.querySelectorAll('.scope-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-
-    // 切换对应内容区域
-    const scope = tab.dataset.scope;
-    // 按 scope 值显示对应的 .scope-content
-  });
-});
-```
-
-### 8.3 CSS 组件
-**诊断类型标签：**
-```css
-.type-tag.online { background: #e8f0fe; color: var(--primary); }
-.type-tag.direct { background: #fce8f3; color: #c41c7a; }
-```
-
-**范围选择标签：**
-```css
-.scope-tab { padding: 8px 16px; border-radius: 20px; }
-.scope-tab.active { background: var(--primary); color: white; }
-```
-
-**富文本编辑器：**
-```css
-.rich-editor { border: 1px solid var(--border); border-radius: 8px; }
-.editor-toolbar { display: flex; gap: 4px; padding: 8px 12px; }
-.editor-content { min-height: 150px; padding: 16px; }
-```
 
 ---
 
@@ -605,3 +480,7 @@ document.querySelectorAll('.scope-tab').forEach(tab => {
 | v1.0 | 2024-04-17 | 初始版本 |
 | v1.1 | 2024-04-17 | 新增全局导航、诊断管理、学生平板效果模块 |
 | v1.2 | 2024-04-18 | 重构诊断管理模块为配置管理功能 |
+| v1.3 | 2024-04-18 | 新增级联选择器、多弹窗系统 |
+| v1.4 | 2024-04-19 | 新增学生状态管理（待发布/已完成）、报告只读模式 |
+| v1.5 | 2024-04-19 | 报名名单状态调整、咨询名单增加预约时间字段 |
+| v1.6 | 2024-04-19 | 新增云控开关、诊断说明字段、考试时间校验、诊断列表增加考试时间列 |

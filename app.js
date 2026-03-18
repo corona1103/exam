@@ -460,7 +460,24 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.student-item').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
       const name = item.querySelector('.student-name').textContent;
+      const reportStatus = item.dataset.reportStatus; // 获取报告状态
 
+      // 根据报告状态决定行为
+      if (reportStatus === 'published') {
+        // 已发布：显示只读报告
+        showToast(`学生 ${name} 的报告已发布`);
+        showStudentReport(true); // true 表示只读模式
+        return;
+      }
+
+      if (reportStatus === 'pending') {
+        // 待发布：显示可编辑报告
+        showToast(`学生 ${name} 已批改完成，请审核发布报告`);
+        showStudentReport(false); // false 表示可编辑模式
+        return;
+      }
+
+      // grading 或 none：正常批改流程
       // 获取该学生的批改进度（模拟数据）
       const progressText = item.querySelector('.student-progress-text').textContent;
       const match = progressText.match(/已批 (\d+)\/(\d+)/);
@@ -469,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // 如果已经批完所有题目，直接显示报告
       if (gradedCount >= totalQuestions) {
         showToast(`学生 ${name} 已批改完成，请审核报告`);
-        showStudentReport();
+        showStudentReport(false);
         return;
       }
 
@@ -520,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 最后一题批改完成，显示整体报告
         showToast(`已提交评分: ${score}分，正在生成诊断报告...`);
         setTimeout(() => {
-          showStudentReport();
+          showStudentReport(false);
           scoreInput.value = '';
         }, 500);
       }
@@ -528,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ========== 学生整体报告 ==========
-  function showStudentReport() {
+  function showStudentReport(readonly = false) {
     // 获取当前学生名称
     const activeStudent = document.querySelector('.student-item.active');
     const studentName = activeStudent ? activeStudent.querySelector('.student-name').textContent : '李明';
@@ -537,8 +554,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reportStudentName').textContent = studentName;
     document.querySelector('.profile-avatar').textContent = studentName.charAt(0);
 
-    // 计算总分
-    const totalScore = studentScores.reduce((a, b) => a + b, 0);
+    // 计算总分（已发布的用模拟数据）
+    let displayScores = studentScores;
+    if (readonly) {
+      // 已发布报告的模拟数据
+      displayScores = [10, 8, 12, 13, 19];
+    }
+    const totalScore = displayScores.reduce((a, b) => a + b, 0);
     const fullScore = questionScores.reduce((a, b) => a + b, 0);
     document.getElementById('reportTotalScore').textContent = totalScore;
     document.querySelector('.score-full').textContent = `/ ${fullScore} 分`;
@@ -546,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 更新各题得分条
     const scoreOverview = document.getElementById('scoreOverview');
     scoreOverview.innerHTML = questionScores.map((full, i) => {
-      const got = studentScores[i];
+      const got = displayScores[i];
       const percent = Math.round((got / full) * 100);
       return `
         <div class="score-item">
@@ -559,22 +581,62 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }).join('');
 
+    // 获取报告操作区域
+    const reportActions = document.querySelector('.report-actions');
+    const overallComment = document.getElementById('overallComment');
+    const teacherMessage = document.getElementById('teacherMessage');
+
+    if (readonly) {
+      // 只读模式：禁用编辑，隐藏发布按钮
+      overallComment.setAttribute('readonly', true);
+      teacherMessage.setAttribute('readonly', true);
+      overallComment.value = '该生在本次考试中表现良好，函数求导和三角函数部分掌握较为扎实，但在数列求和部分仍需加强练习。建议多做相关类型题目，巩固解题思路。';
+      teacherMessage.value = '继续保持学习热情，相信你一定能取得更大的进步！加油！';
+
+      // 隐藏发布按钮，只显示关闭按钮
+      reportActions.innerHTML = `
+        <button class="btn btn-outline" id="closeReportOnly">关闭</button>
+      `;
+      // 重新绑定关闭事件
+      document.getElementById('closeReportOnly').addEventListener('click', () => {
+        reportModal.classList.remove('show');
+      });
+    } else {
+      // 可编辑模式：恢复编辑功能
+      overallComment.removeAttribute('readonly');
+      teacherMessage.removeAttribute('readonly');
+
+      // 恢复原始按钮
+      reportActions.innerHTML = `
+        <button class="btn btn-outline" id="saveReportDraft">保存草稿</button>
+        <button class="btn btn-primary" id="submitReport">发布报告，查看下一人</button>
+      `;
+      // 重新绑定事件
+      bindReportButtons();
+    }
+
     // 显示报告弹窗
     reportModal.classList.add('show');
   }
 
-  // 关闭报告
-  document.getElementById('closeReport').addEventListener('click', () => {
-    reportModal.classList.remove('show');
-  });
+  // 绑定报告按钮事件
+  function bindReportButtons() {
+    const saveBtn = document.getElementById('saveReportDraft');
+    const submitBtn = document.getElementById('submitReport');
 
-  // 保存报告草稿
-  document.getElementById('saveReportDraft').addEventListener('click', () => {
-    showToast('报告草稿已保存');
-  });
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        showToast('报告草稿已保存');
+      });
+    }
 
-  // 提交报告并批改下一位
-  document.getElementById('submitReport').addEventListener('click', () => {
+    if (submitBtn) {
+      submitBtn.addEventListener('click', handleSubmitReport);
+    }
+  }
+
+  // 处理报告提交
+  function handleSubmitReport() {
     const overallComment = document.getElementById('overallComment').value;
     const teacherMessage = document.getElementById('teacherMessage').value;
 
@@ -589,7 +651,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 更新当前学生状态为已完成
     const currentActiveStudent = document.querySelector('.student-item.active');
     if (currentActiveStudent) {
-      currentActiveStudent.querySelector('.status').className = 'status done';
+      currentActiveStudent.dataset.reportStatus = 'published';
+      currentActiveStudent.querySelector('.status').className = 'status completed';
       currentActiveStudent.querySelector('.status').textContent = '已完成';
       currentActiveStudent.querySelector('.student-progress-text').textContent = `已批 ${totalQuestions}/${totalQuestions} 题`;
     }
@@ -609,37 +672,51 @@ document.addEventListener('DOMContentLoaded', () => {
         students[currentIndex + 1].classList.add('active');
         const nextStudent = students[currentIndex + 1];
         const nextName = nextStudent.querySelector('.student-name').textContent;
+        const nextStatus = nextStudent.dataset.reportStatus;
 
-        // 检查下一个学生是否已批完（需要直接显示报告）
-        const progressText = nextStudent.querySelector('.student-progress-text').textContent;
-        const match = progressText.match(/已批 (\d+)\/(\d+)/);
-        const gradedCount = match ? parseInt(match[1]) : 0;
-
-        if (gradedCount >= totalQuestions) {
-          showToast(`学生 ${nextName} 已批改完成，请审核报告`);
-          // 清空报告内容准备新的
+        // 根据下一个学生状态决定行为
+        if (nextStatus === 'published') {
+          showToast(`学生 ${nextName} 的报告已发布`);
+          showStudentReport(true);
+        } else if (nextStatus === 'pending') {
+          showToast(`学生 ${nextName} 已批改完成，请审核发布报告`);
           document.getElementById('overallComment').value = '';
           document.getElementById('teacherMessage').value = '';
-          showStudentReport();
+          showStudentReport(false);
         } else {
-          showToast(`已切换到学生: ${nextName}`);
-          // 重置题目和得分
-          currentQuestion = gradedCount + 1;
-          updateQuestionInfo();
-          updateSubmitButtonText();
-          scoreInput.value = '';
-          studentScores = [0, 0, 0, 0, 0]; // 重置得分记录
-          annotations.innerHTML = '';
+          // 检查批改进度
+          const progressText = nextStudent.querySelector('.student-progress-text').textContent;
+          const match = progressText.match(/已批 (\d+)\/(\d+)/);
+          const gradedCount = match ? parseInt(match[1]) : 0;
 
-          // 清空报告内容
-          document.getElementById('overallComment').value = '';
-          document.getElementById('teacherMessage').value = '';
+          if (gradedCount >= totalQuestions) {
+            showToast(`学生 ${nextName} 已批改完成，请审核报告`);
+            document.getElementById('overallComment').value = '';
+            document.getElementById('teacherMessage').value = '';
+            showStudentReport(false);
+          } else {
+            showToast(`已切换到学生: ${nextName}`);
+            currentQuestion = gradedCount + 1;
+            updateQuestionInfo();
+            updateSubmitButtonText();
+            scoreInput.value = '';
+            studentScores = [0, 0, 0, 0, 0];
+            annotations.innerHTML = '';
+          }
         }
       } else {
         showToast('所有学生批改完成！');
       }
-    }, 500);
+    }, 1000);
+  }
+
+  // 关闭报告
+  document.getElementById('closeReport').addEventListener('click', () => {
+    reportModal.classList.remove('show');
   });
+
+  // 初始化报告按钮事件绑定
+  bindReportButtons();
 
   // 添加历史记录
   function addHistory(action) {
@@ -706,19 +783,109 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('diagnosisEditTitle').textContent = '创建诊断配置';
     // 清空表单
     document.getElementById('diagnosisName').value = '';
+    document.getElementById('diagnosisDesc').value = '';
+    document.getElementById('diagnosisDescCount').textContent = '0';
     document.getElementById('startTime').value = '';
     document.getElementById('endTime').value = '';
     showDiagnosisPage('edit');
   });
 
+  // 诊断说明字数统计
+  const diagnosisDesc = document.getElementById('diagnosisDesc');
+  const diagnosisDescCount = document.getElementById('diagnosisDescCount');
+  if (diagnosisDesc && diagnosisDescCount) {
+    diagnosisDesc.addEventListener('input', () => {
+      diagnosisDescCount.textContent = diagnosisDesc.value.length;
+    });
+  }
+
   // 编辑诊断按钮
   document.querySelectorAll('.btn-edit-diagnosis').forEach(btn => {
     btn.addEventListener('click', () => {
+      const status = btn.dataset.status;
       document.getElementById('diagnosisEditTitle').textContent = '编辑诊断配置';
-      // 可以根据行数据填充表单（演示直接显示）
+
+      // 进行中的诊断显示警告提示
+      const editNotice = document.getElementById('editActiveNotice');
+      if (status === 'active') {
+        editNotice.classList.remove('hidden');
+        // 锁定已有学生的复选框
+        document.querySelectorAll('.student-check.locked input').forEach(cb => {
+          cb.disabled = true;
+        });
+      } else {
+        editNotice.classList.add('hidden');
+        // 解锁学生复选框（待开始状态可以自由编辑）
+        document.querySelectorAll('.student-check.locked').forEach(item => {
+          item.classList.remove('locked');
+          const tag = item.querySelector('.locked-tag');
+          if (tag) tag.remove();
+          item.querySelector('input').disabled = false;
+        });
+      }
+
       showDiagnosisPage('edit');
     });
   });
+
+  // 查看诊断按钮（已结束的诊断只能查看）
+  document.querySelectorAll('.btn-view-diagnosis').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('diagnosisEditTitle').textContent = '查看诊断配置';
+
+      // 隐藏编辑警告
+      document.getElementById('editActiveNotice').classList.add('hidden');
+
+      // 禁用所有表单元素
+      const editPage = document.getElementById('diagnosisEditPage');
+      editPage.querySelectorAll('input, select, textarea').forEach(el => {
+        el.disabled = true;
+      });
+      editPage.querySelectorAll('button:not(#backToDiagnosisList)').forEach(el => {
+        if (!el.classList.contains('close-enroll') && !el.classList.contains('close-consult')) {
+          el.disabled = true;
+        }
+      });
+
+      // 隐藏操作按钮，只显示返回
+      const formActions = editPage.querySelector('.form-actions');
+      if (formActions) {
+        formActions.innerHTML = `
+          <button type="button" class="btn btn-outline" id="backFromView">返回列表</button>
+        `;
+        document.getElementById('backFromView').addEventListener('click', () => {
+          // 恢复表单可编辑状态
+          editPage.querySelectorAll('input, select, textarea, button').forEach(el => {
+            el.disabled = false;
+          });
+          // 恢复操作按钮
+          formActions.innerHTML = `
+            <button type="button" class="btn btn-outline" id="cancelDiagnosis">取消</button>
+            <button type="button" class="btn btn-outline" id="saveDiagnosisDraft">保存草稿</button>
+            <button type="button" class="btn btn-primary" id="publishDiagnosis">发布诊断</button>
+          `;
+          rebindDiagnosisButtons();
+          showDiagnosisPage('list');
+        });
+      }
+
+      showDiagnosisPage('edit');
+    });
+  });
+
+  // 重新绑定诊断操作按钮
+  function rebindDiagnosisButtons() {
+    document.getElementById('cancelDiagnosis').addEventListener('click', () => {
+      showDiagnosisPage('list');
+    });
+    document.getElementById('saveDiagnosisDraft').addEventListener('click', () => {
+      showToast('诊断配置草稿已保存');
+    });
+    document.getElementById('publishDiagnosis').addEventListener('click', () => {
+      showToast('诊断配置已发布');
+      showDiagnosisPage('list');
+    });
+  }
 
   // 返回列表
   document.getElementById('backToDiagnosisList').addEventListener('click', () => {
@@ -743,34 +910,869 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('请填写诊断名称');
       return;
     }
+
+    // 校验时间
+    if (!validateDiagnosisTimes()) {
+      return;
+    }
+
     showToast('诊断配置已发布');
     showDiagnosisPage('list');
   });
 
-  // 学生范围标签切换
-  document.querySelectorAll('.scope-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      // 更新标签高亮
-      document.querySelectorAll('.scope-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
+  // 校验诊断时间配置
+  function validateDiagnosisTimes() {
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
 
-      // 切换内容
-      const scope = tab.dataset.scope;
-      document.querySelectorAll('.scope-content').forEach(content => {
-        content.style.display = 'none';
+    if (!startTime || !endTime) {
+      showToast('请填写报名开放时间');
+      return false;
+    }
+
+    const enrollStart = new Date(startTime);
+    const enrollEnd = new Date(endTime);
+
+    if (enrollStart >= enrollEnd) {
+      showToast('报名结束时间必须晚于开始时间');
+      return false;
+    }
+
+    // 检查是否是在线模考类型
+    const diagnosisType = document.querySelector('input[name="diagnosisType"]:checked');
+    if (diagnosisType && diagnosisType.value === 'online') {
+      const examStartTime = document.getElementById('examStartTime').value;
+      const examEndTime = document.getElementById('examEndTime').value;
+
+      if (!examStartTime || !examEndTime) {
+        showToast('请填写考试开放时间');
+        return false;
+      }
+
+      const examStart = new Date(examStartTime);
+      const examEnd = new Date(examEndTime);
+
+      if (examStart >= examEnd) {
+        showToast('考试结束时间必须晚于开始时间');
+        return false;
+      }
+
+      // 考试时间必须在报名时间区间内
+      if (examStart < enrollStart) {
+        showToast('考试开始时间不能早于报名开始时间');
+        return false;
+      }
+
+      if (examEnd > enrollEnd) {
+        showToast('考试结束时间不能晚于报名结束时间');
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // 考试时间输入时实时校验提示
+  const examStartTimeInput = document.getElementById('examStartTime');
+  const examEndTimeInput = document.getElementById('examEndTime');
+
+  if (examStartTimeInput) {
+    examStartTimeInput.addEventListener('change', validateExamTimeRange);
+  }
+  if (examEndTimeInput) {
+    examEndTimeInput.addEventListener('change', validateExamTimeRange);
+  }
+
+  function validateExamTimeRange() {
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
+    const examStartTime = document.getElementById('examStartTime').value;
+    const examEndTime = document.getElementById('examEndTime').value;
+
+    if (!startTime || !endTime) {
+      showToast('请先填写报名开放时间');
+      return;
+    }
+
+    const enrollStart = new Date(startTime);
+    const enrollEnd = new Date(endTime);
+
+    if (examStartTime) {
+      const examStart = new Date(examStartTime);
+      if (examStart < enrollStart) {
+        showToast('考试开始时间不能早于报名开始时间');
+      }
+    }
+
+    if (examEndTime) {
+      const examEnd = new Date(examEndTime);
+      if (examEnd > enrollEnd) {
+        showToast('考试结束时间不能晚于报名结束时间');
+      }
+    }
+  }
+
+  // ========== 云控开关 ==========
+  const cloudControlModal = document.getElementById('cloudControlModal');
+  const cloudControlBtn = document.getElementById('cloudControlBtn');
+  const closeCloudControl = document.getElementById('closeCloudControl');
+  const cancelCloudControl = document.getElementById('cancelCloudControl');
+  const saveCloudControl = document.getElementById('saveCloudControl');
+
+  // 打开云控弹窗
+  if (cloudControlBtn) {
+    cloudControlBtn.addEventListener('click', () => {
+      cloudControlModal.classList.add('show');
+    });
+  }
+
+  // 关闭云控弹窗
+  if (closeCloudControl) {
+    closeCloudControl.addEventListener('click', () => {
+      cloudControlModal.classList.remove('show');
+    });
+  }
+
+  if (cancelCloudControl) {
+    cancelCloudControl.addEventListener('click', () => {
+      cloudControlModal.classList.remove('show');
+    });
+  }
+
+  // 保存并下发
+  if (saveCloudControl) {
+    saveCloudControl.addEventListener('click', () => {
+      showToast('云控配置已保存并下发');
+      cloudControlModal.classList.remove('show');
+    });
+  }
+
+  // 全部开放
+  const batchOpenAll = document.getElementById('batchOpenAll');
+  if (batchOpenAll) {
+    batchOpenAll.addEventListener('click', () => {
+      document.querySelectorAll('#cloudControlListBody .switch input').forEach(cb => {
+        cb.checked = true;
       });
+      updateCloudControlStatus();
+      showToast('已设置全部开放');
+    });
+  }
 
-      if (scope === 'org') {
-        document.getElementById('scopeOrg').style.display = 'block';
-      } else if (scope === 'grade') {
-        document.getElementById('scopeGrade').style.display = 'block';
-      } else if (scope === 'class') {
-        document.getElementById('scopeClass').style.display = 'block';
-      } else if (scope === 'student') {
-        document.getElementById('scopeStudent').style.display = 'block';
+  // 全部关闭
+  const batchCloseAll = document.getElementById('batchCloseAll');
+  if (batchCloseAll) {
+    batchCloseAll.addEventListener('click', () => {
+      document.querySelectorAll('#cloudControlListBody .switch input').forEach(cb => {
+        cb.checked = false;
+      });
+      updateCloudControlStatus();
+      showToast('已设置全部关闭');
+    });
+  }
+
+  // 开关切换时更新状态显示
+  document.querySelectorAll('#cloudControlListBody .switch input').forEach(cb => {
+    cb.addEventListener('change', () => {
+      updateCloudControlStatus();
+    });
+  });
+
+  // 更新云控状态显示
+  function updateCloudControlStatus() {
+    const rows = document.querySelectorAll('#cloudControlListBody .control-row');
+    let openCount = 0;
+    let closedCount = 0;
+
+    rows.forEach(row => {
+      const checkbox = row.querySelector('.switch input');
+      const statusCol = row.querySelector('.col-status');
+      if (checkbox.checked) {
+        statusCol.innerHTML = '<span class="status-dot open"></span>已开放';
+        openCount++;
+      } else {
+        statusCol.innerHTML = '<span class="status-dot closed"></span>已关闭';
+        closedCount++;
+      }
+    });
+
+    // 更新统计
+    const summary = document.querySelector('.control-summary');
+    if (summary) {
+      summary.innerHTML = `共 <strong>${rows.length}</strong> 个机构，<strong>${openCount}</strong> 个已开放，<strong>${closedCount}</strong> 个已关闭`;
+    }
+  }
+
+  // 云控搜索
+  const cloudControlSearch = document.getElementById('cloudControlSearch');
+  if (cloudControlSearch) {
+    cloudControlSearch.addEventListener('input', () => {
+      const keyword = cloudControlSearch.value.toLowerCase();
+      document.querySelectorAll('#cloudControlListBody .control-row').forEach(row => {
+        const orgName = row.querySelector('.col-org').textContent.toLowerCase();
+        if (orgName.includes(keyword)) {
+          row.style.display = 'grid';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  // ========== 诊断类型切换 ==========
+  const onlineExamConfig = document.getElementById('onlineExamConfig');
+  const directDataConfig = document.getElementById('directDataConfig');
+
+  document.querySelectorAll('input[name="diagnosisType"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (radio.value === 'online') {
+        onlineExamConfig.classList.remove('hidden');
+        directDataConfig.classList.add('hidden');
+      } else {
+        onlineExamConfig.classList.add('hidden');
+        directDataConfig.classList.remove('hidden');
       }
     });
   });
+
+  // ========== 题目管理 ==========
+  const questionTypes = {
+    'Q001': { type: 'choice', name: '单选题' },
+    'Q002': { type: 'choice', name: '单选题' },
+    'Q003': { type: 'multi', name: '多选题' },
+    'Q004': { type: 'fill', name: '填空题' },
+    'Q005': { type: 'essay', name: '解答题' },
+    'Q006': { type: 'essay', name: '解答题' },
+    'Q007': { type: 'essay', name: '解答题' },
+    'Q008': { type: 'judge', name: '判断题' },
+    'Q009': { type: 'choice', name: '单选题' },
+    'Q010': { type: 'fill', name: '填空题' }
+  };
+
+  // 添加题目（在线模考 - 支持批量）
+  const addQuestionBtn = document.getElementById('addQuestionBtn');
+  if (addQuestionBtn) {
+    addQuestionBtn.addEventListener('click', () => {
+      const input = document.getElementById('questionIdInput');
+      const inputValue = input.value.trim();
+      if (!inputValue) {
+        showToast('请输入题目ID');
+        return;
+      }
+
+      // 支持逗号分隔的批量输入
+      const qids = inputValue.split(/[,，]/).map(id => id.trim().toUpperCase()).filter(id => id);
+      let addedCount = 0;
+      let skippedCount = 0;
+
+      const questionListBody = document.getElementById('questionListBody');
+
+      qids.forEach(qid => {
+        // 检查是否已存在
+        if (document.querySelector(`#questionListBody .question-row[data-qid="${qid}"]`)) {
+          skippedCount++;
+          return;
+        }
+
+        // 模拟获取题型（实际应从后端获取）
+        const typeInfo = questionTypes[qid] || { type: 'choice', name: '单选题' };
+        const count = questionListBody.children.length + 1;
+
+        const row = document.createElement('div');
+        row.className = 'question-row';
+        row.dataset.qid = qid;
+        row.innerHTML = `
+          <span class="col-seq">${count}</span>
+          <span class="col-id">${qid}</span>
+          <span class="col-type"><span class="type-badge ${typeInfo.type}">${typeInfo.name}</span></span>
+          <span class="col-score">
+            <input type="number" class="score-input-sm" value="5" min="0">
+          </span>
+          <span class="col-action">
+            <button type="button" class="btn-icon-sm btn-move-up" title="上移">↑</button>
+            <button type="button" class="btn-icon-sm btn-move-down" title="下移">↓</button>
+            <button type="button" class="btn-icon-sm btn-delete-q" title="删除">×</button>
+          </span>
+        `;
+
+        questionListBody.appendChild(row);
+        bindQuestionRowEvents(row);
+        addedCount++;
+      });
+
+      input.value = '';
+      updateQuestionStats();
+
+      if (addedCount > 0 && skippedCount > 0) {
+        showToast(`已添加 ${addedCount} 道题目，${skippedCount} 道已存在被跳过`);
+      } else if (addedCount > 0) {
+        showToast(`已添加 ${addedCount} 道题目`);
+      } else {
+        showToast('所有题目已存在');
+      }
+    });
+  }
+
+  // 更新题目统计
+  function updateQuestionStats() {
+    const rows = document.querySelectorAll('#questionListBody .question-row');
+    let totalScore = 0;
+
+    rows.forEach((row, index) => {
+      row.querySelector('.col-seq').textContent = index + 1;
+      const scoreInput = row.querySelector('.score-input-sm');
+      totalScore += parseInt(scoreInput.value) || 0;
+    });
+
+    document.getElementById('questionCount').textContent = rows.length;
+    document.getElementById('questionTotalScore').textContent = totalScore;
+    document.getElementById('examTotalScore').value = totalScore;
+  }
+
+  // 绑定题目行事件
+  function bindQuestionRowEvents(row) {
+    // 删除
+    row.querySelector('.btn-delete-q').addEventListener('click', () => {
+      row.remove();
+      updateQuestionStats();
+      showToast('已删除题目');
+    });
+
+    // 上移
+    row.querySelector('.btn-move-up').addEventListener('click', () => {
+      const prev = row.previousElementSibling;
+      if (prev) {
+        row.parentNode.insertBefore(row, prev);
+        updateQuestionStats();
+      }
+    });
+
+    // 下移
+    row.querySelector('.btn-move-down').addEventListener('click', () => {
+      const next = row.nextElementSibling;
+      if (next) {
+        row.parentNode.insertBefore(next, row);
+        updateQuestionStats();
+      }
+    });
+
+    // 分值变化
+    row.querySelector('.score-input-sm').addEventListener('input', () => {
+      updateQuestionStats();
+    });
+  }
+
+  // 初始化已有题目行的事件
+  document.querySelectorAll('#questionListBody .question-row').forEach(row => {
+    bindQuestionRowEvents(row);
+  });
+
+  // 初始化统计
+  updateQuestionStats();
+
+  // ========== 数据直传 - 题目管理 ==========
+  // 添加题目（数据直传 - 支持批量，无分值）
+  const addDirectQuestionBtn = document.getElementById('addDirectQuestionBtn');
+  if (addDirectQuestionBtn) {
+    addDirectQuestionBtn.addEventListener('click', () => {
+      const input = document.getElementById('directQuestionIdInput');
+      const inputValue = input.value.trim();
+      if (!inputValue) {
+        showToast('请输入题目ID');
+        return;
+      }
+
+      const qids = inputValue.split(/[,，]/).map(id => id.trim().toUpperCase()).filter(id => id);
+      let addedCount = 0;
+      let skippedCount = 0;
+
+      const questionListBody = document.getElementById('directQuestionListBody');
+
+      qids.forEach(qid => {
+        if (document.querySelector(`#directQuestionListBody .question-row[data-qid="${qid}"]`)) {
+          skippedCount++;
+          return;
+        }
+
+        const typeInfo = questionTypes[qid] || { type: 'choice', name: '单选题' };
+        const count = questionListBody.children.length + 1;
+
+        const row = document.createElement('div');
+        row.className = 'question-row';
+        row.dataset.qid = qid;
+        row.innerHTML = `
+          <span class="col-seq">${count}</span>
+          <span class="col-id-wide">${qid}</span>
+          <span class="col-type"><span class="type-badge ${typeInfo.type}">${typeInfo.name}</span></span>
+          <span class="col-action">
+            <button type="button" class="btn-icon-sm btn-delete-dq" title="删除">×</button>
+          </span>
+        `;
+
+        questionListBody.appendChild(row);
+        bindDirectQuestionRowEvents(row);
+        addedCount++;
+      });
+
+      input.value = '';
+      updateDirectQuestionStats();
+
+      if (addedCount > 0 && skippedCount > 0) {
+        showToast(`已添加 ${addedCount} 道题目，${skippedCount} 道已存在被跳过`);
+      } else if (addedCount > 0) {
+        showToast(`已添加 ${addedCount} 道题目`);
+      } else {
+        showToast('所有题目已存在');
+      }
+    });
+  }
+
+  // 绑定数据直传题目行事件
+  function bindDirectQuestionRowEvents(row) {
+    row.querySelector('.btn-delete-dq').addEventListener('click', () => {
+      row.remove();
+      updateDirectQuestionStats();
+      showToast('已删除题目');
+    });
+  }
+
+  // 更新数据直传题目统计
+  function updateDirectQuestionStats() {
+    const rows = document.querySelectorAll('#directQuestionListBody .question-row');
+    rows.forEach((row, index) => {
+      row.querySelector('.col-seq').textContent = index + 1;
+    });
+    document.getElementById('directQuestionCount').textContent = rows.length;
+  }
+
+  // 初始化数据直传题目行事件
+  document.querySelectorAll('#directQuestionListBody .question-row').forEach(row => {
+    bindDirectQuestionRowEvents(row);
+  });
+  updateDirectQuestionStats();
+
+  // ========== 答题卡上传类型切换 ==========
+  document.querySelectorAll('.switch-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.switch-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+
+      const type = item.dataset.type;
+      const imageArea = document.getElementById('imageUploadArea');
+      const jsonArea = document.getElementById('jsonUploadArea');
+
+      if (type === 'image') {
+        imageArea.classList.remove('hidden');
+        jsonArea.classList.add('hidden');
+      } else {
+        imageArea.classList.add('hidden');
+        jsonArea.classList.remove('hidden');
+      }
+    });
+  });
+
+  // ========== 文件上传交互 ==========
+  // 小分表上传
+  const scoreFileInput = document.getElementById('scoreFileInput');
+  const scoreUploadedFile = document.getElementById('scoreUploadedFile');
+  if (scoreFileInput) {
+    scoreFileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        scoreUploadedFile.querySelector('.file-name').textContent = file.name;
+        scoreUploadedFile.querySelector('.file-size').textContent = formatFileSize(file.size);
+        scoreUploadedFile.classList.remove('hidden');
+        showToast('小分表上传成功');
+      }
+    });
+  }
+
+  const removeScoreFile = document.getElementById('removeScoreFile');
+  if (removeScoreFile) {
+    removeScoreFile.addEventListener('click', () => {
+      scoreFileInput.value = '';
+      scoreUploadedFile.classList.add('hidden');
+      showToast('已移除文件');
+    });
+  }
+
+  // 答题卡图片上传
+  const cardImageInput = document.getElementById('cardImageInput');
+  const uploadedImages = document.getElementById('uploadedImages');
+  if (cardImageInput) {
+    cardImageInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        Array.from(e.target.files).forEach(file => {
+          const item = document.createElement('div');
+          item.className = 'image-item';
+          item.innerHTML = `
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='80' fill='%23e0e0e0'%3E%3Crect width='60' height='80'/%3E%3C/svg%3E" alt="答题卡">
+            <span class="image-name">${file.name}</span>
+            <button type="button" class="btn-remove-img">×</button>
+          `;
+          item.querySelector('.btn-remove-img').addEventListener('click', () => {
+            item.remove();
+          });
+          uploadedImages.appendChild(item);
+        });
+        showToast(`已上传 ${e.target.files.length} 张图片`);
+      }
+    });
+  }
+
+  // 初始化已有图片的删除按钮
+  document.querySelectorAll('.btn-remove-img').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.image-item').remove();
+    });
+  });
+
+  // JSON文件上传
+  const cardJsonInput = document.getElementById('cardJsonInput');
+  const jsonUploadedFile = document.getElementById('jsonUploadedFile');
+  if (cardJsonInput) {
+    cardJsonInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        jsonUploadedFile.querySelector('.file-name').textContent = file.name;
+        jsonUploadedFile.querySelector('.file-size').textContent = formatFileSize(file.size);
+        jsonUploadedFile.classList.remove('hidden');
+        showToast('JSON文件上传成功');
+      }
+    });
+  }
+
+  const removeJsonFile = document.getElementById('removeJsonFile');
+  if (removeJsonFile) {
+    removeJsonFile.addEventListener('click', () => {
+      cardJsonInput.value = '';
+      jsonUploadedFile.classList.add('hidden');
+      showToast('已移除文件');
+    });
+  }
+
+  // 格式化文件大小
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  // ========== 课程咨询名单弹窗 ==========
+  const consultModal = document.getElementById('consultModal');
+
+  // 打开咨询名单弹窗
+  document.querySelectorAll('.btn-view-consult').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const count = btn.dataset.count || '0';
+      const row = btn.closest('tr');
+      const diagnosisName = row.querySelector('td:first-child strong').textContent;
+
+      // 更新弹窗信息
+      document.querySelector('.consult-diagnosis').textContent = diagnosisName;
+      document.getElementById('consultTotalCount').textContent = count;
+
+      consultModal.classList.add('show');
+    });
+  });
+
+  // 关闭咨询名单弹窗
+  document.getElementById('closeConsult').addEventListener('click', () => {
+    consultModal.classList.remove('show');
+  });
+
+  // 点击弹窗背景关闭
+  consultModal.addEventListener('click', (e) => {
+    if (e.target === consultModal) {
+      consultModal.classList.remove('show');
+    }
+  });
+
+  // 咨询名单搜索
+  const consultSearchInput = document.getElementById('consultSearchInput');
+  if (consultSearchInput) {
+    consultSearchInput.addEventListener('input', () => {
+      const keyword = consultSearchInput.value.toLowerCase();
+      const rows = document.querySelectorAll('#consultTableBody tr');
+
+      rows.forEach(row => {
+        const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        const phone = row.querySelector('.phone-cell').textContent.toLowerCase();
+        const studentId = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+
+        if (name.includes(keyword) || phone.includes(keyword) || studentId.includes(keyword)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  // 导出名单
+  const exportConsultBtn = document.getElementById('exportConsultBtn');
+  if (exportConsultBtn) {
+    exportConsultBtn.addEventListener('click', () => {
+      showToast('正在导出咨询名单...');
+      setTimeout(() => {
+        showToast('咨询名单已导出');
+      }, 1000);
+    });
+  }
+
+  // ========== 报名名单弹窗 ==========
+  const enrollModal = document.getElementById('enrollModal');
+
+  // 打开报名名单弹窗
+  document.querySelectorAll('.btn-view-enroll').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const count = btn.dataset.count || '0';
+      const row = btn.closest('tr');
+      const diagnosisName = row.querySelector('td:first-child strong').textContent;
+
+      document.getElementById('enrollDiagnosisName').textContent = diagnosisName;
+      document.getElementById('enrollTotalCount').textContent = count;
+
+      enrollModal.classList.add('show');
+    });
+  });
+
+  // 关闭报名名单弹窗
+  document.getElementById('closeEnroll').addEventListener('click', () => {
+    enrollModal.classList.remove('show');
+  });
+
+  enrollModal.addEventListener('click', (e) => {
+    if (e.target === enrollModal) {
+      enrollModal.classList.remove('show');
+    }
+  });
+
+  // 报名名单搜索
+  const enrollSearchInput = document.getElementById('enrollSearchInput');
+  if (enrollSearchInput) {
+    enrollSearchInput.addEventListener('input', () => {
+      const keyword = enrollSearchInput.value.toLowerCase();
+      const rows = document.querySelectorAll('#enrollTableBody tr');
+
+      rows.forEach(row => {
+        const name = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+        const studentId = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
+        const org = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+        if (name.includes(keyword) || studentId.includes(keyword) || org.includes(keyword)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  // 导出报名名单
+  const exportEnrollBtn = document.getElementById('exportEnrollBtn');
+  if (exportEnrollBtn) {
+    exportEnrollBtn.addEventListener('click', () => {
+      showToast('正在导出报名名单...');
+      setTimeout(() => {
+        showToast('报名名单已导出');
+      }, 1000);
+    });
+  }
+
+  // ========== 诊断报告列表弹窗 ==========
+  const reportListModal = document.getElementById('reportListModal');
+
+  // 打开诊断报告列表弹窗
+  document.querySelectorAll('.btn-view-report').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const count = btn.dataset.count || '0';
+      const row = btn.closest('tr');
+      const diagnosisName = row.querySelector('td:first-child strong').textContent;
+
+      document.getElementById('reportListDiagnosisName').textContent = diagnosisName;
+      document.getElementById('reportListTotalCount').textContent = count;
+
+      if (count === '0') {
+        showToast('暂无已完成的诊断报告');
+        return;
+      }
+
+      reportListModal.classList.add('show');
+    });
+  });
+
+  // 关闭诊断报告列表弹窗
+  document.getElementById('closeReportList').addEventListener('click', () => {
+    reportListModal.classList.remove('show');
+  });
+
+  reportListModal.addEventListener('click', (e) => {
+    if (e.target === reportListModal) {
+      reportListModal.classList.remove('show');
+    }
+  });
+
+  // 诊断报告搜索
+  const reportListSearchInput = document.getElementById('reportListSearchInput');
+  if (reportListSearchInput) {
+    reportListSearchInput.addEventListener('input', () => {
+      const keyword = reportListSearchInput.value.toLowerCase();
+      const rows = document.querySelectorAll('#reportListTableBody tr');
+
+      rows.forEach(row => {
+        const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        const studentId = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+
+        if (name.includes(keyword) || studentId.includes(keyword)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  // 分数段筛选
+  const reportScoreFilter = document.getElementById('reportScoreFilter');
+  if (reportScoreFilter) {
+    reportScoreFilter.addEventListener('change', () => {
+      const filterValue = reportScoreFilter.value;
+      const rows = document.querySelectorAll('#reportListTableBody tr');
+
+      rows.forEach(row => {
+        const scoreText = row.querySelector('.score-cell').textContent;
+        const score = parseInt(scoreText);
+
+        let show = true;
+        if (filterValue === '90') show = score >= 90;
+        else if (filterValue === '80') show = score >= 80 && score < 90;
+        else if (filterValue === '70') show = score >= 70 && score < 80;
+        else if (filterValue === '60') show = score >= 60 && score < 70;
+        else if (filterValue === '0') show = score < 60;
+
+        row.style.display = show ? '' : 'none';
+      });
+    });
+  }
+
+  // 导出报告列表
+  const exportReportListBtn = document.getElementById('exportReportListBtn');
+  if (exportReportListBtn) {
+    exportReportListBtn.addEventListener('click', () => {
+      showToast('正在批量导出报告...');
+      setTimeout(() => {
+        showToast('报告已导出');
+      }, 1000);
+    });
+  }
+
+  // 查看报告详情
+  document.querySelectorAll('.btn-view-detail').forEach(btn => {
+    btn.addEventListener('click', () => {
+      reportListModal.classList.remove('show');
+      // 显示已有的报告弹窗
+      reportModal.classList.add('show');
+      showToast('正在加载学生诊断报告...');
+    });
+  });
+
+  // ========== 级联选择器交互 ==========
+  // 机构选择
+  document.querySelectorAll('#orgList .cascade-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('#orgList .cascade-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      // 实际应用中这里会加载对应机构的班级列表
+      showToast(`已选择: ${item.querySelector('.item-name').textContent}`);
+    });
+  });
+
+  // 班级复选框
+  document.querySelectorAll('#classList .cascade-item-check').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.type !== 'checkbox') {
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
+      }
+      updateSelectedCount();
+    });
+  });
+
+  // 学生复选框
+  document.querySelectorAll('#studentListCascade .cascade-item-check').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.type !== 'checkbox') {
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
+      }
+      updateSelectedCount();
+    });
+  });
+
+  // 全选班级
+  const selectAllClasses = document.getElementById('selectAllClasses');
+  if (selectAllClasses) {
+    selectAllClasses.addEventListener('change', () => {
+      document.querySelectorAll('#classList input[type="checkbox"]').forEach(cb => {
+        cb.checked = selectAllClasses.checked;
+      });
+      updateSelectedCount();
+    });
+  }
+
+  // 全选学生
+  const selectAllStudents = document.getElementById('selectAllStudents');
+  if (selectAllStudents) {
+    selectAllStudents.addEventListener('change', () => {
+      document.querySelectorAll('#studentListCascade input[type="checkbox"]').forEach(cb => {
+        cb.checked = selectAllStudents.checked;
+      });
+      updateSelectedCount();
+    });
+  }
+
+  // 学生搜索
+  const studentSearch = document.getElementById('studentSearch');
+  if (studentSearch) {
+    studentSearch.addEventListener('input', () => {
+      const keyword = studentSearch.value.toLowerCase();
+      document.querySelectorAll('#studentListCascade .student-check').forEach(item => {
+        const name = item.querySelector('.stu-name').textContent.toLowerCase();
+        const id = item.querySelector('.stu-id').textContent.toLowerCase();
+        if (name.includes(keyword) || id.includes(keyword)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  // 清空选择
+  const clearSelection = document.getElementById('clearSelection');
+  if (clearSelection) {
+    clearSelection.addEventListener('click', () => {
+      document.querySelectorAll('.cascade-selector input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+      });
+      updateSelectedCount();
+      showToast('已清空选择');
+    });
+  }
+
+  // 更新已选数量
+  function updateSelectedCount() {
+    const classCount = document.querySelectorAll('#classList input[type="checkbox"]:checked').length;
+    const studentCount = document.querySelectorAll('#studentListCascade input[type="checkbox"]:checked').length;
+    const countEl = document.getElementById('selectedCount');
+    if (countEl) {
+      countEl.textContent = `${classCount} 个班级，${studentCount} 名学生`;
+    }
+  }
+
+  // 初始化计数
+  updateSelectedCount();
 
   // 富文本编辑器简单交互
   document.querySelectorAll('.editor-btn').forEach(btn => {
