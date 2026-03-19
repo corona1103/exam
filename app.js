@@ -2,6 +2,107 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ========== 角色权限系统 ==========
+  const ROLES = {
+    admin: '管理员',
+    operator: '运营',
+    expert: '专家',
+    teacher: '教师'
+  };
+
+  // 角色-模块权限映射
+  const ROLE_PERMISSIONS = {
+    admin:    ['grading', 'diagnosis', 'user', 'lecture'],
+    operator: ['grading', 'diagnosis', 'user', 'lecture'],
+    expert:   ['grading'],
+    teacher:  ['grading']
+  };
+
+  // 当前登录用户（演示用，实际从后端获取）
+  let currentUser = {
+    name: '张老师',
+    role: 'admin'
+  };
+
+  // 初始化时根据角色显示/隐藏导航项
+  function initNavByRole() {
+    const allowedPages = ROLE_PERMISSIONS[currentUser.role];
+    document.querySelectorAll('.nav-item').forEach(item => {
+      const page = item.dataset.page;
+      if (page === 'student') return; // 学生平板效果始终显示（演示用）
+      if (allowedPages.includes(page)) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+
+    // 更新用户角色标签
+    const roleTag = document.querySelector('.nav-user .user-role-tag');
+    if (roleTag) {
+      roleTag.className = 'user-role-tag ' + currentUser.role;
+      roleTag.textContent = ROLES[currentUser.role];
+    }
+
+    // 如果当前显示的模块无权限，切换到第一个有权限的模块
+    const activeModule = document.querySelector('.module.active');
+    if (activeModule) {
+      const activeModuleId = activeModule.id;
+      const pageMap = {
+        'moduleGrading': 'grading',
+        'moduleDiagnosis': 'diagnosis',
+        'moduleStudent': 'student',
+        'moduleUser': 'user',
+        'moduleLecture': 'lecture'
+      };
+      const activePage = pageMap[activeModuleId];
+      if (activePage !== 'student' && !allowedPages.includes(activePage)) {
+        // 切换到第一个有权限的页面
+        const firstAllowed = allowedPages[0];
+        switchToModule(firstAllowed);
+      }
+    }
+  }
+
+  // 角色切换（演示用）
+  const roleSelect = document.getElementById('roleSelect');
+  if (roleSelect) {
+    roleSelect.addEventListener('change', (e) => {
+      currentUser.role = e.target.value;
+      initNavByRole();
+      showToast(`已切换为${ROLES[currentUser.role]}角色`);
+    });
+  }
+
+  // 切换到指定模块
+  function switchToModule(targetPage) {
+    const navItems = document.querySelectorAll('.nav-item');
+    const modules = document.querySelectorAll('.module');
+
+    // 更新导航高亮
+    navItems.forEach(nav => {
+      if (nav.dataset.page === targetPage) {
+        nav.classList.add('active');
+      } else {
+        nav.classList.remove('active');
+      }
+    });
+
+    // 切换模块
+    modules.forEach(mod => mod.classList.remove('active'));
+    const moduleMap = {
+      'grading': 'moduleGrading',
+      'diagnosis': 'moduleDiagnosis',
+      'student': 'moduleStudent',
+      'user': 'moduleUser',
+      'lecture': 'moduleLecture'
+    };
+    const moduleId = moduleMap[targetPage];
+    if (moduleId) {
+      document.getElementById(moduleId).classList.add('active');
+    }
+  }
+
   // ========== 全局导航切换 ==========
   const navItems = document.querySelectorAll('.nav-item');
   const modules = document.querySelectorAll('.module');
@@ -9,22 +110,12 @@ document.addEventListener('DOMContentLoaded', () => {
   navItems.forEach(item => {
     item.addEventListener('click', () => {
       const targetPage = item.dataset.page;
-
-      // 更新导航高亮
-      navItems.forEach(nav => nav.classList.remove('active'));
-      item.classList.add('active');
-
-      // 切换模块
-      modules.forEach(mod => mod.classList.remove('active'));
-      if (targetPage === 'grading') {
-        document.getElementById('moduleGrading').classList.add('active');
-      } else if (targetPage === 'diagnosis') {
-        document.getElementById('moduleDiagnosis').classList.add('active');
-      } else if (targetPage === 'student') {
-        document.getElementById('moduleStudent').classList.add('active');
-      }
+      switchToModule(targetPage);
     });
   });
+
+  // 初始化权限
+  initNavByRole();
 
   // ========== 阅卷批改模块 ==========
   // 页面元素
@@ -2242,5 +2333,496 @@ document.addEventListener('DOMContentLoaded', () => {
       toggle.dataset.expanded = (!isExpanded).toString();
     });
   });
+
+  // ========== 用户管理模块 ==========
+  // 二级导航切换
+  const userSubNavItems = document.querySelectorAll('.user-sub-nav .sub-nav-item');
+  const userListPage = document.getElementById('userListPage');
+  const expertOnboardPage = document.getElementById('expertOnboardPage');
+
+  userSubNavItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const targetSubPage = item.dataset.subPage;
+
+      // 更新二级导航高亮
+      userSubNavItems.forEach(nav => nav.classList.remove('active'));
+      item.classList.add('active');
+
+      // 切换子页面
+      if (targetSubPage === 'userList') {
+        userListPage.classList.add('active');
+        expertOnboardPage.classList.remove('active');
+      } else if (targetSubPage === 'expertOnboard') {
+        userListPage.classList.remove('active');
+        expertOnboardPage.classList.add('active');
+      }
+    });
+  });
+
+
+  // 示例用户数据
+  const usersData = [
+    { id: 1, name: '张老师', phone: '13812341234', subject: 'math', role: 'admin', status: 'active', createTime: '2024-01-15' },
+    { id: 2, name: '李老师', phone: '13956785678', subject: 'chinese', role: 'operator', status: 'active', createTime: '2024-02-20' },
+    { id: 3, name: '王教授', phone: '13790129012', subject: 'physics', role: 'expert', status: 'active', createTime: '2024-03-01' },
+    { id: 4, name: '赵老师', phone: '13634563456', subject: 'english', role: 'teacher', status: 'active', createTime: '2024-03-10' },
+    { id: 5, name: '钱老师', phone: '13578907890', subject: 'chemistry', role: 'teacher', status: 'disabled', createTime: '2024-03-15' },
+    { id: 6, name: '孙老师', phone: '13423452345', subject: 'biology', role: 'expert', status: 'active', createTime: '2024-03-18' }
+  ];
+
+  const subjectNames = {
+    math: '数学', chinese: '语文', english: '英语', physics: '物理',
+    chemistry: '化学', biology: '生物', politics: '政治', history: '历史', geography: '地理'
+  };
+
+  let editingUserId = null;
+
+  // 打开用户弹窗
+  const createUserBtn = document.getElementById('createUserBtn');
+  const userModalOverlay = document.getElementById('userModalOverlay');
+  const userModal = document.getElementById('userModal');
+  const closeUserModal = document.getElementById('closeUserModal');
+  const cancelUserForm = document.getElementById('cancelUserForm');
+  const userForm = document.getElementById('userForm');
+  const userModalTitle = document.getElementById('userModalTitle');
+
+  function openUserModal(isEdit = false, user = null) {
+    editingUserId = isEdit ? user.id : null;
+    userModalTitle.textContent = isEdit ? '编辑用户' : '添加用户';
+
+    if (isEdit && user) {
+      document.getElementById('userName').value = user.name;
+      document.getElementById('userPhone').value = user.phone;
+      document.getElementById('userSubject').value = user.subject;
+      document.getElementById('userRole').value = user.role;
+    } else {
+      userForm.reset();
+    }
+
+    userModalOverlay.classList.add('active');
+  }
+
+  function closeUserModalFn() {
+    userModalOverlay.classList.remove('active');
+    editingUserId = null;
+    userForm.reset();
+  }
+
+  if (createUserBtn) {
+    createUserBtn.addEventListener('click', () => openUserModal(false));
+  }
+
+  if (closeUserModal) {
+    closeUserModal.addEventListener('click', closeUserModalFn);
+  }
+
+  if (cancelUserForm) {
+    cancelUserForm.addEventListener('click', closeUserModalFn);
+  }
+
+  if (userModalOverlay) {
+    userModalOverlay.addEventListener('click', (e) => {
+      if (e.target === userModalOverlay) {
+        closeUserModalFn();
+      }
+    });
+  }
+
+  // 用户表单提交
+  if (userForm) {
+    userForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('userName').value;
+      const phone = document.getElementById('userPhone').value;
+      const subject = document.getElementById('userSubject').value;
+      const role = document.getElementById('userRole').value;
+
+      if (editingUserId) {
+        showToast(`用户 ${name} 信息已更新`);
+      } else {
+        showToast(`用户 ${name} 已添加成功`);
+      }
+
+      closeUserModalFn();
+    });
+  }
+
+  // 用户表格操作按钮
+  const userTableBody = document.getElementById('userTableBody');
+  if (userTableBody) {
+    userTableBody.addEventListener('click', (e) => {
+      const btn = e.target;
+      const row = btn.closest('tr');
+      if (!row) return;
+
+      const userId = parseInt(row.dataset.userId);
+      const userName = row.querySelector('td:first-child').textContent;
+
+      if (btn.classList.contains('btn-edit-user')) {
+        // 编辑用户
+        const user = usersData.find(u => u.id === userId);
+        if (user) {
+          openUserModal(true, user);
+        }
+      } else if (btn.classList.contains('btn-reset-pwd')) {
+        // 重置密码
+        document.getElementById('resetPwdUserName').textContent = userName;
+        document.getElementById('resetPwdModalOverlay').classList.add('active');
+      } else if (btn.classList.contains('btn-disable-user')) {
+        // 禁用用户
+        if (confirm(`确定要禁用用户 ${userName} 吗？`)) {
+          showToast(`用户 ${userName} 已禁用`);
+          const statusTag = row.querySelector('.user-status-tag');
+          statusTag.className = 'user-status-tag disabled';
+          statusTag.textContent = '已禁用';
+          btn.textContent = '启用';
+          btn.className = 'btn btn-sm btn-text btn-enable-user';
+        }
+      } else if (btn.classList.contains('btn-enable-user')) {
+        // 启用用户
+        showToast(`用户 ${userName} 已启用`);
+        const statusTag = row.querySelector('.user-status-tag');
+        statusTag.className = 'user-status-tag active';
+        statusTag.textContent = '正常';
+        btn.textContent = '禁用';
+        btn.className = 'btn btn-sm btn-text btn-disable-user';
+      }
+    });
+  }
+
+  // 重置密码弹窗
+  const resetPwdModalOverlay = document.getElementById('resetPwdModalOverlay');
+  const closeResetPwdModal = document.getElementById('closeResetPwdModal');
+  const cancelResetPwd = document.getElementById('cancelResetPwd');
+  const confirmResetPwd = document.getElementById('confirmResetPwd');
+
+  function closeResetPwdModalFn() {
+    resetPwdModalOverlay.classList.remove('active');
+  }
+
+  if (closeResetPwdModal) {
+    closeResetPwdModal.addEventListener('click', closeResetPwdModalFn);
+  }
+
+  if (cancelResetPwd) {
+    cancelResetPwd.addEventListener('click', closeResetPwdModalFn);
+  }
+
+  if (confirmResetPwd) {
+    confirmResetPwd.addEventListener('click', () => {
+      const userName = document.getElementById('resetPwdUserName').textContent;
+      closeResetPwdModalFn();
+      showToast(`${userName} 的密码已重置为 123456`);
+    });
+  }
+
+  if (resetPwdModalOverlay) {
+    resetPwdModalOverlay.addEventListener('click', (e) => {
+      if (e.target === resetPwdModalOverlay) {
+        closeResetPwdModalFn();
+      }
+    });
+  }
+
+  // ========== 讲座排课模块 - 周课表视图 ==========
+  let currentWeekStart = getWeekStart(new Date());
+  let editingLectureId = null;
+
+  // 获取某个日期所在周的周一
+  function getWeekStart(date) {
+    const d = new Date(date);
+    const day = d.getDay() || 7;
+    d.setDate(d.getDate() - day + 1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  // 格式化周显示
+  function formatWeekRange(weekStart) {
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 4);
+    const startStr = `${weekStart.getMonth() + 1}月${weekStart.getDate()}日`;
+    const endStr = `${weekEnd.getMonth() + 1}月${weekEnd.getDate()}日`;
+    return `${startStr} - ${endStr}`;
+  }
+
+  // 更新周显示
+  function updateWeekDisplay() {
+    const weekRangeText = document.getElementById('weekRangeText');
+    if (weekRangeText) {
+      weekRangeText.textContent = formatWeekRange(currentWeekStart);
+    }
+
+    // 更新日期头
+    const dayHeaders = document.querySelectorAll('.day-column-header');
+    dayHeaders.forEach((header, index) => {
+      const date = new Date(currentWeekStart);
+      date.setDate(currentWeekStart.getDate() + index);
+      const dateStr = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+      const dateEl = header.querySelector('.day-date');
+      if (dateEl) dateEl.textContent = dateStr;
+    });
+  }
+
+  // 周切换
+  const prevWeekBtn = document.getElementById('prevWeekBtn');
+  const nextWeekBtn = document.getElementById('nextWeekBtn');
+  const todayBtn = document.getElementById('todayBtn');
+
+  if (prevWeekBtn) {
+    prevWeekBtn.addEventListener('click', () => {
+      currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+      updateWeekDisplay();
+    });
+  }
+
+  if (nextWeekBtn) {
+    nextWeekBtn.addEventListener('click', () => {
+      currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+      updateWeekDisplay();
+    });
+  }
+
+  if (todayBtn) {
+    todayBtn.addEventListener('click', () => {
+      currentWeekStart = getWeekStart(new Date());
+      updateWeekDisplay();
+      showToast('已切换到本周');
+    });
+  }
+
+  // 添加讲座按钮
+  const addLectureBtn = document.getElementById('addLectureBtn');
+  if (addLectureBtn) {
+    addLectureBtn.addEventListener('click', () => openLectureModal(false));
+  }
+
+  // 讲座弹窗
+  const lectureModalOverlay = document.getElementById('lectureModalOverlay');
+  const lectureModal = document.getElementById('lectureModal');
+  const closeLectureModal = document.getElementById('closeLectureModal');
+  const cancelLecture = document.getElementById('cancelLecture');
+  const lectureForm = document.getElementById('lectureForm');
+  const lectureModalTitle = document.getElementById('lectureModalTitle');
+
+  function openLectureModal(isEdit = false, lectureData = null) {
+    editingLectureId = isEdit ? lectureData?.id : null;
+    if (lectureModalTitle) {
+      lectureModalTitle.textContent = isEdit ? '编辑讲座' : '新建讲座';
+    }
+    if (lectureForm) lectureForm.reset();
+    // 重置级联选择器
+    document.querySelectorAll('.cascade-student-selector input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+    });
+    updateSelectionCount();
+    if (lectureModalOverlay) lectureModalOverlay.classList.add('active');
+  }
+
+  // 级联选择器逻辑
+  function updateSelectionCount() {
+    const orgCount = document.querySelectorAll('input[name="org"]:checked').length;
+    const classCount = document.querySelectorAll('input[name="class"]:checked').length;
+    const studentCount = document.querySelectorAll('input[name="student"]:checked').length;
+
+    // 简单计算人数（实际项目中根据机构/班级实际人数计算）
+    let total = 0;
+    if (orgCount > 0) total += orgCount * 100; // 假设每机构100人
+    if (classCount > 0) total += classCount * 30; // 假设每班30人
+    total += studentCount;
+
+    const countEl = document.getElementById('selectedCount');
+    if (countEl) {
+      countEl.textContent = total > 0 ? `约 ${total}` : '0';
+    }
+  }
+
+  // 级联选择器 - 全选机构
+  const lectureSelectAllOrgs = document.getElementById('selectAllOrgs');
+  if (lectureSelectAllOrgs) {
+    lectureSelectAllOrgs.addEventListener('change', (e) => {
+      document.querySelectorAll('input[name="org"]').forEach(cb => {
+        cb.checked = e.target.checked;
+      });
+      updateSelectionCount();
+    });
+  }
+
+  // 级联选择器 - 全选班级
+  const lectureSelectAllClasses = document.getElementById('selectAllClasses');
+  if (lectureSelectAllClasses) {
+    lectureSelectAllClasses.addEventListener('change', (e) => {
+      document.querySelectorAll('input[name="class"]').forEach(cb => {
+        cb.checked = e.target.checked;
+      });
+      updateSelectionCount();
+    });
+  }
+
+  // 级联选择器 - 全选学生
+  const lectureSelectAllStudents = document.getElementById('selectAllStudents');
+  if (lectureSelectAllStudents) {
+    lectureSelectAllStudents.addEventListener('change', (e) => {
+      document.querySelectorAll('input[name="student"]').forEach(cb => {
+        cb.checked = e.target.checked;
+      });
+      updateSelectionCount();
+    });
+  }
+
+  // 单个选择更新计数
+  document.querySelectorAll('.cascade-student-selector input[name="org"], .cascade-student-selector input[name="class"], .cascade-student-selector input[name="student"]').forEach(cb => {
+    cb.addEventListener('change', updateSelectionCount);
+  });
+
+  function closeLectureModalFn() {
+    if (lectureModalOverlay) lectureModalOverlay.classList.remove('active');
+    editingLectureId = null;
+  }
+
+  if (closeLectureModal) {
+    closeLectureModal.addEventListener('click', closeLectureModalFn);
+  }
+
+  if (cancelLecture) {
+    cancelLecture.addEventListener('click', closeLectureModalFn);
+  }
+
+  if (lectureModalOverlay) {
+    lectureModalOverlay.addEventListener('click', (e) => {
+      if (e.target === lectureModalOverlay) closeLectureModalFn();
+    });
+  }
+
+  // 讲座表单提交
+  if (lectureForm) {
+    lectureForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const lectureName = document.getElementById('lectureName').value;
+      if (editingLectureId) {
+        showToast(`讲座 "${lectureName}" 已更新`);
+      } else {
+        showToast(`讲座 "${lectureName}" 已创建`);
+      }
+      closeLectureModalFn();
+    });
+  }
+
+  // 点击日历空白区域添加讲座
+  const dayColumns = document.querySelectorAll('.day-column');
+  dayColumns.forEach(col => {
+    col.addEventListener('click', (e) => {
+      if (e.target.closest('.lecture-block')) return;
+      openLectureModal(false);
+    });
+  });
+
+  // 点击讲座块编辑
+  const lectureBlocks = document.querySelectorAll('.lecture-block');
+  lectureBlocks.forEach(block => {
+    block.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const lectureId = block.dataset.lectureId;
+      const title = block.querySelector('.lecture-title')?.textContent || '';
+      openLectureModal(true, { id: lectureId, title });
+      if (document.getElementById('lectureName')) {
+        document.getElementById('lectureName').value = title;
+      }
+    });
+  });
+
+  // 初始化周显示
+  updateWeekDisplay();
+
+  // ========== 专家入驻模块更新 ==========
+  const addExpertBtn = document.getElementById('addExpertBtn');
+  const expertModalOverlay = document.getElementById('expertModalOverlay');
+  const closeExpertModal = document.getElementById('closeExpertModal');
+  const cancelExpert = document.getElementById('cancelExpert');
+  const expertForm = document.getElementById('expertForm');
+
+  function openExpertModalFn() {
+    if (expertForm) expertForm.reset();
+    if (expertModalOverlay) expertModalOverlay.classList.add('active');
+  }
+
+  function closeExpertModalFn() {
+    if (expertModalOverlay) expertModalOverlay.classList.remove('active');
+  }
+
+  if (addExpertBtn) {
+    addExpertBtn.addEventListener('click', openExpertModalFn);
+  }
+
+  if (closeExpertModal) {
+    closeExpertModal.addEventListener('click', closeExpertModalFn);
+  }
+
+  if (cancelExpert) {
+    cancelExpert.addEventListener('click', closeExpertModalFn);
+  }
+
+  if (expertModalOverlay) {
+    expertModalOverlay.addEventListener('click', (e) => {
+      if (e.target === expertModalOverlay) closeExpertModalFn();
+    });
+  }
+
+  if (expertForm) {
+    expertForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const expertName = document.getElementById('expertName').value;
+      showToast(`外部专家 "${expertName}" 添加成功！`);
+      closeExpertModalFn();
+    });
+  }
+
+  // 专家表格操作 - 启用/禁用/删除
+  const expertTableBody = document.getElementById('expertTableBody');
+  if (expertTableBody) {
+    expertTableBody.addEventListener('click', (e) => {
+      const btn = e.target;
+      const row = btn.closest('tr');
+      if (!row) return;
+
+      const expertName = row.querySelector('td:first-child').textContent;
+      const currentStatus = row.dataset.status;
+
+      if (btn.classList.contains('btn-toggle-expert')) {
+        if (currentStatus === 'active') {
+          if (confirm(`确定禁用专家 ${expertName} 的账号吗？\n禁用后该专家将无法被选择讲座`)) {
+            row.dataset.status = 'disabled';
+            row.classList.add('row-disabled');
+            row.querySelector('.expert-status-tag').className = 'expert-status-tag disabled';
+            row.querySelector('.expert-status-tag').textContent = '已禁用';
+            btn.textContent = '启用';
+            btn.classList.remove('btn-text-danger');
+            btn.classList.add('btn-text-success');
+            // 禁用学科标签
+            row.querySelectorAll('.subject-tag').forEach(tag => tag.classList.add('disabled'));
+            row.querySelectorAll('td:not(:last-child)').forEach(td => td.classList.add('text-disabled'));
+            showToast(`已禁用专家 ${expertName} 的账号`);
+          }
+        } else {
+          row.dataset.status = 'active';
+          row.classList.remove('row-disabled');
+          row.querySelector('.expert-status-tag').className = 'expert-status-tag active';
+          row.querySelector('.expert-status-tag').textContent = '正常';
+          btn.textContent = '禁用';
+          btn.classList.remove('btn-text-success');
+          btn.classList.add('btn-text-danger');
+          // 恢复学科标签
+          row.querySelectorAll('.subject-tag').forEach(tag => tag.classList.remove('disabled'));
+          row.querySelectorAll('td').forEach(td => td.classList.remove('text-disabled'));
+          showToast(`已启用专家 ${expertName} 的账号`);
+        }
+      } else if (btn.classList.contains('btn-delete-expert')) {
+        if (confirm(`确定删除专家 ${expertName} 吗？\n删除后数据无法恢复`)) {
+          row.remove();
+          showToast(`已删除专家 ${expertName}`);
+        }
+      }
+    });
+  }
 
 });

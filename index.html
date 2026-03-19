@@ -25,10 +25,29 @@
         <span class="nav-icon">📱</span>
         <span>学生平板效果</span>
       </li>
+      <li class="nav-item" data-page="user">
+        <span class="nav-icon">👤</span>
+        <span>用户管理</span>
+      </li>
+      <li class="nav-item" data-page="lecture">
+        <span class="nav-icon">🎓</span>
+        <span>讲座排课</span>
+      </li>
     </ul>
-    <div class="nav-user">
+    <div class="nav-user" id="navUser">
       <span class="user-avatar">张</span>
-      <span class="user-name">张老师</span>
+      <div class="user-info">
+        <span class="user-name">张老师</span>
+        <span class="user-role-tag admin">管理员</span>
+      </div>
+      <div class="role-switcher" id="roleSwitcher">
+        <select id="roleSelect">
+          <option value="admin">管理员</option>
+          <option value="operator">运营</option>
+          <option value="expert">专家</option>
+          <option value="teacher">教师</option>
+        </select>
+      </div>
     </div>
   </nav>
 
@@ -1840,6 +1859,725 @@
       </div>
     </div>
     <!-- 模块3结束 -->
+
+    <!-- ========== 模块4：用户管理 ========== -->
+    <div class="module module-user" id="moduleUser">
+      <div class="user-container">
+        <!-- 二级导航 -->
+        <div class="user-sub-nav">
+          <div class="sub-nav-item active" data-sub-page="userList">用户管理</div>
+          <div class="sub-nav-item" data-sub-page="expertOnboard">专家入驻</div>
+        </div>
+
+        <!-- 用户管理列表页 -->
+        <div class="user-page user-list-page active" id="userListPage">
+          <!-- 页头 + 添加按钮 -->
+          <div class="user-header">
+            <h2>用户管理</h2>
+            <button class="btn btn-primary" id="createUserBtn">+ 添加用户</button>
+          </div>
+
+          <!-- 筛选栏 -->
+          <div class="user-filters">
+            <select class="filter-select" id="filterUserRole">
+              <option value="">全部角色</option>
+              <option value="admin">管理员</option>
+              <option value="operator">运营</option>
+              <option value="expert">专家</option>
+              <option value="teacher">教师</option>
+            </select>
+            <select class="filter-select" id="filterUserSubject">
+              <option value="">全部学科</option>
+              <option value="math">数学</option>
+              <option value="chinese">语文</option>
+              <option value="english">英语</option>
+              <option value="physics">物理</option>
+              <option value="chemistry">化学</option>
+              <option value="biology">生物</option>
+              <option value="politics">政治</option>
+              <option value="history">历史</option>
+              <option value="geography">地理</option>
+            </select>
+            <select class="filter-select" id="filterUserStatus">
+              <option value="">全部状态</option>
+              <option value="active">正常</option>
+              <option value="disabled">已禁用</option>
+            </select>
+            <input type="text" class="search-input" id="searchUserInput" placeholder="搜索姓名/手机号">
+          </div>
+
+          <!-- 用户表格 -->
+          <div class="user-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>姓名</th>
+                  <th>手机号</th>
+                  <th>学科</th>
+                  <th>角色</th>
+                  <th>状态</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody">
+                <tr data-user-id="1">
+                  <td>张老师</td>
+                  <td>138****1234</td>
+                  <td>数学</td>
+                  <td><span class="role-tag admin">管理员</span></td>
+                  <td><span class="user-status-tag active">正常</span></td>
+                  <td>2024-01-15</td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-edit-user">编辑</button>
+                    <button class="btn btn-sm btn-text btn-reset-pwd">重置密码</button>
+                    <button class="btn btn-sm btn-text btn-disable-user">禁用</button>
+                  </td>
+                </tr>
+                <tr data-user-id="2">
+                  <td>李老师</td>
+                  <td>139****5678</td>
+                  <td>语文</td>
+                  <td><span class="role-tag operator">运营</span></td>
+                  <td><span class="user-status-tag active">正常</span></td>
+                  <td>2024-02-20</td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-edit-user">编辑</button>
+                    <button class="btn btn-sm btn-text btn-reset-pwd">重置密码</button>
+                    <button class="btn btn-sm btn-text btn-disable-user">禁用</button>
+                  </td>
+                </tr>
+                <tr data-user-id="3">
+                  <td>王教授</td>
+                  <td>137****9012</td>
+                  <td>物理</td>
+                  <td><span class="role-tag expert">专家</span></td>
+                  <td><span class="user-status-tag active">正常</span></td>
+                  <td>2024-03-01</td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-edit-user">编辑</button>
+                    <button class="btn btn-sm btn-text btn-reset-pwd">重置密码</button>
+                    <button class="btn btn-sm btn-text btn-disable-user">禁用</button>
+                  </td>
+                </tr>
+                <tr data-user-id="4">
+                  <td>赵老师</td>
+                  <td>136****3456</td>
+                  <td>英语</td>
+                  <td><span class="role-tag teacher">教师</span></td>
+                  <td><span class="user-status-tag active">正常</span></td>
+                  <td>2024-03-10</td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-edit-user">编辑</button>
+                    <button class="btn btn-sm btn-text btn-reset-pwd">重置密码</button>
+                    <button class="btn btn-sm btn-text btn-disable-user">禁用</button>
+                  </td>
+                </tr>
+                <tr data-user-id="5">
+                  <td>钱老师</td>
+                  <td>135****7890</td>
+                  <td>化学</td>
+                  <td><span class="role-tag teacher">教师</span></td>
+                  <td><span class="user-status-tag disabled">已禁用</span></td>
+                  <td>2024-03-15</td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-edit-user">编辑</button>
+                    <button class="btn btn-sm btn-text btn-reset-pwd">重置密码</button>
+                    <button class="btn btn-sm btn-text btn-enable-user">启用</button>
+                  </td>
+                </tr>
+                <tr data-user-id="6">
+                  <td>孙老师</td>
+                  <td>134****2345</td>
+                  <td>生物</td>
+                  <td><span class="role-tag expert">专家</span></td>
+                  <td><span class="user-status-tag active">正常</span></td>
+                  <td>2024-03-18</td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-edit-user">编辑</button>
+                    <button class="btn btn-sm btn-text btn-reset-pwd">重置密码</button>
+                    <button class="btn btn-sm btn-text btn-disable-user">禁用</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 分页 -->
+          <div class="user-pagination">
+            <span class="pagination-info">共 12 条记录</span>
+            <div class="pagination-btns">
+              <button class="btn btn-sm btn-outline" disabled>上一页</button>
+              <span class="page-num active">1</span>
+              <span class="page-num">2</span>
+              <button class="btn btn-sm btn-outline">下一页</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 专家入驻页 -->
+        <div class="user-page expert-onboard-page" id="expertOnboardPage">
+          <div class="user-header">
+            <h2>专家入驻</h2>
+            <button class="btn btn-primary" id="addExpertBtn">+ 添加专家</button>
+          </div>
+
+          <!-- 统计卡片 -->
+          <div class="user-stats">
+            <div class="stat-card">
+              <span class="stat-value stat-blue" id="expertTotalCount">5</span>
+              <span class="stat-label">专家总数</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value stat-green" id="expertActiveCount">4</span>
+              <span class="stat-label">正常状态</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value stat-gray" id="expertDisabledCount">1</span>
+              <span class="stat-label">已禁用</span>
+            </div>
+          </div>
+
+          <!-- 搜索和表格容器 -->
+          <div class="table-container">
+            <div class="table-toolbar">
+              <input type="text" class="search-input" id="searchExpertInput" placeholder="搜索专家姓名或手机号">
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>专家姓名</th>
+                  <th>手机号码</th>
+                  <th>擅长学科</th>
+                  <th>入驻时间</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="expertTableBody">
+                <tr data-expert-id="1" data-status="active">
+                  <td>王教授</td>
+                  <td>13790129012</td>
+                  <td>
+                    <span class="subject-tag" style="background: #e8f0fe; color: #1a73e8;">物理</span>
+                    <span class="subject-tag" style="background: #fce8f3; color: #c41c7a;">数学</span>
+                  </td>
+                  <td>2024-03-01</td>
+                  <td><span class="expert-status-tag active">正常</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-text-danger btn-toggle-expert">禁用</button>
+                    <button class="btn btn-sm btn-text btn-text-danger btn-delete-expert">删除</button>
+                  </td>
+                </tr>
+                <tr data-expert-id="2" data-status="active">
+                  <td>孙老师</td>
+                  <td>13423452345</td>
+                  <td>
+                    <span class="subject-tag" style="background: #dcfce7; color: #166534;">生物</span>
+                  </td>
+                  <td>2024-03-18</td>
+                  <td><span class="expert-status-tag active">正常</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-text-danger btn-toggle-expert">禁用</button>
+                    <button class="btn btn-sm btn-text btn-text-danger btn-delete-expert">删除</button>
+                  </td>
+                </tr>
+                <tr data-expert-id="3" data-status="active">
+                  <td>李教授</td>
+                  <td>13945674567</td>
+                  <td>
+                    <span class="subject-tag" style="background: #fef3c7; color: #92400e;">化学</span>
+                    <span class="subject-tag" style="background: #dcfce7; color: #166534;">生物</span>
+                  </td>
+                  <td>2024-02-25</td>
+                  <td><span class="expert-status-tag active">正常</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-text-danger btn-toggle-expert">禁用</button>
+                    <button class="btn btn-sm btn-text btn-text-danger btn-delete-expert">删除</button>
+                  </td>
+                </tr>
+                <tr data-expert-id="4" data-status="disabled" class="row-disabled">
+                  <td class="text-disabled">周老师</td>
+                  <td class="text-disabled">13589018901</td>
+                  <td>
+                    <span class="subject-tag disabled">英语</span>
+                  </td>
+                  <td class="text-disabled">2024-04-15</td>
+                  <td><span class="expert-status-tag disabled">已禁用</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-text-success btn-toggle-expert">启用</button>
+                    <button class="btn btn-sm btn-text btn-text-danger btn-delete-expert">删除</button>
+                  </td>
+                </tr>
+                <tr data-expert-id="5" data-status="active">
+                  <td>吴研究员</td>
+                  <td>13623452345</td>
+                  <td>
+                    <span class="subject-tag" style="background: #e8f0fe; color: #1a73e8;">物理</span>
+                  </td>
+                  <td>2024-03-05</td>
+                  <td><span class="expert-status-tag active">正常</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-text btn-text-danger btn-toggle-expert">禁用</button>
+                    <button class="btn btn-sm btn-text btn-text-danger btn-delete-expert">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="table-footer">
+              <span class="pagination-info">共 5 位专家</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 模块4结束 -->
+
+    <!-- ========== 模块5：讲座排课 ========== -->
+    <div class="module module-lecture" id="moduleLecture">
+      <div class="lecture-container">
+        <!-- 页头 -->
+        <div class="lecture-header">
+          <h2>讲座排课</h2>
+          <button class="btn btn-primary" id="addLectureBtn">+ 添加讲座</button>
+        </div>
+
+        <!-- 周切换器 -->
+        <div class="week-switcher">
+          <button class="btn btn-outline" id="prevWeekBtn">← 上一周</button>
+          <div class="week-display">
+            <span class="week-range" id="weekRangeText">3月18日 - 3月22日</span>
+            <button class="btn btn-sm btn-text" id="todayBtn">回到本周</button>
+          </div>
+          <button class="btn btn-outline" id="nextWeekBtn">下一周 →</button>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="lecture-stats">
+          <div class="stat-card">
+            <span class="stat-value stat-blue" id="weekLectureCount">4</span>
+            <span class="stat-label">本周讲座</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value stat-green" id="weekTeacherCount">3</span>
+            <span class="stat-label">授课教师</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value stat-purple" id="weekSubjectCount">3</span>
+            <span class="stat-label">学科数量</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value stat-orange" id="expertCount">5</span>
+            <span class="stat-label">外部专家</span>
+          </div>
+        </div>
+
+        <!-- 周课表 -->
+        <div class="schedule-calendar">
+          <!-- 表头 -->
+          <div class="calendar-header">
+            <div class="time-column-header">时间</div>
+            <div class="day-column-header" data-day="1">
+              <div class="day-name">周一</div>
+              <div class="day-date">03/18</div>
+            </div>
+            <div class="day-column-header" data-day="2">
+              <div class="day-name">周二</div>
+              <div class="day-date">03/19</div>
+            </div>
+            <div class="day-column-header" data-day="3">
+              <div class="day-name">周三</div>
+              <div class="day-date">03/20</div>
+            </div>
+            <div class="day-column-header" data-day="4">
+              <div class="day-name">周四</div>
+              <div class="day-date">03/21</div>
+            </div>
+            <div class="day-column-header" data-day="5">
+              <div class="day-name">周五</div>
+              <div class="day-date">03/22</div>
+            </div>
+          </div>
+
+          <!-- 时间轴主体 -->
+          <div class="calendar-body">
+            <!-- 时间刻度列 -->
+            <div class="time-column">
+              <div class="time-slot">08:00</div>
+              <div class="time-slot">09:00</div>
+              <div class="time-slot">10:00</div>
+              <div class="time-slot">11:00</div>
+              <div class="time-slot">12:00</div>
+              <div class="time-slot">13:00</div>
+              <div class="time-slot">14:00</div>
+              <div class="time-slot">15:00</div>
+              <div class="time-slot">16:00</div>
+              <div class="time-slot">17:00</div>
+              <div class="time-slot">18:00</div>
+              <div class="time-slot">19:00</div>
+            </div>
+
+            <!-- 每天的列 -->
+            <div class="day-column" data-day="1">
+              <div class="hour-grid"></div>
+              <!-- 讲座卡片示例 -->
+              <div class="lecture-block" style="top: 120px; height: 90px;" data-lecture-id="1">
+                <div class="lecture-block-inner" style="background: rgba(26,115,232,0.15); border-left-color: #1a73e8;">
+                  <div class="lecture-title" style="color: #1a73e8;">数学函数专题</div>
+                  <div class="lecture-meta">数学 · 王教授</div>
+                  <div class="lecture-time">10:00-11:30</div>
+                  <div class="lecture-count">156人</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="day-column" data-day="2">
+              <div class="hour-grid"></div>
+              <div class="lecture-block" style="top: 180px; height: 60px;" data-lecture-id="2">
+                <div class="lecture-block-inner" style="background: rgba(234,67,53,0.15); border-left-color: #ea4335;">
+                  <div class="lecture-title" style="color: #ea4335;">物理实验技巧</div>
+                  <div class="lecture-meta">物理 · 孙老师</div>
+                  <div class="lecture-time">11:00-12:00</div>
+                  <div class="lecture-count">98人</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="day-column" data-day="3">
+              <div class="hour-grid"></div>
+              <div class="lecture-block" style="top: 360px; height: 90px;" data-lecture-id="3">
+                <div class="lecture-block-inner" style="background: rgba(52,168,83,0.15); border-left-color: #34a853;">
+                  <div class="lecture-title" style="color: #34a853;">生物遗传学</div>
+                  <div class="lecture-meta">生物 · 孙老师</div>
+                  <div class="lecture-time">14:00-15:30</div>
+                  <div class="lecture-count">87人</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="day-column" data-day="4">
+              <div class="hour-grid"></div>
+            </div>
+
+            <div class="day-column" data-day="5">
+              <div class="hour-grid"></div>
+              <div class="lecture-block" style="top: 60px; height: 120px;" data-lecture-id="4">
+                <div class="lecture-block-inner" style="background: rgba(251,188,4,0.15); border-left-color: #fbbc04;">
+                  <div class="lecture-title" style="color: #b06000;">高考数学压轴题</div>
+                  <div class="lecture-meta">数学 · 王教授</div>
+                  <div class="lecture-time">09:00-11:00</div>
+                  <div class="lecture-count">203人</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 提示说明 -->
+        <div class="calendar-hint">
+          点击空白区域可添加讲座，点击已有讲座可编辑或删除
+        </div>
+      </div>
+    </div>
+    <!-- 模块5结束 -->
+
+    <!-- 讲座弹窗：新建/编辑讲座 -->
+    <div class="modal-overlay" id="lectureModalOverlay">
+      <div class="modal-container modal-md" id="lectureModal">
+        <div class="modal-header">
+          <h3 id="lectureModalTitle">新建讲座</h3>
+          <button class="modal-close" id="closeLectureModal">&times;</button>
+        </div>
+        <form class="modal-form" id="lectureForm">
+          <div class="form-group">
+            <label>讲座标题 <span class="required">*</span></label>
+            <input type="text" id="lectureName" placeholder="请输入讲座标题" required maxlength="50">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>学科 <span class="required">*</span></label>
+              <select id="lectureSubject" required>
+                <option value="">选择学科</option>
+                <option value="math">数学</option>
+                <option value="chinese">语文</option>
+                <option value="english">英语</option>
+                <option value="physics">物理</option>
+                <option value="chemistry">化学</option>
+                <option value="biology">生物</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>授课老师 <span class="required">*</span></label>
+              <select id="lectureSpeaker" required>
+                <option value="">选择老师</option>
+                <optgroup label="内部老师">
+                  <option value="t1">张老师 (数学)</option>
+                  <option value="t2">李老师 (语文)</option>
+                </optgroup>
+                <optgroup label="外部专家">
+                  <option value="e1">王教授 (物理/数学)</option>
+                  <option value="e2">孙老师 (生物)</option>
+                  <option value="e3">李教授 (化学/生物)</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>讲座日期 <span class="required">*</span></label>
+              <input type="date" id="lectureDate" required>
+            </div>
+            <div class="form-group">
+              <label>时间段 <span class="required">*</span></label>
+              <div class="time-range-picker">
+                <input type="time" id="lectureStartTime" required>
+                <span>至</span>
+                <input type="time" id="lectureEndTime" required>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>目标学生</label>
+            <div class="cascade-student-selector">
+              <!-- 机构选择 -->
+              <div class="cascade-level">
+                <div class="cascade-header">
+                  <span class="cascade-label">选择机构</span>
+                  <label class="select-all-checkbox">
+                    <input type="checkbox" id="selectAllOrgs"> 全选
+                  </label>
+                </div>
+                <div class="cascade-options" id="orgOptions">
+                  <label class="cascade-option">
+                    <input type="checkbox" name="org" value="org1"> 北京总校
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="org" value="org2"> 上海分校
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="org" value="org3"> 广州分校
+                  </label>
+                </div>
+              </div>
+              <!-- 班级选择 -->
+              <div class="cascade-level">
+                <div class="cascade-header">
+                  <span class="cascade-label">选择班级</span>
+                  <label class="select-all-checkbox">
+                    <input type="checkbox" id="selectAllClasses"> 全选
+                  </label>
+                </div>
+                <div class="cascade-options" id="classOptions">
+                  <label class="cascade-option">
+                    <input type="checkbox" name="class" value="c1"> 高三(1)班
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="class" value="c2"> 高三(2)班
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="class" value="c3"> 高三(3)班
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="class" value="c4"> 高二(1)班
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="class" value="c5"> 高二(2)班
+                  </label>
+                </div>
+              </div>
+              <!-- 学生选择 -->
+              <div class="cascade-level">
+                <div class="cascade-header">
+                  <span class="cascade-label">选择学生</span>
+                  <label class="select-all-checkbox">
+                    <input type="checkbox" id="selectAllStudents"> 全选
+                  </label>
+                </div>
+                <div class="cascade-options cascade-options-scroll" id="studentOptions">
+                  <label class="cascade-option">
+                    <input type="checkbox" name="student" value="s1"> 李明
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="student" value="s2"> 王小红
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="student" value="s3"> 张华
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="student" value="s4"> 刘芳
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="student" value="s5"> 陈刚
+                  </label>
+                  <label class="cascade-option">
+                    <input type="checkbox" name="student" value="s6"> 赵丽
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="selection-summary" id="selectionSummary">
+              <span class="summary-text">已选择：<strong id="selectedCount">0</strong> 人</span>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-outline" id="cancelLecture">取消</button>
+            <button type="submit" class="btn btn-primary">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 专家入驻弹窗 -->
+    <div class="modal-overlay" id="expertModalOverlay">
+      <div class="modal-container" id="expertModal">
+        <div class="modal-header">
+          <h3>外部专家入驻</h3>
+          <button class="modal-close" id="closeExpertModal">&times;</button>
+        </div>
+        <form class="modal-form" id="expertForm">
+          <div class="form-group">
+            <label>专家姓名 <span class="required">*</span></label>
+            <input type="text" id="expertName" placeholder="请输入姓名" required>
+          </div>
+          <div class="form-group">
+            <label>手机号码 <span class="required">*</span></label>
+            <input type="tel" id="expertPhone" placeholder="请输入手机号码" pattern="[0-9]{11}" required maxlength="11">
+          </div>
+          <div class="form-group">
+            <label>擅长学科</label>
+            <div class="subject-checkbox-group" id="expertSubjects">
+              <label class="subject-checkbox">
+                <input type="checkbox" value="math"> <span class="tag" style="background: #fce8f3; color: #c41c7a;">数学</span>
+              </label>
+              <label class="subject-checkbox">
+                <input type="checkbox" value="chinese"> <span class="tag" style="background: #dcfce7; color: #166534;">语文</span>
+              </label>
+              <label class="subject-checkbox">
+                <input type="checkbox" value="english"> <span class="tag" style="background: #dbeafe; color: #1e40af;">英语</span>
+              </label>
+              <label class="subject-checkbox">
+                <input type="checkbox" value="physics"> <span class="tag" style="background: #e8f0fe; color: #1a73e8;">物理</span>
+              </label>
+              <label class="subject-checkbox">
+                <input type="checkbox" value="chemistry"> <span class="tag" style="background: #fef3c7; color: #92400e;">化学</span>
+              </label>
+              <label class="subject-checkbox">
+                <input type="checkbox" value="biology"> <span class="tag" style="background: #dcfce7; color: #166534;">生物</span>
+              </label>
+            </div>
+            <p class="form-hint">可多选，不选表示不限学科</p>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-outline" id="cancelExpert">取消</button>
+            <button type="submit" class="btn btn-primary">确认入驻</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 用户管理弹窗：添加/编辑用户 -->
+    <div class="modal-overlay" id="userModalOverlay">
+      <div class="modal-container" id="userModal">
+        <div class="modal-header">
+          <h3 id="userModalTitle">添加用户</h3>
+          <button class="modal-close" id="closeUserModal">&times;</button>
+        </div>
+        <form class="modal-form" id="userForm">
+          <div class="form-group">
+            <label>姓名 <span class="required">*</span></label>
+            <input type="text" id="userName" placeholder="请输入姓名" required>
+          </div>
+          <div class="form-group">
+            <label>手机号 <span class="required">*</span></label>
+            <input type="tel" id="userPhone" placeholder="请输入手机号" pattern="[0-9]{11}" required>
+          </div>
+          <div class="form-group">
+            <label>学科 <span class="required">*</span></label>
+            <select id="userSubject" required>
+              <option value="">请选择学科</option>
+              <option value="math">数学</option>
+              <option value="chinese">语文</option>
+              <option value="english">英语</option>
+              <option value="physics">物理</option>
+              <option value="chemistry">化学</option>
+              <option value="biology">生物</option>
+              <option value="politics">政治</option>
+              <option value="history">历史</option>
+              <option value="geography">地理</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>角色 <span class="required">*</span></label>
+            <select id="userRole" required>
+              <option value="">请选择角色</option>
+              <option value="admin">管理员</option>
+              <option value="operator">运营</option>
+              <option value="expert">专家</option>
+              <option value="teacher">教师</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-outline" id="cancelUserForm">取消</button>
+            <button type="submit" class="btn btn-primary">确定</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 用户管理弹窗：重置密码 -->
+    <div class="modal-overlay" id="resetPwdModalOverlay">
+      <div class="modal-container modal-sm" id="resetPwdModal">
+        <div class="modal-header">
+          <h3>重置密码</h3>
+          <button class="modal-close" id="closeResetPwdModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="confirm-text">确定要重置 <strong id="resetPwdUserName">张老师</strong> 的密码吗？</p>
+          <p class="hint-text">重置后密码将恢复为默认密码：123456</p>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" id="cancelResetPwd">取消</button>
+          <button type="button" class="btn btn-primary" id="confirmResetPwd">确定重置</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 讲座排课弹窗：查看报名学生 -->
+    <div class="modal-overlay" id="studentsModalOverlay">
+      <div class="modal-container modal-lg" id="studentsModal">
+        <div class="modal-header">
+          <h3>报名学生列表</h3>
+          <button class="modal-close" id="closeStudentsModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="students-list-header">
+            <span>讲座：<strong id="studentsLectureName">高考数学压轴题解析</strong></span>
+            <span>报名人数：<strong id="studentsCount">156</strong> 人</span>
+          </div>
+          <div class="students-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>学生姓名</th>
+                  <th>班级</th>
+                  <th>报名时间</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTableBody">
+                <tr><td>李明</td><td>高三(1)班</td><td>2024-04-18 09:23</td></tr>
+                <tr><td>王小红</td><td>高三(1)班</td><td>2024-04-18 10:15</td></tr>
+                <tr><td>张华</td><td>高三(2)班</td><td>2024-04-18 11:42</td></tr>
+                <tr><td>刘芳</td><td>高三(1)班</td><td>2024-04-18 14:08</td></tr>
+                <tr><td>陈刚</td><td>高三(3)班</td><td>2024-04-19 08:30</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" id="closeStudentsBtn">关闭</button>
+        </div>
+      </div>
+    </div>
 
     <!-- 学生端弹窗：开始诊断确认 -->
     <div class="tablet-modal" id="startExamModal">
