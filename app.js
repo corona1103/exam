@@ -661,8 +661,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // 保存草稿
   document.getElementById('saveDraft').addEventListener('click', () => {
     showToast('草稿已保存');
-    addHistory('保存草稿');
   });
+
+  // 题干和答案解析展开/收起
+  const analysisToggle = document.getElementById('analysisToggle');
+  if (analysisToggle) {
+    analysisToggle.addEventListener('click', () => {
+      analysisToggle.classList.toggle('expanded');
+    });
+  }
 
   // 提交评分
   document.getElementById('submitScore').addEventListener('click', () => {
@@ -772,7 +779,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 恢复原始按钮
       reportActions.innerHTML = `
-        <button class="btn btn-outline" id="saveReportDraft">保存草稿</button>
         <button class="btn btn-primary" id="submitReport">发布报告，查看下一人</button>
       `;
       // 重新绑定事件
@@ -785,14 +791,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 绑定报告按钮事件
   function bindReportButtons() {
-    const saveBtn = document.getElementById('saveReportDraft');
     const submitBtn = document.getElementById('submitReport');
-
-    if (saveBtn) {
-      saveBtn.addEventListener('click', () => {
-        showToast('报告草稿已保存');
-      });
-    }
 
     if (submitBtn) {
       submitBtn.addEventListener('click', handleSubmitReport);
@@ -1121,14 +1120,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
       }
 
-      // 考试时间必须在报名时间区间内
-      if (examStart < enrollStart) {
-        showToast('考试开始时间不能早于报名开始时间');
-        return false;
-      }
+      // 时间校验规则（支持提前报名 + 考试期间也能报名并考试）：
+      // 1. 报名结束时间必须 >= 考试结束时间（保证考试期间都能报名参与）
+      // 2. 报名开始时间可以早于考试开始时间（支持提前预告和报名）
+      // 3. 考试开始时间可以早于报名开始时间（特殊场景，不做限制）
 
-      if (examEnd > enrollEnd) {
-        showToast('考试结束时间不能晚于报名结束时间');
+      if (enrollEnd < examEnd) {
+        showToast('报名结束时间不能早于考试结束时间，需保证考试期间学生可报名参与');
         return false;
       }
     }
@@ -1153,25 +1151,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const examStartTime = document.getElementById('examStartTime').value;
     const examEndTime = document.getElementById('examEndTime').value;
 
-    if (!startTime || !endTime) {
-      showToast('请先填写报名开放时间');
+    if (!endTime) {
+      showToast('请先填写报名结束时间');
       return;
     }
 
-    const enrollStart = new Date(startTime);
     const enrollEnd = new Date(endTime);
 
-    if (examStartTime) {
-      const examStart = new Date(examStartTime);
-      if (examStart < enrollStart) {
-        showToast('考试开始时间不能早于报名开始时间');
-      }
-    }
-
+    // 校验：报名结束时间必须 >= 考试结束时间
     if (examEndTime) {
       const examEnd = new Date(examEndTime);
       if (examEnd > enrollEnd) {
-        showToast('考试结束时间不能晚于报名结束时间');
+        showToast('提示：报名结束时间应不早于考试结束时间，以保证考试期间学生可直接参与');
       }
     }
   }
@@ -2212,6 +2203,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+  });
+
+  // ========== 答卷详情 - 题号切换功能 ==========
+  const questionNavTabs = document.getElementById('questionNavTabs');
+  const questionDetailContainer = document.getElementById('questionDetailContainer');
+
+  if (questionNavTabs && questionDetailContainer) {
+    const qTabs = questionNavTabs.querySelectorAll('.q-tab');
+    const qPanels = questionDetailContainer.querySelectorAll('.question-detail-panel');
+
+    qTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const qNum = tab.dataset.q;
+
+        // 更新tab状态
+        qTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // 切换面板
+        qPanels.forEach(panel => {
+          if (panel.dataset.q === qNum) {
+            panel.classList.add('active');
+          } else {
+            panel.classList.remove('active');
+          }
+        });
+      });
+    });
+  }
+
+  // ========== 答卷详情 - 展开/收起题干与解析 ==========
+  const expandToggles = document.querySelectorAll('.expand-toggle');
+
+  expandToggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const isExpanded = toggle.dataset.expanded === 'true';
+      toggle.dataset.expanded = (!isExpanded).toString();
+    });
   });
 
 });
