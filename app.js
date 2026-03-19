@@ -2,6 +2,195 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ========== 登录系统 ==========
+  const loginPage = document.getElementById('loginPage');
+  const appContainer = document.getElementById('appContainer');
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+
+  // 演示用户数据
+  const demoUsers = {
+    '13800138000': { password: '123456', name: '张老师', role: 'admin' },
+    '13900139000': { password: '123456', name: '李老师', role: 'operator' },
+    '13700137000': { password: '123456', name: '王教授', role: 'expert' },
+    '13600136000': { password: '123456', name: '赵老师', role: 'teacher' }
+  };
+
+  // 检查登录状态
+  function checkLoginStatus() {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      currentUser = JSON.parse(savedUser);
+      showApp();
+    } else {
+      showLogin();
+    }
+  }
+
+  // 显示登录页
+  function showLogin() {
+    loginPage.style.display = 'flex';
+    appContainer.style.display = 'none';
+  }
+
+  // 显示主应用
+  function showApp() {
+    loginPage.style.display = 'none';
+    appContainer.style.display = 'flex';
+    updateUserDisplay();
+    initNavByRole();
+  }
+
+  // 更新用户显示
+  function updateUserDisplay() {
+    const userAvatar = document.getElementById('userAvatar');
+    const userNameEl = document.getElementById('userName');
+    const userRoleTag = document.getElementById('userRoleTag');
+
+    if (userAvatar) userAvatar.textContent = currentUser.name.charAt(0);
+    if (userNameEl) userNameEl.textContent = currentUser.name;
+    if (userRoleTag) {
+      userRoleTag.className = 'user-role-tag ' + currentUser.role;
+      userRoleTag.textContent = ROLES[currentUser.role];
+    }
+  }
+
+  // 登录表单提交
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const phone = document.getElementById('loginPhone').value;
+      const password = document.getElementById('loginPassword').value;
+
+      // 验证
+      const user = demoUsers[phone];
+      if (!user) {
+        loginError.textContent = '手机号不存在';
+        return;
+      }
+      if (user.password !== password) {
+        loginError.textContent = '密码错误';
+        return;
+      }
+
+      // 登录成功
+      currentUser = {
+        phone: phone,
+        name: user.name,
+        role: user.role
+      };
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      loginError.textContent = '';
+      showApp();
+      showToast(`欢迎回来，${currentUser.name}`);
+    });
+  }
+
+  // 退出登录
+  function logout() {
+    localStorage.removeItem('currentUser');
+    currentUser = { name: '', role: 'admin' };
+    showLogin();
+    // 重置登录表单
+    if (loginForm) loginForm.reset();
+    if (loginError) loginError.textContent = '';
+  }
+
+  // 用户头像下拉菜单
+  const userAvatarWrapper = document.getElementById('userAvatarWrapper');
+  const userDropdown = document.getElementById('userDropdown');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const changePasswordBtn = document.getElementById('changePasswordBtn');
+
+  if (userAvatarWrapper) {
+    userAvatarWrapper.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdown.classList.toggle('active');
+    });
+  }
+
+  // 点击其他地方关闭下拉菜单
+  document.addEventListener('click', () => {
+    if (userDropdown) userDropdown.classList.remove('active');
+  });
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      if (confirm('确定要退出登录吗？')) {
+        logout();
+        showToast('已退出登录');
+      }
+    });
+  }
+
+  // 修改密码弹窗
+  const changePwdModalOverlay = document.getElementById('changePwdModalOverlay');
+  const closeChangePwdModal = document.getElementById('closeChangePwdModal');
+  const cancelChangePwd = document.getElementById('cancelChangePwd');
+  const changePwdForm = document.getElementById('changePwdForm');
+  const changePwdError = document.getElementById('changePwdError');
+
+  function openChangePwdModal() {
+    if (userDropdown) userDropdown.classList.remove('active');
+    if (changePwdForm) changePwdForm.reset();
+    if (changePwdError) changePwdError.textContent = '';
+    if (changePwdModalOverlay) changePwdModalOverlay.classList.add('active');
+  }
+
+  function closeChangePwdModalFn() {
+    if (changePwdModalOverlay) changePwdModalOverlay.classList.remove('active');
+  }
+
+  if (changePasswordBtn) {
+    changePasswordBtn.addEventListener('click', openChangePwdModal);
+  }
+
+  if (closeChangePwdModal) {
+    closeChangePwdModal.addEventListener('click', closeChangePwdModalFn);
+  }
+
+  if (cancelChangePwd) {
+    cancelChangePwd.addEventListener('click', closeChangePwdModalFn);
+  }
+
+  if (changePwdModalOverlay) {
+    changePwdModalOverlay.addEventListener('click', (e) => {
+      if (e.target === changePwdModalOverlay) closeChangePwdModalFn();
+    });
+  }
+
+  if (changePwdForm) {
+    changePwdForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const oldPwd = document.getElementById('oldPassword').value;
+      const newPwd = document.getElementById('newPassword').value;
+      const confirmPwd = document.getElementById('confirmPassword').value;
+
+      // 验证原密码
+      const user = demoUsers[currentUser.phone];
+      if (!user || user.password !== oldPwd) {
+        changePwdError.textContent = '原密码错误';
+        return;
+      }
+
+      // 验证新密码
+      if (newPwd.length < 6) {
+        changePwdError.textContent = '新密码至少6位';
+        return;
+      }
+
+      if (newPwd !== confirmPwd) {
+        changePwdError.textContent = '两次输入的新密码不一致';
+        return;
+      }
+
+      // 修改成功（演示用，实际需调用后端API）
+      demoUsers[currentUser.phone].password = newPwd;
+      closeChangePwdModalFn();
+      showToast('密码修改成功');
+    });
+  }
+
   // ========== 角色权限系统 ==========
   const ROLES = {
     admin: '管理员',
@@ -18,11 +207,14 @@ document.addEventListener('DOMContentLoaded', () => {
     teacher:  ['grading']
   };
 
-  // 当前登录用户（演示用，实际从后端获取）
+  // 当前登录用户
   let currentUser = {
     name: '张老师',
     role: 'admin'
   };
+
+  // 初始化登录检查
+  checkLoginStatus();
 
   // 初始化时根据角色显示/隐藏导航项
   function initNavByRole() {
